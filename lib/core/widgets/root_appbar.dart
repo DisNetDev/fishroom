@@ -1,0 +1,39 @@
+import 'package:flutter/material.dart';
+
+class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const RootSliverAppBar({
+    super.key,
+    required this.title,
+    this.implyLeading = false,
+    this.sliver = false,
+  });
+
+  final String title;
+  final bool implyLeading;
+  final bool sliver;
+  @override
+  Widget build(BuildContext context) {
+    return sliver
+        ? SliverAppBar(
+            shape: const RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(20))),
+            centerTitle: false,
+            shadowColor: Colors.black,
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            automaticallyImplyLeading: implyLeading,
+            title: Text(title))
+        : AppBar(
+            shape: const RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(20))),
+            centerTitle: false,
+            shadowColor: Colors.black,
+            backgroundColor: Colors.white,
+            title: Text(title));
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
