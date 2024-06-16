@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.1.6
+  supabase_flutter: ^2.5.5
 
 dev_dependencies:
   flutter_test:
