@@ -15,23 +15,10 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return sliver
         ? SliverAppBar(
-            shape: const RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20))),
             centerTitle: false,
-            shadowColor: Colors.black,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
             automaticallyImplyLeading: implyLeading,
             title: Text(title))
-        : AppBar(
-            shape: const RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20))),
-            centerTitle: false,
-            shadowColor: Colors.black,
-            backgroundColor: Colors.white,
-            title: Text(title));
+        : AppBar(centerTitle: false, title: Text(title));
   }
 
   @override

@@ -16,12 +16,15 @@ class TankTile extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: MaterialContainer(
-        elevation: 10,
         padding: const EdgeInsets.all(20),
         onTap: () {},
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          image: DecorationImage(
+            image: AssetImage(tank.image?.path ?? ""),
+            fit: BoxFit.cover,
+          ),
+          border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Column(

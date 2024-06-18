@@ -35,7 +35,7 @@ class MaterialContainer extends StatelessWidget {
       tag: heroTag ?? uuid.v4(),
       child: Padding(
         padding: margin ?? const EdgeInsets.all(0),
-        child: InkWell(
+        child: GestureDetector(
           onTap: onTap,
           child: AnimatedContainer(
             clipBehavior: Clip.none,

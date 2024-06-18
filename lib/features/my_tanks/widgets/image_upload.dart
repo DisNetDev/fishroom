@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ImageUpload extends StatelessWidget {
+  ImageUpload({super.key, required this.onTap, required this.image});
+
+  final Function() onTap;
+
+  final ImagePicker _imagePicker = ImagePicker();
+
+  final XFile? image;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 600),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(image?.path ?? ""),
+              fit: BoxFit.cover,
+            ),
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: image == null
+              ? const Center(
+                  child: Text("Upload Image"),
+                )
+              : const SizedBox.shrink(),
+        ),
+      ),
+    );
+  }
+}

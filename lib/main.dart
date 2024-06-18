@@ -14,8 +14,17 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => TanksCubit(),
-      child: const MaterialApp(
-        home: MyTanks(),
+      child: MaterialApp(
+        theme: ThemeData.from(
+            colorScheme: const ColorScheme.light(
+          primary: Color.fromARGB(255, 33, 75, 243),
+        )),
+        darkTheme: ThemeData.from(
+            colorScheme: const ColorScheme.dark(
+          primary: Color.fromARGB(255, 33, 75, 243),
+        )),
+        themeMode: ThemeMode.system,
+        home: const MyTanks(),
       ),
     );
   }
