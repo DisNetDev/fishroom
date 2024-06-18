@@ -18,7 +18,12 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             centerTitle: false,
             automaticallyImplyLeading: implyLeading,
             title: Text(title))
-        : AppBar(centerTitle: false, title: Text(title));
+        : AppBar(
+            centerTitle: false,
+            title: Text(title),
+            surfaceTintColor: Colors.white,
+            elevation: 20,
+          );
   }
 
   @override

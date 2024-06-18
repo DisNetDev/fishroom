@@ -3,6 +3,7 @@ import 'package:fish_man/core/widgets/fishy_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_dropdown.dart';
@@ -140,6 +141,7 @@ class _CreateTankState extends State<CreateTank> {
                   );
                 } else {
                   context.read<TanksCubit>().addTank(Tank(
+                      id: const Uuid().v4(),
                       name: _tankName,
                       type: _tankType,
                       size: _tankSize,
