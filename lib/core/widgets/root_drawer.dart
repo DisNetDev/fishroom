@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../features/my_tanks/views/create_tank.dart';
+import '../../features/fishroom/views/create_tank.dart';
 
 class RootDrawer extends StatelessWidget {
   const RootDrawer({super.key});

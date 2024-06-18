@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'features/my_tanks/cubit/tanks_cubit.dart';
-import 'features/my_tanks/views/my_tanks.dart';
+import 'features/fishroom/cubit/tanks_cubit.dart';
+import 'features/fishroom/views/my_tanks.dart';
 
 void main() {
   runApp(const MainApp());
