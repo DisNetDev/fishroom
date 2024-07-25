@@ -28,7 +28,6 @@ class TankTile extends StatelessWidget {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: MaterialContainer(
-              heroTag: "tank-${tank.id}",
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: BoxDecoration(
                 boxShadow: const [

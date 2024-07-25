@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class MaterialContainer extends StatelessWidget {
   const MaterialContainer(
@@ -12,7 +11,6 @@ class MaterialContainer extends StatelessWidget {
       this.onTap,
       this.height,
       this.width,
-      this.heroTag,
       this.constraints,
       this.duration = const Duration(milliseconds: 200)});
 
@@ -26,33 +24,28 @@ class MaterialContainer extends StatelessWidget {
   final double? width;
   final BoxConstraints? constraints;
   final Duration duration;
-  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
-    Uuid uuid = const Uuid();
-    return Hero(
-      tag: heroTag ?? uuid.v4(),
-      child: Padding(
-        padding: margin ?? const EdgeInsets.all(0),
-        child: GestureDetector(
-          onTap: onTap,
-          child: AnimatedContainer(
-            clipBehavior: Clip.none,
-            duration: const Duration(milliseconds: 200),
-            constraints: constraints,
-            height: height,
-            width: width,
-            decoration: decoration,
-            child: Material(
-                color: decoration?.color ?? Colors.transparent,
-                borderRadius: decoration?.borderRadius,
-                elevation: elevation ?? 0,
-                child: Padding(
-                  padding: padding ?? const EdgeInsets.all(0),
-                  child: child,
-                )),
-          ),
+    return Padding(
+      padding: margin ?? const EdgeInsets.all(0),
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          clipBehavior: Clip.none,
+          duration: const Duration(milliseconds: 200),
+          constraints: constraints,
+          height: height,
+          width: width,
+          decoration: decoration,
+          child: Material(
+              color: decoration?.color ?? Colors.transparent,
+              borderRadius: decoration?.borderRadius,
+              elevation: elevation ?? 0,
+              child: Padding(
+                padding: padding ?? const EdgeInsets.all(0),
+                child: child,
+              )),
         ),
       ),
     );
