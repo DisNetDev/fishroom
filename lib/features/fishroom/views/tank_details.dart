@@ -1,3 +1,5 @@
+import 'package:fish_man/core/widgets/root_appbar.dart';
+import 'package:fish_man/core/widgets/root_drawer.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/models/tank.dart';
@@ -14,7 +16,10 @@ class TankDetails extends StatelessWidget {
       tankTypeNonNullable = "Tank Type";
     }
     return Scaffold(
+      endDrawer: const RootDrawer(),
+      appBar: RootSliverAppBar(title: tank.name ?? "Tank Details"),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Hero(
             tag: "tank-${tank.id}",
@@ -24,8 +29,8 @@ class TankDetails extends StatelessWidget {
                 ShaderMask(
                   shaderCallback: (rect) {
                     return const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
                       colors: [Colors.black87, Colors.transparent],
                     ).createShader(
                         Rect.fromLTRB(0, 0, rect.width, rect.height));
@@ -44,7 +49,7 @@ class TankDetails extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  bottom: 0,
+                  // bottom: 0,
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     width: MediaQuery.of(context).size.width,
