@@ -17,7 +17,9 @@ class TankDetails extends StatelessWidget {
     }
     return Scaffold(
       endDrawer: const RootDrawer(),
-      appBar: RootSliverAppBar(title: tank.name ?? "Tank Details"),
+      appBar: RootSliverAppBar(
+        title: tank.name ?? "Tank Details",
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

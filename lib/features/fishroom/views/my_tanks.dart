@@ -15,7 +15,9 @@ class MyTanks extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           appBar: state.tanks.isEmpty
-              ? const RootSliverAppBar(title: "My Fish Room")
+              ? const RootSliverAppBar(
+                  title: "Fishroom",
+                )
               : null,
           endDrawer: const RootDrawer(),
           body: Builder(
@@ -25,7 +27,7 @@ class MyTanks extends StatelessWidget {
                   physics: const BouncingScrollPhysics(),
                   slivers: [
                     const RootSliverAppBar(
-                      title: "My Fish Room",
+                      title: "Fishroom",
                       sliver: true,
                     ),
                     SliverList(
