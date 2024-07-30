@@ -27,3 +27,9 @@ flutter:
 
   assets:
     - assets/
+    - assets/fonts/
+
+  fonts:
+    - family: CheesyCats
+      fonts:
+        - asset: assets/fonts/CheesyCats.ttf
