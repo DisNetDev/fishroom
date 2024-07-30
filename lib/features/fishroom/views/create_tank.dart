@@ -1,5 +1,5 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:fish_room/core/widgets/fishy_snackbar.dart';
+import 'package:fishroom/core/widgets/fishy_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';

@@ -1,4 +1,4 @@
-package com.example.fish_room
+package com.fishroom.staging
 
 import io.flutter.embedding.android.FlutterActivity
 

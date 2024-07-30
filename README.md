@@ -1,3 +1,3 @@
-# fish_room
+# Fishroom
 
 A new Flutter project.
