@@ -32,4 +32,4 @@ flutter:
   fonts:
     - family: CheesyCats
       fonts:
-        - asset: assets/fonts/CheesyCats.ttf
+        - asset: assets/fonts/CheesyCats.otf
