@@ -1,5 +1,5 @@
-import 'package:fish_man/core/widgets/root_appbar.dart';
-import 'package:fish_man/core/widgets/root_drawer.dart';
+import 'package:fish_room/core/widgets/root_appbar.dart';
+import 'package:fish_room/core/widgets/root_drawer.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/models/tank.dart';
