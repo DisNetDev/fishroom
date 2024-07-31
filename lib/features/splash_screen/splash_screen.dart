@@ -14,35 +14,35 @@ class SplashScreen extends StatelessWidget {
         children: [
           SvgPicture.asset(
             'assets/fishroom_logo.svg',
-            height: 120,
+            height: 100,
           ),
           const SizedBox(height: 10),
           const Text(
             'Fishroom',
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 36,
+                fontSize: 40,
                 fontWeight: FontWeight.bold,
                 fontFamily: "CheesyCats"),
           ),
           const SizedBox(height: 100),
           Lottie.asset('assets/loading_animation.json', height: 80),
-          const SizedBox(height: 20),
-          StreamBuilder<String>(
-            stream: Stream.periodic(
-                const Duration(seconds: 3), (_) => _getLoadingText()),
-            builder: (context, snapshot) {
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                child: Text(
-                  snapshot.data ?? _getLoadingText(),
-                  key: ValueKey<String>(snapshot.data ?? _getLoadingText()),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              );
-            },
-          ),
+          // const SizedBox(height: 20),
+          // StreamBuilder<String>(
+          //   stream: Stream.periodic(
+          //       const Duration(seconds: 3), (_) => _getLoadingText()),
+          //   builder: (context, snapshot) {
+          //     return AnimatedSwitcher(
+          //       duration: const Duration(milliseconds: 500),
+          //       child: Text(
+          //         snapshot.data ?? _getLoadingText(),
+          //         key: ValueKey<String>(snapshot.data ?? _getLoadingText()),
+          //         textAlign: TextAlign.center,
+          //         style: const TextStyle(fontSize: 12, color: Colors.grey),
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
     );
