@@ -19,11 +19,12 @@ class ImageUpload extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 600),
           decoration: BoxDecoration(
+            color: Colors.black26,
             image: DecorationImage(
               image: AssetImage(image?.path ?? ""),
               fit: BoxFit.cover,
             ),
-            border: Border.all(color: Colors.grey),
+            border: Border.all(color: const Color.fromARGB(32, 68, 137, 255)),
             borderRadius: BorderRadius.circular(20),
           ),
           child: image == null

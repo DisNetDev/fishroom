@@ -1,4 +1,4 @@
-import 'package:fishroom/features/splash_screen/splash_screen.dart';
+import 'package:fishroom/features/fishroom/views/my_tanks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
@@ -17,14 +17,14 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData.from(
             colorScheme: const ColorScheme.light(
-          primary: Color.fromARGB(255, 33, 75, 243),
+          primary: Color.fromARGB(255, 33, 138, 243),
         )),
         darkTheme: ThemeData.from(
             colorScheme: const ColorScheme.dark(
-          primary: Color.fromARGB(255, 33, 75, 243),
+          primary: Color.fromARGB(255, 33, 138, 243),
         )),
         themeMode: ThemeMode.system,
-        home: const SplashScreen(),
+        home: const MyTanks(),
       ),
     );
   }

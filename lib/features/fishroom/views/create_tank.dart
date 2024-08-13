@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/widgets/custom_button.dart';
-import '../../../core/widgets/custom_dropdown.dart';
 import '../../../core/widgets/root_appbar.dart';
 import '../../../core/widgets/text_input.dart';
 import '../cubit/tanks_cubit.dart';
@@ -21,11 +20,14 @@ class CreateTank extends StatefulWidget {
 
 class _CreateTankState extends State<CreateTank> {
   String _tankName = "";
-  String _tankType = "";
+  final String _tankType = "";
   String _tankSize = "";
-  String _measurementUnit = "L";
+  final String _measurementUnit = "L";
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _image;
+
+  List<bool> tankTypeSelection = [false, false, false];
+  List<bool> capacitySelection = [false, false, false, false];
 
   @override
   Widget build(BuildContext context) {
@@ -37,66 +39,86 @@ class _CreateTankState extends State<CreateTank> {
           children: [
             TextInput(
               margin: const EdgeInsets.symmetric(vertical: 16),
-              hintText: "Tank Name",
+              label: const Text("Tank Name"),
               onChanged: (value) {
                 setState(() {
                   _tankName = value;
                 });
               },
             ),
-            Row(
+            Stack(
+              alignment: Alignment.centerRight,
               children: [
-                Expanded(
-                  child: TextInput(
-                    margin: const EdgeInsets.all(0),
-                    onChanged: (value) {
-                      setState(() {
-                        _tankSize = value;
-                      });
-                    },
-                    keyboardType: TextInputType.number,
-                    hintText: "Tank Capacity",
-                    suffix: InkWell(
-                      onTap: () {
-                        setState(() {
-                          if (_measurementUnit == "L") {
-                            _measurementUnit = "G";
-                          } else {
-                            _measurementUnit = "L";
-                          }
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          _measurementUnit,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                CustomDropdown(
-                  margin: const EdgeInsets.only(left: 16),
-                  hintText: "Tank Type",
-                  entries: const [
-                    DropdownMenuEntry(value: "Freshwater", label: "Freshwater"),
-                    DropdownMenuEntry(value: "Brackish", label: "Brackish"),
-                    DropdownMenuEntry(value: "Saltwater", label: "Saltwater"),
-                  ],
-                  onSelected: (value) {
+                TextInput(
+                  margin: const EdgeInsets.all(0),
+                  onChanged: (value) {
                     setState(() {
-                      _tankType = value;
+                      _tankSize = value;
                     });
                   },
+                  keyboardType: TextInputType.number,
+                  label: const Text("Tank Capacity"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  //TODO: Fill this up into the whole field somehow
+                  child: ToggleButtons(
+                      color: Colors.white,
+                      borderColor: const Color.fromARGB(52, 255, 255, 255),
+                      selectedColor: Colors.white,
+                      selectedBorderColor: Colors.white,
+                      borderRadius: BorderRadius.circular(100),
+                      onPressed: (index) {
+                        for (int i = 0; i < capacitySelection.length; i++) {
+                          capacitySelection[i] = false;
+                        }
+                        setState(() {
+                          capacitySelection[index] = true;
+                        });
+                      },
+                      isSelected: capacitySelection,
+                      children: const [
+                        Text("L"),
+                        Text("G"),
+                        Text("F"),
+                        Text("CM")
+                      ]),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+            Container(
+              padding: EdgeInsets.zero,
+              decoration: BoxDecoration(
+                color: Colors.black26,
+                borderRadius: BorderRadius.circular(1000),
+              ),
+              child: ToggleButtons(
+                borderColor: Colors.black26,
+                selectedBorderColor: Colors.transparent,
+                constraints: BoxConstraints(
+                    minHeight: 40,
+                    minWidth: MediaQuery.of(context).size.width /
+                            tankTypeSelection.length -
+                        12),
+                borderRadius: BorderRadius.circular(1000),
+                onPressed: (index) {
+                  for (int i = 0; i < tankTypeSelection.length; i++) {
+                    tankTypeSelection[i] = false;
+                  }
+                  setState(() {
+                    tankTypeSelection[index] = true;
+                  });
+                },
+                isSelected: tankTypeSelection,
+                children: const [
+                  Text("Freshwater"),
+                  Text("Saltwater"),
+                  Text("Brackish"),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
             ImageUpload(
               image: _image,
               onTap: () async {
@@ -107,7 +129,9 @@ class _CreateTankState extends State<CreateTank> {
                 });
               },
             ),
-            const Expanded(child: SizedBox()),
+            const Expanded(
+              child: SizedBox(),
+            ),
             CustomButton(
               margin: const EdgeInsets.symmetric(vertical: 16),
               text: "Create",

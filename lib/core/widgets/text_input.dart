@@ -1,3 +1,4 @@
+import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
 
 class TextInput extends StatefulWidget {
@@ -9,6 +10,7 @@ class TextInput extends StatefulWidget {
       this.margin = const EdgeInsets.symmetric(horizontal: 16),
       this.suffix,
       this.keyboardType,
+      this.label,
       this.prefixIcon});
 
   final String? hintText;
@@ -18,6 +20,7 @@ class TextInput extends StatefulWidget {
   final Widget? suffix;
   final Widget? prefixIcon;
   final TextInputType? keyboardType;
+  final Widget? label;
 
   @override
   State<TextInput> createState() => _TextInputState();
@@ -27,12 +30,11 @@ class _TextInputState extends State<TextInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
       margin: widget.margin,
-      padding: widget.padding,
+      padding: const EdgeInsets.only(left: 25, top: 5, bottom: 5, right: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(20),
+        gradient: kPrimaryGradient,
+        borderRadius: BorderRadius.circular(1000),
       ),
       child: Align(
         alignment: Alignment.center,
@@ -40,6 +42,10 @@ class _TextInputState extends State<TextInput> {
           onChanged: widget.onChanged,
           keyboardType: widget.keyboardType,
           decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            alignLabelWithHint: true,
+            labelStyle: kHintTextStyle,
+            label: widget.label,
             prefixIcon: widget.prefixIcon,
             suffix: widget.suffix,
             border: InputBorder.none,
