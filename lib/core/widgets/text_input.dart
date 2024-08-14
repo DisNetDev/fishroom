@@ -31,9 +31,7 @@ class _TextInputState extends State<TextInput> {
   Widget build(BuildContext context) {
     return Container(
       margin: widget.margin,
-      padding: const EdgeInsets.only(left: 25, top: 5, bottom: 5, right: 10),
       decoration: BoxDecoration(
-        gradient: kPrimaryGradient,
         borderRadius: BorderRadius.circular(1000),
       ),
       child: Align(
@@ -42,13 +40,31 @@ class _TextInputState extends State<TextInput> {
           onChanged: widget.onChanged,
           keyboardType: widget.keyboardType,
           decoration: InputDecoration(
-            floatingLabelBehavior: FloatingLabelBehavior.always,
             alignLabelWithHint: true,
             labelStyle: kHintTextStyle,
             label: widget.label,
             prefixIcon: widget.prefixIcon,
             suffix: widget.suffix,
-            border: InputBorder.none,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(2000),
+              borderSide: const BorderSide(
+                color: Colors.white,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(2000),
+              borderSide: const BorderSide(
+                color: Color.fromARGB(255, 95, 95, 95),
+              ),
+            ),
+            // border: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(2000),
+            //   borderSide: const BorderSide(
+            //     color: Color.fromARGB(255, 95, 95, 95),
+            //   ),
+            // ),
             hintText: widget.hintText,
             hintStyle: const TextStyle(
               color: Colors.grey,

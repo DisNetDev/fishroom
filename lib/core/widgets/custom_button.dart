@@ -1,26 +1,39 @@
+import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
 
 import 'material_container.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton(
-      {super.key, required this.text, required this.onPressed, this.margin});
+      {super.key,
+      required this.text,
+      required this.onPressed,
+      this.primary = true,
+      this.margin});
 
   final String text;
   final Function() onPressed;
   final EdgeInsets? margin;
+  final bool primary;
 
   @override
   Widget build(BuildContext context) {
     return MaterialContainer(
+      height: 50,
       margin: margin,
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
       onTap: onPressed,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(20),
+        border: primary ? null : Border.all(color: Colors.white),
+        gradient: primary ? kPrimaryGradient : null,
+        borderRadius: BorderRadius.circular(2000),
       ),
-      child: Text(text),
+      child: Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }
