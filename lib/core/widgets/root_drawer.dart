@@ -1,3 +1,4 @@
+import 'package:fishroom/core/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -14,9 +15,14 @@ class RootDrawer extends StatelessWidget {
           children: [
             Container(
               height: 100,
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               decoration: const BoxDecoration(
                 border:
                     Border(bottom: BorderSide(color: Colors.grey, width: 0.2)),
+              ),
+              child: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Logo(horizontal: true),
               ),
             ),
             ListTile(

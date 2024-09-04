@@ -20,7 +20,7 @@ class CreateTank extends StatefulWidget {
 
 class _CreateTankState extends State<CreateTank> {
   String _tankName = "";
-  final String _tankType = "";
+  String _tankType = "";
   String _tankSize = "";
   final String _measurementUnit = "L";
   final ImagePicker _imagePicker = ImagePicker();
@@ -108,6 +108,11 @@ class _CreateTankState extends State<CreateTank> {
                   }
                   setState(() {
                     tankTypeSelection[index] = true;
+                    _tankType = index == 0
+                        ? "Freshwater"
+                        : index == 1
+                            ? "Saltwater"
+                            : "Brackish";
                   });
                 },
                 isSelected: tankTypeSelection,
