@@ -1,5 +1,6 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:gradient_borders/input_borders/gradient_underline_input_border.dart';
 
 class TextInput extends StatefulWidget {
   const TextInput(
@@ -50,16 +51,22 @@ class _TextInputState extends State<TextInput> {
             suffix: widget.suffix,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(2000),
-              borderSide: const BorderSide(
-                color: Colors.white,
+            focusedBorder: const GradientUnderlineInputBorder(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  kPrimaryColor,
+                  Colors.transparent,
+                ],
               ),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(2000),
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 95, 95, 95),
+            enabledBorder: const GradientUnderlineInputBorder(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.grey,
+                  Colors.transparent,
+                ],
               ),
             ),
             // border: OutlineInputBorder(
