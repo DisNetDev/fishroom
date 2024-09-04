@@ -15,8 +15,7 @@ class LogonView extends StatefulWidget {
 }
 
 class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
-  int step = 0;
-  bool emailLogin = false;
+  int step = 1;
   bool runAnimationEmailField = true;
   String emailAddress = "";
   bool showPassword1 = false;
@@ -29,10 +28,14 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
   late AnimationController _emailController;
   late AnimationController _password1Controller;
   late AnimationController _password2Controller;
+  final focusNodeEmail = FocusNode();
+  final focusNodePassword1 = FocusNode();
+  final focusNodePassword2 = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    focusNodeEmail.requestFocus();
     _emailController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -52,6 +55,9 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     _emailController.dispose();
     _password1Controller.dispose();
     _password2Controller.dispose();
+    focusNodeEmail.dispose();
+    focusNodePassword1.dispose();
+    focusNodePassword2.dispose();
     super.dispose();
   }
 
@@ -64,96 +70,82 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         children: [
           const Expanded(flex: 2, child: SizedBox()),
           const Hero(tag: "logo", child: Logo()),
-          const Expanded(flex: 2, child: SizedBox()),
-          if (emailLogin)
-            animator(
-              controller: _emailController,
-              showAnimation: runAnimationEmailField,
-              then: (_) {
-                setState(() {
-                  runAnimationEmailField = false;
-                });
-              },
-              child: TextInput(
-                onChanged: (email) => setState(() => emailAddress = email),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                label: const Text("Email"),
-              ),
+          Expanded(
+            flex: 3,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  child: TextInput(
+                    initialValue: emailAddress,
+                    focusNode: focusNodeEmail,
+                    onChanged: (email) => setState(() => emailAddress = email),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 20),
+                    label: const Text("Email"),
+                  ),
+                ),
+                AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    height: showPassword1 ? 1 : 0),
+                TextInput(
+                  height: showPassword1 ? 70 : 0,
+                  focusNode: focusNodePassword1,
+                  obscureText: true,
+                  onChanged: (password) => setState(() => password1 = password),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  label: const Text("Password"),
+                ),
+                TextInput(
+                  height: showPassword2 ? 70 : 0,
+                  focusNode: focusNodePassword2,
+                  obscureText: true,
+                  onChanged: (password) => setState(() => password2 = password),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  label: const Text("Confirm Password"),
+                ),
+              ],
             ),
-          if (showPassword1)
-            animator(
-              controller: _password1Controller,
-              showAnimation: runAnimationPassword1,
-              then: (_) {
-                setState(() {
-                  runAnimationPassword1 = false;
-                });
-              },
-              child: TextInput(
-                obscureText: true,
-                onChanged: (password) => setState(() => password1 = password),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                label: const Text("Password"),
-              ),
-            ),
-          if (showPassword2)
-            animator(
-              controller: _password2Controller,
-              showAnimation: runAnimationPassword2,
-              then: (_) {
-                setState(() {
-                  runAnimationPassword2 = false;
-                });
-              },
-              child: TextInput(
-                obscureText: true,
-                onChanged: (password) => setState(() => password2 = password),
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                label: const Text("Confirm Password"),
-              ),
-            ),
+          ),
           CustomButton(
-            primary: emailLogin,
-            text: emailLogin ? "Continue" : "Continue with Email",
-            onPressed: !emailLogin
-                ? () {
-                    setState(() => emailLogin = true);
-                    step = 1;
-                  }
-                : () {
-                    if (isEmailValid(emailAddress)) {
-                      showPassword1 = true;
-                      showPassword2 = true;
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content:
-                              Text("Please enter a valid email address.")));
-                      return;
-                    }
-                    if (step == 2) {
-                      setState(() {
-                        PasswordValidatorObject passwordValidator =
-                            isPasswordsValid(password1, password2);
+            primary: true,
+            text: "Continue",
+            onPressed: () {
+              if (isEmailValid(emailAddress)) {
+                showPassword1 = true;
+                showPassword2 = true;
+                focusNodeEmail.unfocus();
+                focusNodePassword1.requestFocus();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Please enter a valid email address.")));
+                return;
+              }
+              if (step == 2) {
+                setState(() {
+                  PasswordValidatorObject passwordValidator =
+                      isPasswordsValid(password1, password2);
 
-                        if (passwordValidator.isValid) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MyTanks()));
-                        } else {
-                          if (showPassword1) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(passwordValidator.message)));
-                          }
-                          return;
-                        }
-                      });
-                    } else {
-                      setState(() => step = 2);
+                  if (passwordValidator.isValid) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyTanks()));
+                  } else {
+                    if (showPassword1) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(passwordValidator.message)));
                     }
-                  },
+                    return;
+                  }
+                });
+              } else {
+                setState(() => step = 2);
+              }
+            },
             margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
           ),
           CustomButton(
@@ -179,21 +171,26 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
       controller.forward().then(then);
     }
 
-    return AnimatedOpacity(
-      opacity: emailLogin ? 1.0 : 0.0,
-      duration: Duration(milliseconds: showAnimation ? 1000 : 0),
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(3, 0), // Start from the bottom
-          end: Offset.zero, // End at the original position
-        ).animate(
-          CurvedAnimation(
-            parent: controller,
-            curve: Curves.decelerate,
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        return Opacity(
+          opacity: 1.0,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1), // Start from the bottom
+              end: Offset.zero, // End at the original position
+            ).animate(
+              CurvedAnimation(
+                parent: controller,
+                curve: Curves.decelerate,
+              ),
+            ),
+            child: child,
           ),
-        ),
-        child: child,
-      ),
+        );
+      },
+      child: child,
     );
   }
 }
