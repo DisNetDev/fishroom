@@ -24,13 +24,26 @@ class CustomButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
       onTap: onPressed,
       decoration: BoxDecoration(
-        border: primary ? null : Border.all(color: Colors.white),
+        border: primary
+            ? null
+            : Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
         gradient: primary ? kPrimaryGradient : null,
         borderRadius: BorderRadius.circular(2000),
       ),
       child: Center(
         child: Text(
           text,
+          style: TextStyle(
+            color: primary
+                ? Colors.white
+                : Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+          ),
           textAlign: TextAlign.center,
         ),
       ),

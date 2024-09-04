@@ -22,7 +22,7 @@ class _CreateTankState extends State<CreateTank> {
   String _tankName = "";
   String _tankType = "";
   String _tankSize = "";
-  final String _measurementUnit = "L";
+  String _measurementUnit = "L";
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _image;
 
@@ -74,6 +74,22 @@ class _CreateTankState extends State<CreateTank> {
                         }
                         setState(() {
                           capacitySelection[index] = true;
+                          switch (index) {
+                            case 0:
+                              _measurementUnit = "L";
+                              break;
+                            case 1:
+                              _measurementUnit = "G";
+                              break;
+                            case 2:
+                              _measurementUnit = "F";
+                              break;
+                            case 3:
+                              _measurementUnit = "CM";
+                              break;
+                            default:
+                              break;
+                          }
                         });
                       },
                       isSelected: capacitySelection,

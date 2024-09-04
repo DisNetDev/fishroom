@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-const TextStyle kHintTextStyle = TextStyle(color: Colors.white);
+const TextStyle kHintTextStyle =
+    TextStyle(color: Color.fromARGB(255, 125, 125, 125));
 const TextStyle kPlainTextStyle = TextStyle();
 
 const Color kPrimaryColor = Color.fromARGB(255, 0, 199, 253);

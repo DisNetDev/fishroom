@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gradient_borders/gradient_borders.dart';
 
+import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/widgets/material_container.dart';
 import '../views/tank_details.dart';
@@ -45,10 +47,11 @@ class TankTile extends StatelessWidget {
                   image: AssetImage(tank.image?.path ?? ""),
                   fit: BoxFit.cover,
                 ),
-                border: Border.all(
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.black
-                        : Colors.white),
+                border: const GradientBoxBorder(
+                  gradient: LinearGradient(
+                    colors: [kPrimaryColor, kSecondaryColor],
+                  ),
+                ),
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
             ),

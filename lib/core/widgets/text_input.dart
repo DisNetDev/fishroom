@@ -86,16 +86,8 @@ class _TextInputState extends State<TextInput> {
                       ],
                     ),
                   ),
-                  // border: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(2000),
-                  //   borderSide: const BorderSide(
-                  //     color: Color.fromARGB(255, 95, 95, 95),
-                  //   ),
-                  // ),
                   hintText: widget.hintText,
-                  hintStyle: const TextStyle(
-                    color: Colors.grey,
-                  ),
+                  hintStyle: const TextStyle(color: Colors.grey),
                 ),
         ),
       ),
