@@ -33,7 +33,7 @@ class MaterialContainer extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           clipBehavior: Clip.none,
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 400),
           constraints: constraints,
           height: height,
           width: width,

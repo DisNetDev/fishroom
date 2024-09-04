@@ -5,6 +5,7 @@ class TextInput extends StatefulWidget {
   const TextInput(
       {super.key,
       this.hintText,
+      this.obscureText = false,
       this.onChanged,
       this.padding = const EdgeInsets.symmetric(horizontal: 16),
       this.margin = const EdgeInsets.symmetric(horizontal: 16),
@@ -15,6 +16,7 @@ class TextInput extends StatefulWidget {
 
   final String? hintText;
   final Function(String)? onChanged;
+  final bool obscureText;
   final EdgeInsets padding;
   final EdgeInsets margin;
   final Widget? suffix;
@@ -39,6 +41,7 @@ class _TextInputState extends State<TextInput> {
         child: TextField(
           onChanged: widget.onChanged,
           keyboardType: widget.keyboardType,
+          obscureText: widget.obscureText,
           decoration: InputDecoration(
             alignLabelWithHint: true,
             labelStyle: kHintTextStyle,
