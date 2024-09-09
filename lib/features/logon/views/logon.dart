@@ -36,7 +36,6 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    focusNodeEmail.requestFocus();
     _emailController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -72,48 +71,42 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
           children: [
             const Gap(30),
             const Hero(tag: "logo", child: Logo()),
-            Expanded(
-              flex: 3,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                    child: TextInput(
-                      initialValue: emailAddress,
-                      focusNode: focusNodeEmail,
-                      onChanged: (email) =>
-                          setState(() => emailAddress = email),
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      label: const Text("Email"),
-                    ),
-                  ),
-                  AnimatedContainer(
-                      duration: const Duration(milliseconds: 500),
-                      height: showPassword1 ? 1 : 0),
-                  TextInput(
-                    height: showPassword1 ? 70 : 0,
-                    focusNode: focusNodePassword1,
-                    obscureText: true,
-                    onChanged: (password) =>
-                        setState(() => password1 = password),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  child: TextInput(
+                    initialValue: emailAddress,
+                    focusNode: focusNodeEmail,
+                    onChanged: (email) => setState(() => emailAddress = email),
                     margin: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),
-                    label: const Text("Password"),
+                    label: const Text("Email"),
                   ),
-                  TextInput(
-                    height: showPassword2 ? 70 : 0,
-                    focusNode: focusNodePassword2,
-                    obscureText: true,
-                    onChanged: (password) =>
-                        setState(() => password2 = password),
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    label: const Text("Confirm Password"),
-                  ),
-                ],
-              ),
+                ),
+                AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    height: showPassword1 ? 1 : 0),
+                TextInput(
+                  height: showPassword1 ? 50 : 0,
+                  focusNode: focusNodePassword1,
+                  obscureText: true,
+                  onChanged: (password) => setState(() => password1 = password),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  label: const Text("Password"),
+                ),
+                TextInput(
+                  height: showPassword2 ? 50 : 0,
+                  focusNode: focusNodePassword2,
+                  obscureText: true,
+                  onChanged: (password) => setState(() => password2 = password),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  label: const Text("Confirm Password"),
+                ),
+              ],
             ),
             CustomButton(
               primary: true,
@@ -159,6 +152,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
               onPressed: () {},
               margin: const EdgeInsets.symmetric(horizontal: 80),
             ),
+            const Gap(30),
           ],
         ),
       ),

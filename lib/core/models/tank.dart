@@ -1,15 +1,15 @@
 import 'package:image_picker/image_picker.dart';
 
 class Tank {
-  final String? id;
-  final String? name;
-  final String? type;
-  final String? size;
-  final String? measurementUnit;
-  final XFile? image;
+  String id;
+  String? name;
+  String? type;
+  String? size;
+  String? measurementUnit;
+  XFile? image;
 
-  const Tank(
-      {this.id,
+  Tank(
+      {required this.id,
       this.name,
       this.type,
       this.size,

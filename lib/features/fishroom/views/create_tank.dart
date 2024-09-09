@@ -1,4 +1,5 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/widgets/fishy_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,15 +20,13 @@ class CreateTank extends StatefulWidget {
 }
 
 class _CreateTankState extends State<CreateTank> {
-  String _tankName = "";
-  String _tankType = "";
-  String _tankSize = "";
-  String _measurementUnit = "L";
+  Tank tank = Tank(
+    id: const Uuid().v4(),
+  );
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _image;
 
   List<bool> tankTypeSelection = [false, false, false];
-  List<bool> capacitySelection = [false, false, false, false];
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +41,7 @@ class _CreateTankState extends State<CreateTank> {
               label: const Text("Tank Name"),
               onChanged: (value) {
                 setState(() {
-                  _tankName = value;
+                  tank.name = value;
                 });
               },
             ),
@@ -53,7 +52,7 @@ class _CreateTankState extends State<CreateTank> {
                   margin: const EdgeInsets.all(0),
                   onChanged: (value) {
                     setState(() {
-                      _tankSize = value;
+                      tank.size = value;
                     });
                   },
                   keyboardType: TextInputType.number,
@@ -61,44 +60,55 @@ class _CreateTankState extends State<CreateTank> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 10),
-                  //TODO: Fill this up into the whole field somehow
-                  child: ToggleButtons(
-                      color: Colors.white,
-                      borderColor: const Color.fromARGB(52, 255, 255, 255),
-                      selectedColor: Colors.white,
-                      selectedBorderColor: Colors.white,
-                      borderRadius: BorderRadius.circular(100),
-                      onPressed: (index) {
-                        for (int i = 0; i < capacitySelection.length; i++) {
-                          capacitySelection[i] = false;
-                        }
-                        setState(() {
-                          capacitySelection[index] = true;
-                          switch (index) {
-                            case 0:
-                              _measurementUnit = "L";
-                              break;
-                            case 1:
-                              _measurementUnit = "G";
-                              break;
-                            case 2:
-                              _measurementUnit = "F";
-                              break;
-                            case 3:
-                              _measurementUnit = "CM";
-                              break;
-                            default:
-                              break;
-                          }
-                        });
-                      },
-                      isSelected: capacitySelection,
-                      children: const [
-                        Text("L"),
-                        Text("G"),
-                        Text("F"),
-                        Text("CM")
-                      ]),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _CapacityButton(
+                        measurementUnit: "L",
+                        isSelected: tank.measurementUnit == "L",
+                        onTap: () {
+                          setState(
+                            () {
+                              tank.measurementUnit = "L";
+                            },
+                          );
+                        },
+                      ),
+                      _CapacityButton(
+                        measurementUnit: "Gal",
+                        isSelected: tank.measurementUnit == "Gal",
+                        onTap: () {
+                          setState(
+                            () {
+                              tank.measurementUnit = "Gal";
+                            },
+                          );
+                        },
+                      ),
+                      _CapacityButton(
+                        measurementUnit: "ft",
+                        isSelected: tank.measurementUnit == "ft",
+                        onTap: () {
+                          setState(
+                            () {
+                              tank.measurementUnit = "ft";
+                            },
+                          );
+                        },
+                      ),
+                      _CapacityButton(
+                        measurementUnit: "cm",
+                        isSelected: tank.measurementUnit == "cm",
+                        onTap: () {
+                          setState(
+                            () {
+                              tank.measurementUnit = "cm";
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -113,7 +123,7 @@ class _CreateTankState extends State<CreateTank> {
                 borderColor: Colors.black26,
                 selectedBorderColor: Colors.transparent,
                 constraints: BoxConstraints(
-                    minHeight: 40,
+                    minHeight: 45,
                     minWidth: MediaQuery.of(context).size.width /
                             tankTypeSelection.length -
                         12),
@@ -124,7 +134,7 @@ class _CreateTankState extends State<CreateTank> {
                   }
                   setState(() {
                     tankTypeSelection[index] = true;
-                    _tankType = index == 0
+                    tank.type = index == 0
                         ? "Freshwater"
                         : index == 1
                             ? "Saltwater"
@@ -162,15 +172,15 @@ class _CreateTankState extends State<CreateTank> {
                 bool tankTypeFilled = true;
                 String requiredFields = "";
 
-                if (_tankName == "") {
+                if (tank.name == "") {
                   tankNameFilled = false;
                   requiredFields += "Tank Name, ";
                 }
-                if (_tankSize == "") {
+                if (tank.size == "") {
                   tankSizeFilled = false;
                   requiredFields += "Tank Size, ";
                 }
-                if (_tankType == "") {
+                if (tank.type == "") {
                   tankTypeFilled = false;
                   requiredFields += "Tank Type, ";
                 }
@@ -185,13 +195,8 @@ class _CreateTankState extends State<CreateTank> {
                     ),
                   );
                 } else {
-                  context.read<TanksCubit>().addTank(Tank(
-                      id: const Uuid().v4(),
-                      name: _tankName,
-                      type: _tankType,
-                      size: _tankSize,
-                      measurementUnit: _measurementUnit,
-                      image: _image));
+                  tank.image = _image;
+                  context.read<TanksCubit>().addTank(tank);
                   ScaffoldMessenger.of(context).showSnackBar(fishySnackBar(
                       title: "Tank Created",
                       message: "Tank created successfully",
@@ -204,6 +209,33 @@ class _CreateTankState extends State<CreateTank> {
             const SizedBox(height: 20),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _CapacityButton extends StatelessWidget {
+  const _CapacityButton({
+    required this.measurementUnit,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String measurementUnit;
+  final bool isSelected;
+  final Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: const BoxDecoration(),
+        child: Text(measurementUnit,
+            style: TextStyle(
+              color: isSelected ? kPrimaryColor : Colors.white30,
+            )),
       ),
     );
   }

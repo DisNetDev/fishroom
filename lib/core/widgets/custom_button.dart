@@ -19,7 +19,8 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialContainer(
-      height: 50,
+      constraints:
+          const BoxConstraints(minHeight: 50, maxHeight: 50, minWidth: 100),
       margin: margin,
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
       onTap: onPressed,
@@ -37,6 +38,7 @@ class CustomButton extends StatelessWidget {
       child: Center(
         child: Text(
           text,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: primary
                 ? Colors.white

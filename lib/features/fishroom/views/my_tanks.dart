@@ -33,9 +33,7 @@ class MyTanks extends StatelessWidget {
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {
-                          return Hero(
-                              tag: "tank-${state.tanks[index].id}",
-                              child: TankTile(tank: state.tanks[index]));
+                          return TankTile(tank: state.tanks[index]);
                         },
                         childCount:
                             state.tanks.isNotEmpty ? state.tanks.length : 1,
