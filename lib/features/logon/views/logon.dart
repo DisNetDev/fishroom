@@ -78,6 +78,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
                   child: TextInput(
+                    onEditingComplete: onEditingComplete,
                     initialValue: emailAddress,
                     focusNode: focusNodeEmail,
                     onChanged: (email) => setState(() => emailAddress = email),
@@ -90,6 +91,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
                     duration: const Duration(milliseconds: 500),
                     height: showPassword1 ? 1 : 0),
                 TextInput(
+                  onEditingComplete: onEditingComplete,
                   height: showPassword1 ? 50 : 0,
                   focusNode: focusNodePassword1,
                   obscureText: true,
@@ -99,6 +101,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
                   label: const Text("Password"),
                 ),
                 TextInput(
+                  onEditingComplete: onEditingComplete,
                   height: showPassword2 ? 50 : 0,
                   focusNode: focusNodePassword2,
                   obscureText: true,
@@ -111,39 +114,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             CustomButton(
               primary: true,
               text: "Continue",
-              onPressed: () {
-                if (isEmailValid(emailAddress)) {
-                  showPassword1 = true;
-                  showPassword2 = true;
-                  focusNodeEmail.unfocus();
-                  focusNodePassword1.requestFocus();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Please enter a valid email address.")));
-                  return;
-                }
-                if (step == 2) {
-                  setState(() {
-                    PasswordValidatorObject passwordValidator =
-                        isPasswordsValid(password1, password2);
-
-                    if (passwordValidator.isValid) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MyTanks()));
-                    } else {
-                      if (showPassword1) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(passwordValidator.message)));
-                      }
-                      return;
-                    }
-                  });
-                } else {
-                  setState(() => step = 2);
-                }
-              },
+              onPressed: onEditingComplete,
               margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
             ),
             CustomButton(
@@ -157,6 +128,51 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  void onEditingComplete() {
+    if (isEmailValid(emailAddress)) {
+      setState(() {
+        showPassword1 = true;
+        showPassword2 = true;
+      });
+      if (focusNodePassword2.hasFocus) {
+        focusNodePassword2.unfocus();
+      }
+      if (focusNodePassword1.hasFocus) {
+        focusNodePassword1.unfocus();
+        focusNodePassword2.requestFocus();
+        return;
+      }
+
+      if (focusNodeEmail.hasFocus) {
+        focusNodeEmail.unfocus();
+        focusNodePassword1.requestFocus();
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please enter a valid email address.")));
+      return;
+    }
+    if (step == 2) {
+      setState(() {
+        PasswordValidatorObject passwordValidator =
+            isPasswordsValid(password1, password2);
+
+        if (passwordValidator.isValid) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const MyTanks()));
+        } else {
+          if (showPassword1) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(passwordValidator.message)));
+          }
+          return;
+        }
+      });
+    } else {
+      setState(() => step = 2);
+    }
   }
 
   Widget animator({

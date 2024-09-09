@@ -13,6 +13,7 @@ class TextInput extends StatefulWidget {
       this.padding = const EdgeInsets.symmetric(horizontal: 16),
       this.margin = const EdgeInsets.symmetric(horizontal: 16),
       this.suffix,
+      this.onEditingComplete,
       this.height,
       this.keyboardType,
       this.label,
@@ -23,6 +24,7 @@ class TextInput extends StatefulWidget {
   final FocusNode? focusNode;
   final String? initialValue;
   final bool obscureText;
+  final Function()? onEditingComplete;
   final EdgeInsets padding;
   final EdgeInsets margin;
   final Widget? suffix;
@@ -53,6 +55,7 @@ class _TextInputState extends State<TextInput> {
           focusNode: widget.focusNode,
           initialValue: widget.initialValue,
           onChanged: widget.onChanged,
+          onEditingComplete: widget.onEditingComplete,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
           decoration: widget.height == 0
