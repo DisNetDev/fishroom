@@ -1,6 +1,4 @@
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/widgets/fishy_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -189,21 +187,18 @@ class _CreateTankState extends State<CreateTank> {
 
                 if (!tankSizeFilled || !tankTypeFilled || !tankNameFilled) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    fishySnackBar(
-                      title: "Missing Information",
-                      message:
-                          "Missing Info: \n${requiredFields.substring(0, requiredFields.length - 2)}.",
-                      contentType: ContentType.warning,
+                    SnackBar(
+                      content: Text(
+                        "Missing Info: \n${requiredFields.substring(0, requiredFields.length - 2)}.",
+                      ),
                     ),
                   );
                 } else {
                   tank.image = _image;
                   context.read<TanksCubit>().addTank(tank);
-                  ScaffoldMessenger.of(context).showSnackBar(fishySnackBar(
-                      title: "Tank Created",
-                      message: "Tank created successfully",
-                      contentType: ContentType.success,
-                      color: const Color.fromARGB(255, 0, 156, 21)));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Tank created successfully"),
+                      backgroundColor: Color.fromARGB(255, 0, 156, 21)));
                   Navigator.of(context).pop();
                 }
               },

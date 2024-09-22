@@ -7,7 +7,7 @@ class SupabaseRepository {
   User? user;
   Session? session;
 
-  Future<void> signUpWithPassword(String email, String password) async {
+  Future<UserSession> signUpWithPassword(String email, String password) async {
     AuthResponse authResponse =
         await supabase.auth.signUp(email: email, password: password);
     if (authResponse.session == null) {
@@ -15,9 +15,10 @@ class SupabaseRepository {
     }
     user = authResponse.user;
     session = authResponse.session;
+    return UserSession(user: user, session: session);
   }
 
-  Future<void> signInWithPassword(String email, String password) async {
+  Future<UserSession> signInWithPassword(String email, String password) async {
     AuthResponse authResponse = await supabase.auth
         .signInWithPassword(email: email, password: password);
     if (authResponse.session == null) {
@@ -25,6 +26,13 @@ class SupabaseRepository {
     }
     user = authResponse.user;
     session = authResponse.session;
+    return UserSession(user: user, session: session);
   }
-  
+}
+
+class UserSession {
+  final User? user;
+  final Session? session;
+
+  UserSession({required this.user, required this.session});
 }

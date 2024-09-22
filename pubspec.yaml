@@ -8,7 +8,6 @@ environment:
   sdk: ">=3.3.3 <4.0.0"
 
 dependencies:
-  awesome_snackbar_content: ^0.1.4
   crop_your_image: ^1.1.0
   flutter:
     sdk: flutter

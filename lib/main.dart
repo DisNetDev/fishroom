@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'core/repositories/supabase_repository.dart';
+import 'features/auth/cubit/auth_cubit.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 import 'features/fishroom/views/fishroom.dart';
 
@@ -19,41 +21,53 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TanksCubit(),
-      child: MaterialApp(
-        theme: ThemeData.from(
-          colorScheme: const ColorScheme.light(
-            primary: Color.fromARGB(255, 33, 138, 243),
-          ),
-        ).copyWith(
-          //Snackbar theme, remember to change this here and in dark theme below
-          snackBarTheme: SnackBarThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(1000),
+    return MultiRepositoryProvider(
+      providers: [
+        //Global Repositories
+        RepositoryProvider(create: (context) => SupabaseRepository()),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          //Global Blocs
+          BlocProvider(create: (context) => TanksCubit()),
+          BlocProvider(
+              create: (context) =>
+                  AuthCubit(context.read<SupabaseRepository>())),
+        ],
+        child: MaterialApp(
+          theme: ThemeData.from(
+            colorScheme: const ColorScheme.light(
+              primary: Color.fromARGB(255, 33, 138, 243),
             ),
-            backgroundColor: Colors.black,
-            behavior: SnackBarBehavior.floating,
-            contentTextStyle: const TextStyle(color: Colors.white),
-          ),
-        ),
-        darkTheme: ThemeData.from(
-          colorScheme: const ColorScheme.dark(
-            primary: Color.fromARGB(255, 33, 138, 243),
-          ),
-        ).copyWith(
-          // Snackbar theme, remember to change this here and in light theme above
-          snackBarTheme: SnackBarThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(1000),
+          ).copyWith(
+            //Snackbar theme, remember to change this here and in dark theme below
+            snackBarTheme: SnackBarThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(1000),
+              ),
+              backgroundColor: Colors.black,
+              behavior: SnackBarBehavior.floating,
+              contentTextStyle: const TextStyle(color: Colors.white),
             ),
-            backgroundColor: Colors.white,
-            behavior: SnackBarBehavior.floating,
-            contentTextStyle: const TextStyle(color: Colors.black),
           ),
+          darkTheme: ThemeData.from(
+            colorScheme: const ColorScheme.dark(
+              primary: Color.fromARGB(255, 33, 138, 243),
+            ),
+          ).copyWith(
+            // Snackbar theme, remember to change this here and in light theme above
+            snackBarTheme: SnackBarThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(1000),
+              ),
+              backgroundColor: Colors.white,
+              behavior: SnackBarBehavior.floating,
+              contentTextStyle: const TextStyle(color: Colors.black),
+            ),
+          ),
+          themeMode: ThemeMode.system,
+          home: const Fishroom(),
         ),
-        themeMode: ThemeMode.system,
-        home: const Fishroom(),
       ),
     );
   }

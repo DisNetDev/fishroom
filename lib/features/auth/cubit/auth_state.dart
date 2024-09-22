@@ -1,6 +1,29 @@
 part of 'auth_cubit.dart';
 
-@immutable
-sealed class AuthState {}
+class AuthState {
+  final Session? session;
+  final User? user;
+  final bool error;
+  final String errorMessage;
 
-final class AuthInitial extends AuthState {}
+  AuthState({
+    this.session,
+    this.user,
+    this.error = false,
+    this.errorMessage = "",
+  });
+
+  AuthState copyWith({
+    Session? session,
+    User? user,
+    bool? error,
+    String? errorMessage,
+  }) {
+    return AuthState(
+      session: session ?? this.session,
+      user: user ?? this.user,
+      error: error ?? false,
+      errorMessage: errorMessage ?? "",
+    );
+  }
+}
