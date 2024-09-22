@@ -2,7 +2,7 @@ import 'package:fishroom/core/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-import '../logon/views/logon.dart';
+import '../auth/views/logon.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});

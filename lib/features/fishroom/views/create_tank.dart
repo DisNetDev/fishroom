@@ -3,6 +3,7 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/widgets/fishy_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
@@ -206,7 +207,7 @@ class _CreateTankState extends State<CreateTank> {
                 }
               },
             ),
-            const SizedBox(height: 20),
+            const Gap(40),
           ],
         ),
       ),
