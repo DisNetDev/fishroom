@@ -12,8 +12,6 @@ class SmallEntryGraph extends StatefulWidget {
 class _SmallEntryGraphState extends State<SmallEntryGraph> {
   @override
   Widget build(BuildContext context) {
-
-    
     return const Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [

@@ -89,7 +89,7 @@ class TankTile extends StatelessWidget {
                 Material(
                   color: Colors.transparent,
                   child: Text(
-                    "$tankTypeNonNullable - ${tank.size}${tank.measurementUnit}",
+                    "$tankTypeNonNullable ${tank.size != null && tank.measurementUnit != null ? "-" : ""} ${tank.size ?? ""}${tank.measurementUnit ?? ""}",
                     textAlign: TextAlign.end,
                     style: const TextStyle(
                       color: Colors.white,

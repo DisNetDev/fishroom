@@ -31,6 +31,7 @@ class _CreateTankState extends State<CreateTank> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: const RootSliverAppBar(title: "Create a Tank"),
       body: Padding(
@@ -117,12 +118,12 @@ class _CreateTankState extends State<CreateTank> {
             Container(
               padding: EdgeInsets.zero,
               decoration: BoxDecoration(
-                color: Colors.black26,
+                color: isDarkTheme ? Colors.black26 : Colors.white,
                 borderRadius: BorderRadius.circular(1000),
               ),
               child: ToggleButtons(
                 borderColor: Colors.black26,
-                selectedBorderColor: Colors.transparent,
+                selectedBorderColor: kPrimaryColor,
                 constraints: BoxConstraints(
                     minHeight: 45,
                     minWidth: MediaQuery.of(context).size.width /
@@ -228,15 +229,17 @@ class _CapacityButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: const BoxDecoration(),
-        child: Text(measurementUnit,
-            style: TextStyle(
-              color: isSelected ? kPrimaryColor : Colors.white30,
-            )),
+        child: Text(
+          measurementUnit,
+          style: kHeading2TextStyle.copyWith(
+            color: isSelected ? kPrimaryColor : Colors.grey,
+          ),
+        ),
       ),
     );
   }

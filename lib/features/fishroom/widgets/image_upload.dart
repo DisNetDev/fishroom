@@ -13,6 +13,7 @@ class ImageUpload extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       child: AspectRatio(
@@ -20,7 +21,7 @@ class ImageUpload extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 600),
           decoration: BoxDecoration(
-            color: Colors.black26,
+            color: isDarkTheme ? Colors.black26 : Colors.white,
             image: DecorationImage(
               image: AssetImage(image?.path ?? ""),
               fit: BoxFit.cover,

@@ -71,6 +71,7 @@ class _TextInputState extends State<TextInput> {
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   focusedBorder: const GradientUnderlineInputBorder(
+                    width: 0.5,
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
@@ -81,6 +82,7 @@ class _TextInputState extends State<TextInput> {
                     ),
                   ),
                   enabledBorder: const GradientUnderlineInputBorder(
+                    width: 0.5,
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,

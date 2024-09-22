@@ -1,12 +1,12 @@
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
-import 'package:fishroom/features/fishroom/views/my_tanks.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import '../../../core/usecases/email_validator.dart';
 import '../../../core/usecases/password_validator.dart';
+import '../../fishroom/views/fishroom.dart';
 
 class LogonView extends StatefulWidget {
   const LogonView({super.key});
@@ -161,7 +161,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
 
         if (passwordValidator.isValid) {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const MyTanks()));
+              MaterialPageRoute(builder: (context) => const Fishroom()));
         } else {
           if (showPassword1) {
             ScaffoldMessenger.of(context).showSnackBar(

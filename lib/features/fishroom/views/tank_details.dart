@@ -20,6 +20,10 @@ class TankDetails extends StatelessWidget {
       tankTypeNonNullable = "Tank Type";
     }
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
       endDrawer: const RootDrawer(),
       appBar: RootSliverAppBar(
         title: tank.name ?? "Tank Details",
@@ -59,7 +63,7 @@ class TankDetails extends StatelessWidget {
                           end: Alignment.topCenter,
                           colors: [
                             Colors.black,
-                            Colors.black,
+                            Colors.transparent,
                             Colors.transparent
                           ],
                         ).createShader(

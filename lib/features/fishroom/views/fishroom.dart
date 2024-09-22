@@ -6,14 +6,21 @@ import '../../../core/widgets/root_drawer.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_tile.dart';
 
-class MyTanks extends StatelessWidget {
-  const MyTanks({super.key});
+class Fishroom extends StatelessWidget {
+  const Fishroom({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TanksCubit, TanksState>(
       builder: (context, state) {
         return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const CreateTank()));
+            },
+            child: const Icon(Icons.add),
+          ),
           appBar: state.tanks.isEmpty
               ? const RootSliverAppBar(
                   title: "Fishroom",
