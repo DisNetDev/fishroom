@@ -1,11 +1,12 @@
+import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:toastification/toastification.dart';
 import 'core/repositories/supabase_repository.dart';
 import 'features/auth/cubit/auth_cubit.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
-import 'features/fishroom/views/fishroom.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -34,39 +35,41 @@ class MainApp extends StatelessWidget {
               create: (context) =>
                   AuthCubit(context.read<SupabaseRepository>())),
         ],
-        child: MaterialApp(
-          theme: ThemeData.from(
-            colorScheme: const ColorScheme.light(
-              primary: Color.fromARGB(255, 33, 138, 243),
-            ),
-          ).copyWith(
-            //Snackbar theme, remember to change this here and in dark theme below
-            snackBarTheme: SnackBarThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(1000),
+        child: ToastificationWrapper(
+          child: MaterialApp(
+            theme: ThemeData.from(
+              colorScheme: const ColorScheme.light(
+                primary: Color.fromARGB(255, 33, 138, 243),
               ),
-              backgroundColor: Colors.black,
-              behavior: SnackBarBehavior.floating,
-              contentTextStyle: const TextStyle(color: Colors.white),
-            ),
-          ),
-          darkTheme: ThemeData.from(
-            colorScheme: const ColorScheme.dark(
-              primary: Color.fromARGB(255, 33, 138, 243),
-            ),
-          ).copyWith(
-            // Snackbar theme, remember to change this here and in light theme above
-            snackBarTheme: SnackBarThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(1000),
+            ).copyWith(
+              //Snackbar theme, remember to change this here and in dark theme below
+              snackBarTheme: SnackBarThemeData(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(1000),
+                ),
+                backgroundColor: Colors.black,
+                behavior: SnackBarBehavior.floating,
+                contentTextStyle: const TextStyle(color: Colors.white),
               ),
-              backgroundColor: Colors.white,
-              behavior: SnackBarBehavior.floating,
-              contentTextStyle: const TextStyle(color: Colors.black),
             ),
+            darkTheme: ThemeData.from(
+              colorScheme: const ColorScheme.dark(
+                primary: Color.fromARGB(255, 33, 138, 243),
+              ),
+            ).copyWith(
+              // Snackbar theme, remember to change this here and in light theme above
+              snackBarTheme: SnackBarThemeData(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(1000),
+                ),
+                backgroundColor: Colors.white,
+                behavior: SnackBarBehavior.floating,
+                contentTextStyle: const TextStyle(color: Colors.black),
+              ),
+            ),
+            themeMode: ThemeMode.system,
+            home: const SplashScreen(),
           ),
-          themeMode: ThemeMode.system,
-          home: const Fishroom(),
         ),
       ),
     );

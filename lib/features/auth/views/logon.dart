@@ -1,12 +1,18 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
+import 'package:fishroom/features/auth/cubit/auth_cubit.dart';
+import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../../core/usecases/email_validator.dart';
 import '../../../core/usecases/password_validator.dart';
-import '../../fishroom/views/fishroom.dart';
 
 class LogonView extends StatefulWidget {
   const LogonView({super.key});
@@ -16,7 +22,10 @@ class LogonView extends StatefulWidget {
 }
 
 class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
-  int step = 1;
+  //if userShouldLogIn is null, should only show email field.
+  //if false, should show password1 and password2 for signup.
+  //if true, should only show password1 and login
+  bool? userShouldLogIn;
   bool runAnimationEmailField = true;
   String emailAddress = "";
   bool showPassword1 = false;
@@ -113,7 +122,12 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             ),
             CustomButton(
               primary: true,
-              text: "Continue",
+              loading: loading,
+              text: userShouldLogIn == null
+                  ? "Continue"
+                  : userShouldLogIn!
+                      ? "Login"
+                      : "Sign Up",
               onPressed: onEditingComplete,
               margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
             ),
@@ -130,48 +144,118 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     );
   }
 
-  void onEditingComplete() {
+  bool checkIfEmailIsValid() {
     if (isEmailValid(emailAddress)) {
-      setState(() {
-        showPassword1 = true;
-        showPassword2 = true;
-      });
-      if (focusNodePassword2.hasFocus) {
-        focusNodePassword2.unfocus();
-      }
-      if (focusNodePassword1.hasFocus) {
-        focusNodePassword1.unfocus();
-        focusNodePassword2.requestFocus();
-        return;
-      }
-
-      if (focusNodeEmail.hasFocus) {
-        focusNodeEmail.unfocus();
-        focusNodePassword1.requestFocus();
-      }
+      return true;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter a valid email address.")));
-      return;
+      showToast(
+          title: "Invalid Email",
+          description: "Please enter a valid email",
+          type: ToastificationType.error);
+      return false;
     }
-    if (step == 2) {
-      setState(() {
-        PasswordValidatorObject passwordValidator =
-            isPasswordsValid(password1, password2);
+  }
 
-        if (passwordValidator.isValid) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const Fishroom()));
-        } else {
-          if (showPassword1) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(passwordValidator.message)));
-          }
-          return;
-        }
-      });
+  bool checkIfPasswordIsValid() {
+    PasswordValidatorObject isValid = isPasswordsValid(password1, password2);
+    if (isValid.isValid) {
+      return true;
     } else {
-      setState(() => step = 2);
+      showToast(
+          title: "Invalid Password",
+          description: isValid.message,
+          type: ToastificationType.error);
+      return false;
+    }
+  }
+
+  void signUp() async {
+    setState(() => loading = true);
+    await context
+        .read<AuthCubit>()
+        .signUpWithPassword(email: emailAddress, password: password1);
+    if (context.read<AuthCubit>().state.user != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const Fishroom()));
+    } else {
+      String message = "Something went wrong singing you up. Please try again.";
+      if (context.read<AuthCubit>().state.errorMessage != "") {
+        message = context.read<AuthCubit>().state.errorMessage;
+      }
+      setState(() => loading = false);
+      showToast(
+          title: "Something went wrong.",
+          description: message,
+          type: ToastificationType.error);
+   
+    }
+  }
+
+  void login() async {
+    setState(() => loading = true);
+    await context
+        .read<AuthCubit>()
+        .signInWithPassword(email: emailAddress, password: password1);
+    if (context.read<AuthCubit>().state.user != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const Fishroom()));
+    } else {
+      String message = "Something went wrong logging you in. Please try again.";
+      if (context.read<AuthCubit>().state.errorMessage != "") {
+        message = context.read<AuthCubit>().state.errorMessage;
+      }
+      setState(() => loading = false);
+     showToast(
+          title: "Something went wrong.",
+          description: message,
+          type: ToastificationType.error);
+    }
+  }
+
+  void onEditingComplete() async {
+    switch (userShouldLogIn) {
+      case null:
+        if (checkIfEmailIsValid()) {
+          setState(() => loading = true);
+          bool userIsSignedUp =
+              await context.read<AuthCubit>().checkIfEmailExists(emailAddress);
+          if (userIsSignedUp) {
+            showPassword1 = true;
+            userShouldLogIn = true;
+          } else {
+            showPassword1 = true;
+            showPassword2 = true;
+            userShouldLogIn = false;
+          }
+          focusNodeEmail.unfocus();
+          focusNodePassword1.requestFocus();
+        }
+        setState(() => loading = false);
+        break;
+
+      case false:
+        if (focusNodePassword1.hasFocus) {
+          focusNodePassword2.requestFocus();
+        } else if (focusNodePassword2.hasFocus) {
+          if (checkIfEmailIsValid()) {
+            if (checkIfPasswordIsValid()) {
+              setState(() => loading = true);
+              signUp();
+            }
+          }
+        } else {
+          focusNodeEmail.unfocus();
+          focusNodePassword1.unfocus();
+          focusNodePassword2.unfocus();
+        }
+        break;
+
+      case true:
+        if (checkIfEmailIsValid()) {
+          setState(() => loading = true);
+          login();
+        }
+        break;
     }
   }
 

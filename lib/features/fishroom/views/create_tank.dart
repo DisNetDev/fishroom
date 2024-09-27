@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:toastification/toastification.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
+import '../../../core/usecases/show_toast.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/root_appbar.dart';
 import '../../../core/widgets/text_input.dart';
@@ -196,9 +198,9 @@ class _CreateTankState extends State<CreateTank> {
                 } else {
                   tank.image = _image;
                   context.read<TanksCubit>().addTank(tank);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Tank created successfully"),
-                      backgroundColor: Color.fromARGB(255, 0, 156, 21)));
+                  showToast(
+                      title: "Tank Created Successfully",
+                      type: ToastificationType.success);
                   Navigator.of(context).pop();
                 }
               },

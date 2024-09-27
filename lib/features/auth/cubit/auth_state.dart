@@ -2,7 +2,7 @@ part of 'auth_cubit.dart';
 
 class AuthState {
   final Session? session;
-  final User? user;
+  final FishUser? user;
   final bool error;
   final String errorMessage;
 
@@ -15,7 +15,7 @@ class AuthState {
 
   AuthState copyWith({
     Session? session,
-    User? user,
+    FishUser? user,
     bool? error,
     String? errorMessage,
   }) {

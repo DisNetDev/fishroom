@@ -21,6 +21,7 @@ dependencies:
   package_info_plus: ^8.0.2
   skeletonizer: ^1.4.2
   supabase_flutter: ^2.6.0
+  toastification: ^2.3.0
   uuid: ^4.5.0
 
 dev_dependencies:
