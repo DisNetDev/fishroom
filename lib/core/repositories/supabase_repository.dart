@@ -1,7 +1,6 @@
+import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../../features/auth/models/fish_user.dart';
 
 class SupabaseRepository {
   SupabaseRepository();
@@ -60,8 +59,9 @@ class SupabaseRepository {
 
   Future<PostgrestList?> fetchUser() async {
     if (user != null) {
+      fishLog(user!.id, prefix: "UserID");
       final data =
-          await supabase.from("users").select("email").eq("id", user!.id);
+          await supabase.from("users").select().eq("email", user!.email!);
       return data;
     } else {
       showToast(
@@ -69,6 +69,19 @@ class SupabaseRepository {
           description: "You are not signed in.");
       return null;
     }
+  }
+
+  Future<void> insert(
+      {required String tableName, required Map<String, dynamic> json}) async {
+    await supabase.from(tableName).insert(json);
+  }
+
+  Future<PostgrestList?> fetch(
+      {required String tableName,
+      required String column,
+      required String condition}) async {
+    final data = await supabase.from(tableName).select().eq(column, condition);
+    return data;
   }
 }
 

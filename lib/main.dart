@@ -30,7 +30,9 @@ class MainApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           //Global Blocs
-          BlocProvider(create: (context) => TanksCubit()),
+          BlocProvider(
+              create: (context) => TanksCubit(
+                  supabaseRepository: context.read<SupabaseRepository>())),
           BlocProvider(
               create: (context) =>
                   AuthCubit(context.read<SupabaseRepository>())),

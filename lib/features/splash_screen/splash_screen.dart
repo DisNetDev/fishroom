@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';

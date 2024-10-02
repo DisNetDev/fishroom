@@ -6,9 +6,9 @@ class FishUser {
 
   factory FishUser.fromJson(Map<String, dynamic> json) {
     return FishUser(
-      uuid: json['uuid'],
-      email: json['email'],
-      premium: json['premium'],
+      uuid: json['id'] ?? "",
+      email: json['email'] ?? "",
+      premium: json['premium'] ?? false,
     );
   }
 }

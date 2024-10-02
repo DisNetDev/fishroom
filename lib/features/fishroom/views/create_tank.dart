@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +12,7 @@ import '../../../core/usecases/show_toast.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/root_appbar.dart';
 import '../../../core/widgets/text_input.dart';
+import '../../auth/cubit/auth_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/image_upload.dart';
 
@@ -21,6 +24,7 @@ class CreateTank extends StatefulWidget {
 }
 
 class _CreateTankState extends State<CreateTank> {
+  bool loading = false;
   Tank tank = Tank(
     id: const Uuid().v4(),
   );
@@ -53,9 +57,11 @@ class _CreateTankState extends State<CreateTank> {
                 TextInput(
                   margin: const EdgeInsets.all(0),
                   onChanged: (value) {
-                    setState(() {
-                      tank.size = value;
-                    });
+                    setState(
+                      () {
+                        tank.size = int.tryParse(value);
+                      },
+                    );
                   },
                   keyboardType: TextInputType.number,
                   label: const Text("Tank Capacity"),
@@ -166,9 +172,10 @@ class _CreateTankState extends State<CreateTank> {
               child: SizedBox(),
             ),
             CustomButton(
+              loading: loading,
               margin: const EdgeInsets.symmetric(vertical: 16),
               text: "Create",
-              onPressed: () {
+              onPressed: () async {
                 bool tankNameFilled = true;
                 bool tankSizeFilled = true;
                 bool tankTypeFilled = true;
@@ -178,7 +185,7 @@ class _CreateTankState extends State<CreateTank> {
                   tankNameFilled = false;
                   requiredFields += "Tank Name, ";
                 }
-                if (tank.size == "") {
+                if (tank.size == null) {
                   tankSizeFilled = false;
                   requiredFields += "Tank Size, ";
                 }
@@ -188,20 +195,31 @@ class _CreateTankState extends State<CreateTank> {
                 }
 
                 if (!tankSizeFilled || !tankTypeFilled || !tankNameFilled) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "Missing Info: \n${requiredFields.substring(0, requiredFields.length - 2)}.",
-                      ),
-                    ),
-                  );
-                } else {
-                  tank.image = _image;
-                  context.read<TanksCubit>().addTank(tank);
                   showToast(
-                      title: "Tank Created Successfully",
-                      type: ToastificationType.success);
-                  Navigator.of(context).pop();
+                      title: "Missing Info",
+                      description:
+                          "${requiredFields.substring(0, requiredFields.length - 2)}.");
+                } else {
+                  setState(() => loading = true);
+                  tank.image = _image;
+                  tank.createdAt = DateTime.now().toString();
+                  tank.ownerId = context.read<AuthCubit>().state.user!.uuid;
+                  try {
+                    await context.read<TanksCubit>().addTank(tank);
+                  } on Exception catch (e) {
+                    showToast(
+                        title: "Something went wrong.",
+                        description: e.toString(),
+                        type: ToastificationType.error);
+                  }
+                  setState(() => loading = false);
+
+                  if (!context.read<TanksCubit>().state.error) {
+                    Navigator.pop(context);
+                    showToast(
+                        title: "Tank Created!",
+                        type: ToastificationType.success);
+                  }
                 }
               },
             ),

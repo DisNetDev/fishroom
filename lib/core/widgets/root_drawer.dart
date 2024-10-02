@@ -1,4 +1,5 @@
 import 'package:fishroom/core/widgets/logo.dart';
+import 'package:fishroom/features/auth/usecases/logout.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -64,7 +65,12 @@ class RootDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text("Logout"),
-              onTap: () {},
+              onTap: () {
+                logOut(context);
+                while (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
             ),
           ],
         ),

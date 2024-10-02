@@ -187,7 +187,6 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
           title: "Something went wrong.",
           description: message,
           type: ToastificationType.error);
-   
     }
   }
 
@@ -205,11 +204,12 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         message = context.read<AuthCubit>().state.errorMessage;
       }
       setState(() => loading = false);
-     showToast(
+      showToast(
           title: "Something went wrong.",
           description: message,
           type: ToastificationType.error);
     }
+    setState(() => loading = false);
   }
 
   void onEditingComplete() async {
