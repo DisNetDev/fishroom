@@ -24,3 +24,15 @@ const LinearGradient kPrimaryGradient = LinearGradient(
   end: Alignment.centerRight,
   colors: [kPrimaryColor, kSecondaryColor],
 );
+
+const LinearGradient kErrorGradient = LinearGradient(
+  begin: Alignment.centerLeft,
+  end: Alignment.centerRight,
+  colors: [Color.fromARGB(255, 253, 118, 0), Color.fromARGB(255, 224, 32, 32)],
+);
+
+const LinearGradient kSuccessGradient = LinearGradient(
+  begin: Alignment.centerLeft,
+  end: Alignment.centerRight,
+  colors: [Color.fromARGB(255, 169, 253, 0), Color.fromARGB(255, 32, 224, 38)],
+);

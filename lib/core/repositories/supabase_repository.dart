@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:fishroom/core/usecases/log.dart';
-import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseRepository {
@@ -19,9 +20,8 @@ class SupabaseRepository {
       user = authResponse.user;
       session = authResponse.session;
       return UserSession(user: user, session: session);
-    } on Exception catch (e) {
-      _handleException(e);
-      return UserSession(user: null, session: null);
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
@@ -35,9 +35,8 @@ class SupabaseRepository {
       user = authResponse.user;
       session = authResponse.session;
       return UserSession(user: user, session: session);
-    } on Exception catch (e) {
-      _handleException(e);
-      return UserSession(user: null, session: null);
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
@@ -51,9 +50,8 @@ class SupabaseRepository {
       } else {
         return false;
       }
-    } on Exception catch (e) {
-      _handleException(e);
-      return false;
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
@@ -63,12 +61,8 @@ class SupabaseRepository {
       final data =
           await supabase.from("users").select().eq("email", user!.email!);
       return data;
-    } else {
-      showToast(
-          title: "Something went wrong.",
-          description: "You are not signed in.");
-      return null;
     }
+    return null;
   }
 
   Future<void> insert(
@@ -83,6 +77,16 @@ class SupabaseRepository {
     final data = await supabase.from(tableName).select().eq(column, condition);
     return data;
   }
+
+  Future<String?> uploadImage(File file) async {
+    final String fileName = file.path.split('/').last;
+    final String fullPath = await supabase.storage.from('tank_images').upload(
+          '${user!.id}/$fileName',
+          file,
+          fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+        );
+    return fullPath;
+  }
 }
 
 class UserSession {
@@ -90,8 +94,4 @@ class UserSession {
   final Session? session;
 
   UserSession({required this.user, required this.session});
-}
-
-_handleException(e) {
-  showToast(title: "Something went wrong.", description: e.toString());
 }

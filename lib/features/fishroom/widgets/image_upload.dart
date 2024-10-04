@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/constants.dart';
 
 class ImageUpload extends StatelessWidget {
-  const ImageUpload({super.key, required this.onTap, required this.image});
+  const ImageUpload({super.key, required this.onTap, this.image});
 
   final Function() onTap;
 
@@ -13,7 +16,10 @@ class ImageUpload extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    Color color = isDarkMode(context) ? Colors.black26 : Colors.white;
+    if (image != null) {
+      color = kPrimaryColor;
+    }
     return InkWell(
       onTap: onTap,
       child: AspectRatio(
@@ -21,11 +27,7 @@ class ImageUpload extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 600),
           decoration: BoxDecoration(
-            color: isDarkTheme ? Colors.black26 : Colors.white,
-            image: DecorationImage(
-              image: AssetImage(image?.path ?? ""),
-              fit: BoxFit.cover,
-            ),
+            color: color,
             border: const GradientBoxBorder(
               gradient: LinearGradient(
                 colors: [kPrimaryColor, kSecondaryColor],
@@ -37,7 +39,13 @@ class ImageUpload extends StatelessWidget {
               ? const Center(
                   child: Text("Upload Image"),
                 )
-              : const SizedBox.shrink(),
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.file(
+                    File(image!.path),
+                    fit: BoxFit.cover,
+                  ),
+                ),
         ),
       ),
     );

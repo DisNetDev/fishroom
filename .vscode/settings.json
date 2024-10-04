@@ -9,6 +9,7 @@
     "Skeletonizer",
     "toastification",
     "unfocus",
+    "upsert",
     "vsync"
   ]
 }

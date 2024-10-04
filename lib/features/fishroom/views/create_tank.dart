@@ -1,11 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:toastification/toastification.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/usecases/show_toast.dart';
@@ -195,7 +197,8 @@ class _CreateTankState extends State<CreateTank> {
                 }
 
                 if (!tankSizeFilled || !tankTypeFilled || !tankNameFilled) {
-                  showToast(
+                  showToast(context,
+                      toastType: ToastType.error,
                       title: "Missing Info",
                       description:
                           "${requiredFields.substring(0, requiredFields.length - 2)}.");
@@ -205,20 +208,26 @@ class _CreateTankState extends State<CreateTank> {
                   tank.createdAt = DateTime.now().toString();
                   tank.ownerId = context.read<AuthCubit>().state.user!.uuid;
                   try {
-                    await context.read<TanksCubit>().addTank(tank);
+                    await context.read<TanksCubit>().addTank(
+                        tank, _image != null ? File(_image!.path) : null);
                   } on Exception catch (e) {
+                    fishLog(e.toString());
                     showToast(
-                        title: "Something went wrong.",
-                        description: e.toString(),
-                        type: ToastificationType.error);
+                      context,
+                      title: "Something went wrong.",
+                      description: e.toString(),
+                      toastType: ToastType.error,
+                    );
                   }
                   setState(() => loading = false);
 
                   if (!context.read<TanksCubit>().state.error) {
                     Navigator.pop(context);
                     showToast(
-                        title: "Tank Created!",
-                        type: ToastificationType.success);
+                      context,
+                      title: "Tank Created!",
+                      toastType: ToastType.success,
+                    );
                   }
                 }
               },

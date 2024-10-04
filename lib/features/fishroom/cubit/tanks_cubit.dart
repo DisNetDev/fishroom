@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,8 +14,15 @@ class TanksCubit extends Cubit<TanksState> {
 
   final SupabaseRepository supabaseRepository;
 
-  Future<void> addTank(Tank tank) async {
+  Future<void> addTank(Tank tank, File? image) async {
     fishLog("Creating a tank...");
+    String? imagePath;
+
+    if (image != null) {
+      imagePath = await supabaseRepository.uploadImage(image);
+      tank.imageUrl = imagePath;
+    }
+
     await supabaseRepository.insert(
         tableName: Table.tanks.label, json: tank.toJson());
 

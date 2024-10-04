@@ -9,7 +9,6 @@ import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:toastification/toastification.dart';
 
 import '../../../core/usecases/email_validator.dart';
 import '../../../core/usecases/password_validator.dart';
@@ -149,9 +148,11 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
       return true;
     } else {
       showToast(
-          title: "Invalid Email",
-          description: "Please enter a valid email",
-          type: ToastificationType.error);
+        context,
+        title: "Invalid Email",
+        description: "Please enter a valid email",
+        toastType: ToastType.error,
+      );
       return false;
     }
   }
@@ -162,9 +163,11 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
       return true;
     } else {
       showToast(
-          title: "Invalid Password",
-          description: isValid.message,
-          type: ToastificationType.error);
+        context,
+        title: "Invalid Password",
+        description: isValid.message,
+        toastType: ToastType.error,
+      );
       return false;
     }
   }
@@ -184,9 +187,11 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
       }
       setState(() => loading = false);
       showToast(
-          title: "Something went wrong.",
-          description: message,
-          type: ToastificationType.error);
+        context,
+        title: "Something went wrong.",
+        description: message,
+        toastType: ToastType.error,
+      );
     }
   }
 
@@ -205,9 +210,11 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
       }
       setState(() => loading = false);
       showToast(
-          title: "Something went wrong.",
-          description: message,
-          type: ToastificationType.error);
+        context,
+        title: "Something went wrong.",
+        description: message,
+        toastType: ToastType.error,
+      );
     }
     setState(() => loading = false);
   }
@@ -282,7 +289,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             ).animate(
               CurvedAnimation(
                 parent: controller,
-                curve: Curves.decelerate,
+                curve: Curves.bounceIn,
               ),
             ),
             child: child,

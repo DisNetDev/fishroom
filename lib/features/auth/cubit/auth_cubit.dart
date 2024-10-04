@@ -1,8 +1,6 @@
 import 'package:fishroom/core/usecases/log.dart';
-import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:toastification/toastification.dart';
 
 import '../../../core/repositories/supabase_repository.dart';
 import '../models/fish_user.dart';
@@ -42,20 +40,12 @@ class AuthCubit extends Cubit<AuthState> {
         if (data != null && data.isNotEmpty) {
           user = FishUser.fromJson(data.first);
           emit(state.copyWith(user: user));
-        } else {
-          showToast(
-              title: "Something went wrong",
-              type: ToastificationType.error,
-              description: "Your user couldn't be found.");
         }
       }
       emit(state.copyWith(session: userSession.session));
     } catch (e) {
       emit(state.copyWith(error: true, errorMessage: e.toString()));
-      showToast(
-          title: "Something went wrong",
-          type: ToastificationType.error,
-          description: "Your user couldn't be found.");
+
       rethrow;
     }
   }
