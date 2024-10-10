@@ -34,6 +34,22 @@ class TankReading {
       'note': note,
     };
   }
+
+  TankReading copyWith({
+    String? id,
+    TankReadingType? type,
+    String? tankId,
+    String? createdAt,
+    String? note,
+  }) {
+    return TankReading(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      tankId: tankId ?? this.tankId,
+      createdAt: createdAt ?? this.createdAt,
+      note: note ?? this.note,
+    );
+  }
 }
 
 enum TankReadingType {

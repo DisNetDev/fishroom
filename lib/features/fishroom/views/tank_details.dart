@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/root_appbar.dart';
+import 'package:fishroom/features/tank_reading/create_tank_reading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -112,7 +113,14 @@ class _TankDetailsState extends State<TankDetails> {
         Scaffold(
           backgroundColor: Colors.transparent,
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CreateTankReading(
+                            tank: widget.tank,
+                          )));
+            },
             child: const Icon(Icons.add),
           ),
           appBar: RootSliverAppBar(
