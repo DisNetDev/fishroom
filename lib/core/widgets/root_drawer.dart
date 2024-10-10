@@ -1,8 +1,10 @@
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/auth/usecases/logout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../features/auth/cubit/auth_cubit.dart';
 import '../../features/fishroom/views/create_tank.dart';
 
 class RootDrawer extends StatelessWidget {
@@ -37,7 +39,15 @@ class RootDrawer extends StatelessWidget {
                         builder: (context) => const CreateTank()));
               },
             ),
+
+            ListTile(
+              leading: const Icon(Icons.arrow_upward_outlined),
+              title: Text(context.read<AuthCubit>().state.user!.premium
+                  ? "Version"
+                  : "Upgrade to Pro"),
+            ),
             const Expanded(child: SizedBox()),
+
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text("Settings"),
@@ -59,6 +69,18 @@ class RootDrawer extends StatelessWidget {
               ),
               enabled: false,
             ),
+            ListTile(
+              enabled: false,
+              leading: const Icon(Icons.person),
+              title: const Text("Logged in as:"),
+              subtitle: Text(
+                  context.read<AuthCubit>().state.user?.email ?? "No One?"),
+              subtitleTextStyle: const TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+                color: Colors.grey,
+              ),
+            ),
 
             //Bottom
 
@@ -67,7 +89,6 @@ class RootDrawer extends StatelessWidget {
               title: const Text("Logout"),
               onTap: () {
                 logOut(context);
-                
               },
             ),
           ],
