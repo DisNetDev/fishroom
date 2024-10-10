@@ -4,6 +4,7 @@ import 'package:fishroom/core/widgets/root_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
@@ -12,10 +13,29 @@ import '../../../core/usecases/is_dark_mode.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_entry_list_item.dart';
 
-class TankDetails extends StatelessWidget {
+class TankDetails extends StatefulWidget {
   const TankDetails({super.key, required this.tank});
 
   final Tank tank;
+
+  @override
+  State<TankDetails> createState() => _TankDetailsState();
+}
+
+class _TankDetailsState extends State<TankDetails> {
+  bool loading = false;
+
+  Future<void> getTankReadings() async {
+    setState(() => loading = true);
+    await context.read<TanksCubit>().getReadingsForTank(widget.tank);
+    setState(() => loading = false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getTankReadings();
+  }
 
   // Function to show a confirmation dialog for deleting a tank
   void _showDeleteConfirmationDialog(BuildContext context) {
@@ -33,7 +53,7 @@ class TankDetails extends StatelessWidget {
             TextButton(
               onPressed: () {
                 try {
-                  context.read<TanksCubit>().deleteTank(tank);
+                  context.read<TanksCubit>().deleteTank(widget.tank);
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 } catch (e) {
@@ -54,7 +74,14 @@ class TankDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String tankTypeNonNullable = tank.type ?? "Tank Type";
+    List<TankReading> readings = context
+        .read<TanksCubit>()
+        .state
+        .readings
+        .where((reading) => reading.tankId == widget.tank.id)
+        .toList();
+
+    String tankTypeNonNullable = widget.tank.type ?? "Tank Type";
     if (tankTypeNonNullable == "") {
       tankTypeNonNullable = "Tank Type";
     }
@@ -89,7 +116,7 @@ class TankDetails extends StatelessWidget {
             child: const Icon(Icons.add),
           ),
           appBar: RootSliverAppBar(
-            title: tank.name ?? "Tank Details",
+            title: widget.tank.name ?? "Tank Details",
             actions: [
               IconButton(
                 onPressed: () {
@@ -110,16 +137,22 @@ class TankDetails extends StatelessWidget {
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   children: [
-                    for (int i = 0; i < 10; i++)
-                      TankEntryListItem(
-                        reading: TankReading(
-                          id: "1",
-                          type: TankReadingType.measurement,
-                          tankId: tank.id,
-                          createdAt: DateTime.now().toString(),
-                          note: "Note",
-                        ),
-                      ),
+                    if (loading)
+                      for (var i = 0; i < 4; i++)
+                        Skeletonizer(
+                            child: TankEntryListItem(
+                                reading: TankReading(
+                                    id: "aaa",
+                                    type: TankReadingType.measurement,
+                                    tankId: widget.tank.id,
+                                    createdAt: DateTime.now().toString(),
+                                    note: "Some Dummy Info"))),
+                    ...List.generate(
+                      readings.length,
+                      (index) {
+                        return TankEntryListItem(reading: readings[index]);
+                      },
+                    ),
                     const Gap(300),
                   ],
                 ),
@@ -143,7 +176,7 @@ class TankDetails extends StatelessWidget {
                       height: MediaQuery.of(context).size.width / 3 * 1,
                       child: CachedNetworkImage(
                         fit: BoxFit.cover,
-                        imageUrl: tank.imageUrl ?? "",
+                        imageUrl: widget.tank.imageUrl ?? "",
                         errorWidget: (context, url, error) => const SizedBox(),
                       ),
                     ),
@@ -170,7 +203,7 @@ class TankDetails extends StatelessWidget {
                         Material(
                           color: Colors.transparent,
                           child: Text(
-                            tank.name ?? "Tank name not found",
+                            widget.tank.name ?? "Tank name not found",
                             style: kHeading1TextStyle.copyWith(
                               color: Colors.white,
                             ),
@@ -179,7 +212,7 @@ class TankDetails extends StatelessWidget {
                         Material(
                           color: Colors.transparent,
                           child: Text(
-                            "$tankTypeNonNullable - ${tank.size}${tank.measurementUnit}",
+                            "$tankTypeNonNullable - ${widget.tank.size}${widget.tank.measurementUnit}",
                             style: kHeading2TextStyle.copyWith(
                               color: Colors.white,
                             ),
