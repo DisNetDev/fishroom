@@ -1,26 +1,35 @@
 import 'package:fishroom/core/usecases/log.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../core/repositories/supabase_repository.dart';
 import '../models/fish_user.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
+class AuthCubit extends HydratedCubit<AuthState> {
   AuthCubit(this._supabaseRepository) : super(AuthState());
 
   final SupabaseRepository _supabaseRepository;
 
+  @override
+  AuthState? fromJson(Map<String, dynamic> json) {
+    return AuthState(
+      user: json['user'] != null ? FishUser.fromJson(json['user']) : null,
+    );
+  }
+
+  @override
+  Map<String, dynamic>? toJson(AuthState state) {
+    return {
+      'user': state.user?.toJson(),
+    };
+  }
+
   Future<void> signUpWithPassword(
       {required String email, required String password}) async {
-    UserSession? userSession;
     try {
-      userSession =
-          await _supabaseRepository.signUpWithPassword(email, password);
-      emit(state.copyWith(session: userSession.session));
+      await _supabaseRepository.signUpWithPassword(email, password);
+      emit(state);
     } catch (e) {
-      emit(state.copyWith(error: true, errorMessage: e.toString()));
       rethrow;
     }
   }
@@ -42,10 +51,8 @@ class AuthCubit extends Cubit<AuthState> {
           emit(state.copyWith(user: user));
         }
       }
-      emit(state.copyWith(session: userSession.session));
+      emit(state);
     } catch (e) {
-      emit(state.copyWith(error: true, errorMessage: e.toString()));
-
       rethrow;
     }
   }
@@ -54,7 +61,7 @@ class AuthCubit extends Cubit<AuthState> {
     return _supabaseRepository.checkIfEmailExists(email);
   }
 
-  void clear() {
+  void clearCubit() {
     emit(AuthState());
   }
 }

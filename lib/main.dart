@@ -6,16 +6,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'core/repositories/supabase_repository.dart';
 import 'features/auth/cubit/auth_cubit.dart';
+import 'features/auth/usecases/my_secure_storage.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-  );
+      url: dotenv.env['SUPABASE_URL']!,
+      anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+      authOptions: FlutterAuthClientOptions(
+        localStorage: MySecureStorage(),
+      ));
   runApp(const MainApp());
 }
+
+final SupabaseClient supabase = Supabase.instance.client;
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 
@@ -30,31 +32,34 @@ class TankTile extends StatelessWidget {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: MaterialContainer(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              decoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 5,
-                      offset: Offset(2, 2)),
-                ],
-                color: tank.image?.path != null
-                    ? Colors.transparent
-                    : Theme.of(context).brightness == Brightness.light
-                        ? Colors.white
-                        : Colors.black,
-                image: DecorationImage(
-                  image: AssetImage(tank.image?.path ?? ""),
-                  fit: BoxFit.cover,
-                ),
-                border: const GradientBoxBorder(
-                  gradient: LinearGradient(
-                    colors: [kPrimaryColor, kSecondaryColor],
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 5,
+                        offset: Offset(2, 2)),
+                  ],
+                  color: isDarkMode(context) == false
+                      ? const Color.fromARGB(255, 255, 255, 255)
+                      : Colors.black,
+                  border: const GradientBoxBorder(
+                    gradient: LinearGradient(
+                      colors: [kPrimaryColor, kSecondaryColor],
+                    ),
                   ),
+                  borderRadius: BorderRadius.circular(borderRadius),
                 ),
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-            ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: tank.imageUrl ?? "",
+                      errorWidget: (context, url, error) {
+                        return const Center(child: SizedBox());
+                      }),
+                )),
           ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 11, vertical: 11),

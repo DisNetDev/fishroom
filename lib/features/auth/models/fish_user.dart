@@ -11,4 +11,13 @@ class FishUser {
       premium: json['premium'] ?? false,
     );
   }
+
+  // New toJson method to convert the object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': uuid,
+      'email': email,
+      'premium': premium,
+    };
+  }
 }

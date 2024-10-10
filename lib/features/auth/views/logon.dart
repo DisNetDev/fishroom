@@ -182,9 +182,6 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
           context, MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {
       String message = "Something went wrong singing you up. Please try again.";
-      if (context.read<AuthCubit>().state.errorMessage != "") {
-        message = context.read<AuthCubit>().state.errorMessage;
-      }
       setState(() => loading = false);
       showToast(
         context,
@@ -205,9 +202,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
           context, MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {
       String message = "Something went wrong logging you in. Please try again.";
-      if (context.read<AuthCubit>().state.errorMessage != "") {
-        message = context.read<AuthCubit>().state.errorMessage;
-      }
+
       setState(() => loading = false);
       showToast(
         context,

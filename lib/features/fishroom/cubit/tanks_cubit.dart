@@ -5,50 +5,97 @@ import 'package:fishroom/core/usecases/log.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/models/tank.dart';
+import '../../../core/models/tank_reading.dart';
 
 part 'tanks_state.dart';
 
 class TanksCubit extends Cubit<TanksState> {
   TanksCubit({required this.supabaseRepository})
-      : super(const TanksState(tanks: [], error: false));
+      : super(const TanksState(tanks: [], error: false, readings: []));
 
   final SupabaseRepository supabaseRepository;
 
   Future<void> addTank(Tank tank, File? image) async {
-    fishLog("Creating a tank...");
-    String? imagePath;
+    try {
+      fishLog("Creating a tank...");
+      String? imagePath;
 
-    if (image != null) {
-      imagePath = await supabaseRepository.uploadImage(image);
-      tank.imageUrl = imagePath;
+      if (image != null) {
+        imagePath = await supabaseRepository.uploadImage(image);
+        tank.imageUrl = imagePath;
+      }
+
+      await supabaseRepository.insert(
+          tableName: Table.tanks.label, json: tank.toJson());
+
+      emit(state.copyWith(tanks: [...state.tanks, tank]));
+    } on Exception catch (_) {
+      rethrow;
     }
+  }
 
-    await supabaseRepository.insert(
-        tableName: Table.tanks.label, json: tank.toJson());
-
-    emit(state.copyWith(tanks: [...state.tanks, tank]));
+  Future<void> deleteTank(Tank tank) async {
+    try {
+      await supabaseRepository.delete(
+          tableName: Table.tanks.label, column: "id", condition: tank.id);
+      List<Tank> stateTanks = state.tanks
+          .where((tankInState) => tank.id != tankInState.id)
+          .toList();
+      emit(state.copyWith(tanks: stateTanks));
+    } on Exception catch (_) {
+      rethrow;
+    }
   }
 
   Future<void> getTanks() async {
-    fishLog("Getting tanks...");
-    final data = await supabaseRepository.fetch(
-        tableName: Table.tanks.label,
-        column: "owner_id",
-        condition: supabaseRepository.user!.id);
-    fishLog(data.toString());
+    try {
+      fishLog("Getting tanks...");
+      final data = await supabaseRepository.fetch(
+          tableName: Table.tanks.label,
+          column: "owner_id",
+          condition: supabaseRepository.user!.id);
+      fishLog(data.toString());
 
-    if (data != null) {
-      List<Tank> tanks = [];
-      for (Map<String, dynamic> tankJson in data) {
-        tanks.add(Tank.fromJson(tankJson));
+      if (data != null) {
+        List<Tank> tanks = [];
+        for (Map<String, dynamic> tankJson in data) {
+          tanks.add(Tank.fromJson(tankJson));
+        }
         emit(state.copyWith(tanks: tanks));
+      } else {
+        emit(state.copyWith(error: true));
       }
-    } else {
-      emit(state.copyWith(error: true));
+    } on Exception catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> getReadingsForTank(Tank tank) async {
+    try {
+      fishLog("Getting Tank Readings...");
+
+      final data = await supabaseRepository.fetch(
+          tableName: Table.readings.label,
+          column: "tank_id",
+          condition: tank.id);
+
+      if (data != null) {
+        List<TankReading> readings = [];
+        readings.addAll(state.readings);
+        for (Map<String, dynamic> json in data) {
+          TankReading reading = TankReading.fromJson(json);
+          if (readings.any((reading) => reading.id != reading.id)) {
+            readings.add(reading);
+          }
+        }
+        emit(state.copyWith(readings: readings));
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
   void clear() {
-    emit(const TanksState(tanks: [], error: false));
+    emit(const TanksState(tanks: [], error: false, readings: []));
   }
 }

@@ -67,9 +67,7 @@ class RootDrawer extends StatelessWidget {
               title: const Text("Logout"),
               onTap: () {
                 logOut(context);
-                while (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
+                
               },
             ),
           ],

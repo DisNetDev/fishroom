@@ -3,12 +3,18 @@ import 'dart:io';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../main.dart';
+
 class SupabaseRepository {
   SupabaseRepository();
 
-  final SupabaseClient supabase = Supabase.instance.client;
   User? user;
   Session? session;
+
+  setSession() {
+    session = supabase.auth.currentSession;
+    user = supabase.auth.currentUser;
+  }
 
   Future<UserSession> signUpWithPassword(String email, String password) async {
     try {
@@ -56,36 +62,69 @@ class SupabaseRepository {
   }
 
   Future<PostgrestList?> fetchUser() async {
-    if (user != null) {
-      fishLog(user!.id, prefix: "UserID");
-      final data =
-          await supabase.from("users").select().eq("email", user!.email!);
-      return data;
+    try {
+      if (user != null) {
+        fishLog(user!.id, prefix: "UserID");
+        final data =
+            await supabase.from("users").select().eq("email", user!.email!);
+        return data;
+      }
+      return null;
+    } on Exception catch (_) {
+      rethrow;
     }
-    return null;
   }
 
   Future<void> insert(
       {required String tableName, required Map<String, dynamic> json}) async {
-    await supabase.from(tableName).insert(json);
+    try {
+      await supabase.from(tableName).insert(json);
+    } on Exception catch (_) {
+      rethrow;
+    }
   }
 
   Future<PostgrestList?> fetch(
       {required String tableName,
       required String column,
       required String condition}) async {
-    final data = await supabase.from(tableName).select().eq(column, condition);
-    return data;
+    try {
+      final data =
+          await supabase.from(tableName).select().eq(column, condition);
+      return data;
+    } on Exception catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> delete(
+      {required String tableName,
+      required String column,
+      required String condition}) async {
+    try {
+      await supabase.from(tableName).delete().eq(column, condition);
+    } on Exception catch (_) {
+      rethrow;
+    }
   }
 
   Future<String?> uploadImage(File file) async {
-    final String fileName = file.path.split('/').last;
-    final String fullPath = await supabase.storage.from('tank_images').upload(
-          '${user!.id}/$fileName',
-          file,
-          fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
-        );
-    return fullPath;
+    try {
+      final String fileName = file.path.split('/').last;
+      await supabase.storage.from('tank_images').upload(
+            '${user!.id}/$fileName',
+            file,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
+
+      final String url = supabase.storage
+          .from('tank_images')
+          .getPublicUrl('${user!.id}/$fileName');
+
+      return url;
+    } on Exception catch (_) {
+      rethrow;
+    }
   }
 }
 

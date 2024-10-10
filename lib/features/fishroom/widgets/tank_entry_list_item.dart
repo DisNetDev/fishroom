@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/models/tank_reading.dart';
+import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/date_time_text.dart';
 import '../../../core/widgets/material_container.dart';
 import 'small_entry_graph.dart';
@@ -13,19 +16,23 @@ class TankEntryListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     return MaterialContainer(
-      elevation: 5,
+      // elevation: 5,
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color.fromARGB(10, 0, 0, 0)),
+        border: Border.all(
+            width: 1,
+            color: isDarkMode(context) ? Colors.black : Colors.transparent),
         borderRadius: BorderRadius.circular(10),
-        color: isDarkTheme ? Colors.black87 : Colors.white,
+        color: isDarkMode(context)
+            ? Colors.black87
+            : const Color.fromARGB(55, 255, 255, 255),
       ),
       height: 100,
       child: Stack(
         children: [
+          BackdropFilter(filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -45,7 +52,7 @@ class TankEntryListItem extends StatelessWidget {
           Positioned(
             top: 0,
             right: 0,
-            child: DateTimeText(dateTime: reading.dateTime),
+            child: DateTimeText(dateTime: reading.createdAt),
           ),
         ],
       ),
