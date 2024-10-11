@@ -4,16 +4,21 @@ import 'package:flutter/material.dart';
 
 class ParameterWheel extends StatefulWidget {
   const ParameterWheel(
-      {super.key, required this.valueSelected, required this.parameter});
+      {super.key,
+      required this.valueSelected,
+      required this.parameter,
+      required this.onEnabled});
 
   final Parameter parameter;
   final void Function(double) valueSelected;
+  final void Function(bool) onEnabled;
 
   @override
   State<ParameterWheel> createState() => _ParameterWheelState();
 }
 
 class _ParameterWheelState extends State<ParameterWheel> {
+  bool enabled = false;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -42,7 +47,9 @@ class _ParameterWheelState extends State<ParameterWheel> {
                 widget.valueSelected(widget.parameter.values[index]);
               },
               diameterRatio: 0.9,
-              physics: const FixedExtentScrollPhysics(),
+              physics: enabled
+                  ? const FixedExtentScrollPhysics()
+                  : const NeverScrollableScrollPhysics(),
               itemExtent: 20,
               childDelegate: ListWheelChildBuilderDelegate(
                 childCount: widget.parameter.values.length,
@@ -68,7 +75,20 @@ class _ParameterWheelState extends State<ParameterWheel> {
           widget.parameter.unit,
           style: kHintTextStyle.copyWith(fontStyle: FontStyle.italic),
           textScaler: TextScaler.noScaling,
-        )
+        ),
+        Checkbox(
+            activeColor: kPrimaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(20), // Make the checkbox round
+            ),
+            value: enabled,
+            onChanged: (value) => setState(
+                  () {
+                    enabled = value ?? false;
+                    widget.onEnabled(value ?? false);
+                  },
+                ))
       ],
     );
   }

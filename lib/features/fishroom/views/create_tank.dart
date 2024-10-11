@@ -190,7 +190,7 @@ class _CreateTankState extends State<CreateTank> {
                   image: _image,
                   onTap: () async {
                     final XFile? image = await _imagePicker.pickImage(
-                        source: ImageSource.gallery);
+                        source: ImageSource.camera);
                     setState(() {
                       _image = image;
                     });

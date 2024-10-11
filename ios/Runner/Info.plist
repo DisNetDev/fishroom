@@ -44,7 +44,9 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Upload photos to personalize tank tiles</string>
+	<string>Upload photos to personalize tank tiles and readings</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take and Upload photos to personalize tank tiles and readings</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>

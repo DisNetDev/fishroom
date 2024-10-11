@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/log.dart';
+import 'package:fishroom/features/fishroom/widgets/tank_entry_list_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/models/tank.dart';
@@ -84,13 +85,51 @@ class TanksCubit extends Cubit<TanksState> {
         readings.addAll(state.readings);
         for (Map<String, dynamic> json in data) {
           TankReading reading = TankReading.fromJson(json);
-          if (readings.any((reading) => reading.id != reading.id)) {
+          if (!readings
+              .any((readingInState) => readingInState.id == reading.id)) {
             readings.add(reading);
           }
         }
         emit(state.copyWith(readings: readings));
       }
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> createTankReading(TankReading reading, File? image) async {
+    try {
+      fishLog("Creating a reading...");
+
+      String? imagePath;
+
+      if (image != null) {
+        imagePath = await supabaseRepository.uploadImage(image);
+        reading = reading.copyWith(imageUrl: imagePath);
+      }
+
+      await supabaseRepository.insert(
+        tableName: Table.readings.label,
+        json: reading.toJson(),
+      );
+
+      emit(state.copyWith(readings: [...state.readings, reading]));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteTankReading(TankReading reading) async {
+    try {
+      fishLog("Deleting tank reading...");
+      await supabaseRepository.delete(
+          tableName: Table.readings.label, column: "id", condition: reading.id);
+      List<TankReading> readings = [];
+      readings.addAll(state.readings);
+      readings.removeWhere((removedReading) => removedReading.id == reading.id);
+
+      emit(state.copyWith(readings: readings));
+    } catch (_) {
       rethrow;
     }
   }

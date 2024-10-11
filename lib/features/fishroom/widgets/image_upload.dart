@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,7 +15,7 @@ class ImageUpload extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color = isDarkMode(context) ? Colors.black26 : Colors.white;
+    Color color = Colors.transparent;
     if (image != null) {
       color = kPrimaryColor;
     }
