@@ -97,6 +97,14 @@ class SupabaseRepository {
     }
   }
 
+  Future<void> update(
+      {required String tableName,
+      required Map<String, dynamic> json,
+      required String column,
+      required String condition}) async {
+    await supabase.from(tableName).update(json).eq(column, condition);
+  }
+
   Future<void> delete(
       {required String tableName,
       required String column,

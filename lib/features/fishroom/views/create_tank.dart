@@ -17,7 +17,7 @@ import '../../../core/widgets/root_appbar.dart';
 import '../../../core/widgets/text_input.dart';
 import '../../auth/cubit/auth_cubit.dart';
 import '../cubit/tanks_cubit.dart';
-import '../widgets/image_upload.dart';
+import '../widgets/image_upload_widget.dart';
 
 class CreateTank extends StatefulWidget {
   const CreateTank({super.key});
@@ -31,8 +31,7 @@ class _CreateTankState extends State<CreateTank> {
   Tank tank = Tank(
     id: const Uuid().v4(),
   );
-  final ImagePicker _imagePicker = ImagePicker();
-  XFile? _image;
+  File? _image;
 
   List<bool> tankTypeSelection = [false, false, false];
 
@@ -152,7 +151,7 @@ class _CreateTankState extends State<CreateTank> {
                 Container(
                   padding: EdgeInsets.zero,
                   decoration: BoxDecoration(
-                    color: isDarkTheme ? Colors.black26 : Colors.white,
+                    color: isDarkTheme ? Colors.black26 : Colors.transparent,
                     borderRadius: BorderRadius.circular(1000),
                   ),
                   child: ToggleButtons(
@@ -186,15 +185,8 @@ class _CreateTankState extends State<CreateTank> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ImageUpload(
-                  image: _image,
-                  onTap: () async {
-                    final XFile? image = await _imagePicker.pickImage(
-                        source: ImageSource.camera);
-                    setState(() {
-                      _image = image;
-                    });
-                  },
+                ImageUploadWidget(
+                  onImagePicked: (image) => _image = image,
                 ),
                 const Expanded(
                   child: SizedBox(),
@@ -230,12 +222,10 @@ class _CreateTankState extends State<CreateTank> {
                               "${requiredFields.substring(0, requiredFields.length - 2)}.");
                     } else {
                       setState(() => loading = true);
-                      tank.image = _image;
                       tank.createdAt = DateTime.now().toString();
                       tank.ownerId = context.read<AuthCubit>().state.user!.uuid;
                       try {
-                        await context.read<TanksCubit>().addTank(
-                            tank, _image != null ? File(_image!.path) : null);
+                        await context.read<TanksCubit>().addTank(tank, _image);
                       } on Exception catch (e) {
                         fishLog(e.toString());
                         showToast(

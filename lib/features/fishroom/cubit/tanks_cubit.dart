@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fishroom/core/repositories/supabase_repository.dart';
+import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/features/fishroom/widgets/tank_entry_list_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,11 +20,14 @@ class TanksCubit extends Cubit<TanksState> {
   Future<void> addTank(Tank tank, File? image) async {
     try {
       fishLog("Creating a tank...");
-      String? imagePath;
+      String? localPath;
+      String? imageUrl;
 
       if (image != null) {
-        imagePath = await supabaseRepository.uploadImage(image);
-        tank.imageUrl = imagePath;
+        localPath = await cacheImageFromFile(image);
+        imageUrl = await supabaseRepository.uploadImage(image);
+        tank.imageUrl = imageUrl;
+        tank.imageLocalPath = localPath;
       }
 
       await supabaseRepository.insert(
@@ -39,10 +43,19 @@ class TanksCubit extends Cubit<TanksState> {
     try {
       await supabaseRepository.delete(
           tableName: Table.tanks.label, column: "id", condition: tank.id);
+      await supabaseRepository.delete(
+          tableName: Table.readings.label,
+          column: "tank_id",
+          condition: tank.id);
       List<Tank> stateTanks = state.tanks
           .where((tankInState) => tank.id != tankInState.id)
           .toList();
-      emit(state.copyWith(tanks: stateTanks));
+
+      List<TankReading> stateReadings = state.readings
+          .where((readingInState) => tank.id != readingInState.tankId)
+          .toList();
+
+      emit(state.copyWith(tanks: stateTanks, readings: stateReadings));
     } on Exception catch (_) {
       rethrow;
     }
@@ -114,6 +127,28 @@ class TanksCubit extends Cubit<TanksState> {
       );
 
       emit(state.copyWith(readings: [...state.readings, reading]));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateTank(Tank tank) async {
+    try {
+      fishLog("Updating tank...");
+
+      await supabaseRepository.update(
+        tableName: Table.readings.label,
+        json: tank.toJson(),
+        column: "id",
+        condition: tank.id,
+      );
+
+      List<Tank> tanks = [];
+      tanks.addAll(state.tanks);
+
+      tanks.removeWhere((tankToCheck) => tank.id == tankToCheck.id);
+
+      emit(state.copyWith(tanks: tanks));
     } catch (e) {
       rethrow;
     }

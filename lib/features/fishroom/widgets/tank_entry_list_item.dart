@@ -1,13 +1,10 @@
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/date_time_text.dart';
-import '../cubit/tanks_cubit.dart';
 import 'small_entry_graph.dart';
 
 class TankEntryListItem extends StatelessWidget {
@@ -76,10 +73,7 @@ class TankEntryListItem extends StatelessWidget {
                   const Expanded(child: SizedBox()),
                   reading.type == TankReadingType.note
                       ? const SizedBox()
-                      : Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: SmallEntryGraph(tankReading: reading)),
+                      : SmallEntryGraph(tankReading: reading),
                 ],
               )
             ],

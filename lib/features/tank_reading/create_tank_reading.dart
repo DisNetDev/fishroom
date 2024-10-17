@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/models/tank_reading.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/usecases/upload_image.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/root_appbar.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
-import 'package:fishroom/features/fishroom/widgets/image_upload.dart';
+import 'package:fishroom/features/fishroom/widgets/image_upload_widget.dart';
 import 'package:fishroom/features/tank_reading/usecases/parameters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +41,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
   List<bool> selectedTypeButtons = [true, false];
 
   double horizontalPadding = 12;
-  XFile? _image;
+  File? _image;
   ImagePicker imagePicker = ImagePicker();
 
   @override
@@ -186,19 +187,13 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                   FishTextBox(
                     hintText: "Note",
                     onChanged: (value) => setState(
-                        () => tankReading = tankReading.copyWith(note: value)),
+                      () => tankReading = tankReading.copyWith(note: value),
+                    ),
                     initialValue: tankReading.note ?? "",
                   ),
                   const Gap(20),
-                  ImageUpload(
-                    image: _image,
-                    onTap: () async {
-                      final XFile? image = await imagePicker.pickImage(
-                          source: ImageSource.camera);
-                      setState(() {
-                        _image = image;
-                      });
-                    },
+                  ImageUploadWidget(
+                    onImagePicked: (image) => _image = image,
                   ),
                   const Gap(50),
                   CustomButton(
@@ -209,7 +204,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         try {
                           await context.read<TanksCubit>().createTankReading(
                                 tankReading,
-                                _image == null ? null : File(_image!.path),
+                                _image,
                               );
                           setState(() => loading = false);
                           if (context.mounted) {

@@ -27,9 +27,15 @@ class _TankDetailsState extends State<TankDetails> {
   bool loading = false;
 
   Future<void> getTankReadings() async {
-    setState(() => loading = true);
-    await context.read<TanksCubit>().getReadingsForTank(widget.tank);
-    setState(() => loading = false);
+    if (!context
+        .read<TanksCubit>()
+        .state
+        .readings
+        .any((reading) => reading.tankId == widget.tank.id)) {
+      setState(() => loading = true);
+      await context.read<TanksCubit>().getReadingsForTank(widget.tank);
+      setState(() => loading = false);
+    }
   }
 
   @override
@@ -88,179 +94,186 @@ class _TankDetailsState extends State<TankDetails> {
         if (tankTypeNonNullable == "") {
           tankTypeNonNullable = "Tank Type";
         }
-        return Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: isDarkMode(context)
-                          ? const AssetImage("assets/background_dark.png")
-                          : const AssetImage("assets/background_light.png"))),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-            ),
-            Positioned(
-              bottom: 0,
-              child: Opacity(
-                opacity: isDarkMode(context) ? 0.05 : 0.1,
-                child: Image(
-                  image: const AssetImage(
-                    "assets/bottom_decoration.png",
+        return RefreshIndicator(
+          edgeOffset: 20,
+          onRefresh: () async {
+            await context.read<TanksCubit>().getReadingsForTank(widget.tank);
+          },
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: isDarkMode(context)
+                            ? const AssetImage("assets/background_dark.png")
+                            : const AssetImage("assets/background_light.png"))),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+              ),
+              Positioned(
+                bottom: 0,
+                child: Opacity(
+                  opacity: isDarkMode(context) ? 0.05 : 0.1,
+                  child: Image(
+                    image: const AssetImage(
+                      "assets/bottom_decoration.png",
+                    ),
+                    width: MediaQuery.of(context).size.width,
                   ),
-                  width: MediaQuery.of(context).size.width,
                 ),
               ),
-            ),
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CreateTankReading(
-                                tank: widget.tank,
-                              )));
-                },
-                child: const Icon(Icons.add),
-              ),
-              appBar: RootSliverAppBar(
-                title: widget.tank.name ?? "Tank Details",
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      _showDeleteConfirmationDialog(context);
-                    },
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.grey,
-                    ),
-                  )
-                ],
-              ),
-              body: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Stack(
-                  children: [
-                    ListView(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      children: [
-                        if (loading)
-                          for (var i = 0; i < 4; i++)
-                            Skeletonizer(
-                                child: TankEntryListItem(
-                                    onDismissed: () {},
-                                    reading: TankReading(
-                                        id: "aaa",
-                                        ownerId: "bleh",
-                                        type: TankReadingType.measurement,
-                                        tankId: widget.tank.id,
-                                        createdAt: DateTime.now().toString(),
-                                        note: "Some Dummy Info"))),
-                        ...List.generate(
-                          readings.length,
-                          (index) {
-                            return Skeletonizer(
-                              enabled: loading,
-                              child: TankEntryListItem(
-                                onDismissed: () {
-                                  try {
-                                    final readingToRemove = readings[index];
-                                    readings.removeAt(index); // Remove by index
-                                    context
-                                        .read<TanksCubit>()
-                                        .deleteTankReading(readingToRemove);
-                                  } on Exception catch (e) {
-                                    if (context.mounted) {
-                                      showToast(context,
-                                          title: "Something went wrong.",
-                                          toastType: ToastType.error,
-                                          description: e.toString());
-                                    }
-                                  }
-                                },
-                                reading: readings[index],
-                              ),
-                            );
-                          },
-                        ),
-                        const Gap(300),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: -20,
-                      child: ShaderMask(
-                        shaderCallback: (rect) {
-                          return const LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black,
-                              Colors.transparent,
-                            ],
-                          ).createShader(
-                              Rect.fromLTRB(0, 0, rect.width, rect.height));
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.width / 3 * 1,
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: widget.tank.imageUrl ?? "",
-                            errorWidget: (context, url, error) =>
-                                const SizedBox(),
-                          ),
-                        ),
+              Scaffold(
+                backgroundColor: Colors.transparent,
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateTankReading(
+                                  tank: widget.tank,
+                                )));
+                  },
+                  child: const Icon(Icons.add),
+                ),
+                appBar: RootSliverAppBar(
+                  title: widget.tank.name ?? "Tank Details",
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        _showDeleteConfirmationDialog(context);
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.grey,
                       ),
-                    ),
-                    Positioned(
-                      bottom: 20,
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black54,
-                              Colors.transparent
-                            ],
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Material(
-                              color: Colors.transparent,
-                              child: Text(
-                                widget.tank.name ?? "Tank name not found",
-                                style: kHeading1TextStyle.copyWith(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Material(
-                              color: Colors.transparent,
-                              child: Text(
-                                "$tankTypeNonNullable - ${widget.tank.size}${widget.tank.measurementUnit}",
-                                style: kHeading2TextStyle.copyWith(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    )
                   ],
                 ),
+                body: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Stack(
+                    children: [
+                      ListView(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        children: [
+                          if (loading)
+                            for (var i = 0; i < 4; i++)
+                              Skeletonizer(
+                                  child: TankEntryListItem(
+                                      onDismissed: () {},
+                                      reading: TankReading(
+                                          id: "aaa",
+                                          ownerId: "bleh",
+                                          type: TankReadingType.measurement,
+                                          tankId: widget.tank.id,
+                                          createdAt: DateTime.now().toString(),
+                                          note: "Some Dummy Info"))),
+                          ...List.generate(
+                            readings.length,
+                            (index) {
+                              return Skeletonizer(
+                                enabled: loading,
+                                child: TankEntryListItem(
+                                  onDismissed: () {
+                                    try {
+                                      final readingToRemove = readings[index];
+                                      readings
+                                          .removeAt(index); // Remove by index
+                                      context
+                                          .read<TanksCubit>()
+                                          .deleteTankReading(readingToRemove);
+                                    } on Exception catch (e) {
+                                      if (context.mounted) {
+                                        showToast(context,
+                                            title: "Something went wrong.",
+                                            toastType: ToastType.error,
+                                            description: e.toString());
+                                      }
+                                    }
+                                  },
+                                  reading: readings[index],
+                                ),
+                              );
+                            },
+                          ),
+                          const Gap(300),
+                        ],
+                      ),
+                      Positioned(
+                        bottom: -20,
+                        child: ShaderMask(
+                          shaderCallback: (rect) {
+                            return const LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                Colors.black,
+                                Colors.transparent,
+                              ],
+                            ).createShader(
+                                Rect.fromLTRB(0, 0, rect.width, rect.height));
+                          },
+                          blendMode: BlendMode.dstIn,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.width / 3 * 1,
+                            child: CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: widget.tank.imageUrl ?? "",
+                              errorWidget: (context, url, error) =>
+                                  const SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 20,
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black54,
+                                Colors.transparent
+                              ],
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Material(
+                                color: Colors.transparent,
+                                child: Text(
+                                  widget.tank.name ?? "Tank name not found",
+                                  style: kHeading1TextStyle.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              Material(
+                                color: Colors.transparent,
+                                child: Text(
+                                  "$tankTypeNonNullable - ${widget.tank.size}${widget.tank.measurementUnit}",
+                                  style: kHeading2TextStyle.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

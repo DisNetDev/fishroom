@@ -2,25 +2,31 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants.dart';
+import '../../../core/usecases/upload_image.dart';
 
-class ImageUpload extends StatelessWidget {
-  const ImageUpload({super.key, required this.onTap, this.image});
+class ImageUploadWidget extends StatefulWidget {
+  const ImageUploadWidget({super.key, required this.onImagePicked});
 
-  final Function() onTap;
+  final Function(File) onImagePicked;
 
-  final XFile? image;
+  @override
+  State<ImageUploadWidget> createState() => _ImageUploadWidgetState();
+}
+
+class _ImageUploadWidgetState extends State<ImageUploadWidget> {
+  File? image;
 
   @override
   Widget build(BuildContext context) {
     Color color = Colors.transparent;
-    if (image != null) {
-      color = kPrimaryColor;
-    }
+
     return InkWell(
-      onTap: onTap,
+      onTap: () async {
+        image = await pickImage(context);
+        setState(() {});
+      },
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: AnimatedContainer(
@@ -41,7 +47,7 @@ class ImageUpload extends StatelessWidget {
               : ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.file(
-                    File(image!.path),
+                    image!,
                     fit: BoxFit.cover,
                   ),
                 ),
