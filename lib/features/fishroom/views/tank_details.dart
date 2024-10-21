@@ -161,6 +161,9 @@ class _TankDetailsState extends State<TankDetails> {
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
+                                  effect: isDarkMode(context)
+                                      ? kDarkModeShimmer
+                                      : kLightModeShimmer,
                                   child: TankEntryListItem(
                                       onDismissed: () {},
                                       reading: TankReading(

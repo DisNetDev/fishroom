@@ -8,6 +8,7 @@ import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'dart:io'; // Import the dart:io library
 
 import '../../../core/constants.dart';
@@ -86,69 +87,72 @@ class _TankTileState extends State<TankTile> {
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(borderRadius),
-                child: widget.tank.imageLocalPath != null &&
-                        File(widget.tank.imageLocalPath!)
-                            .existsSync() // Check if the local image path is valid
-                    ? Image(
-                        image: AssetImage(widget.tank.imageLocalPath!),
-                        fit: BoxFit.cover,
-                      )
-                    : CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        imageUrl: widget.tank.imageUrl ?? "",
-                        errorWidget: (context, url, error) {
-                          return const Center(child: SizedBox());
-                        },
-                        placeholder: (context, url) =>
-                            const Center(child: Loader()),
-                      ),
-              ),
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  child: Skeleton.replace(
+                    child: widget.tank.imageLocalPath != null &&
+                            File(widget.tank.imageLocalPath!)
+                                .existsSync() // Check if the local image path is valid
+                        ? Image(
+                            image: AssetImage(widget.tank.imageLocalPath!),
+                            fit: BoxFit.cover,
+                          )
+                        : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: widget.tank.imageUrl ?? "",
+                            errorWidget: (context, url, error) {
+                              return const Center(child: SizedBox());
+                            },
+                            placeholder: (context, url) =>
+                                const Center(child: Loader()),
+                          ),
+                  )),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 11, vertical: 11),
-            padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Colors.transparent, Colors.black],
+          Skeleton.replace(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 11, vertical: 11),
+              padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Colors.transparent, Colors.black],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(borderRadius),
+                  bottomLeft: Radius.circular(borderRadius),
+                ),
               ),
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(borderRadius),
-                bottomLeft: Radius.circular(borderRadius),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Material(
-                  color: Colors.transparent,
-                  child: Text(
-                    widget.tank.name ?? "Tank Name",
-                    textAlign: TextAlign.end,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Material(
+                    color: Colors.transparent,
+                    child: Text(
+                      widget.tank.name ?? "Tank Name",
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: Text(
-                    "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""}${widget.tank.measurementUnit ?? ""}",
-                    textAlign: TextAlign.end,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                  Material(
+                    color: Colors.transparent,
+                    child: Text(
+                      "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""}${widget.tank.measurementUnit ?? ""}",
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

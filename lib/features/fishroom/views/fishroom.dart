@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:uuid/uuid.dart';
+import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/widgets/root_appbar.dart';
 import '../../../core/widgets/root_drawer.dart';
@@ -98,9 +99,10 @@ class _FishroomState extends State<Fishroom> {
                     return Column(
                       children: [
                         Skeletonizer(
-                            child: Skeleton.shade(
-                                child: TankTile(
-                                    tank: Tank(id: const Uuid().v4()))))
+                            effect: isDarkMode(context)
+                                ? kDarkModeShimmer
+                                : kLightModeShimmer,
+                            child: TankTile(tank: Tank(id: const Uuid().v4())))
                       ],
                     );
                   }
