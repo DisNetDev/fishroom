@@ -11,6 +11,7 @@ class TankReading {
   double? no3;
   double? gh;
   double? kh;
+  double? tds;
   String? imageUrl;
 
   TankReading({
@@ -26,6 +27,7 @@ class TankReading {
     this.no3,
     this.gh,
     this.kh,
+    this.tds,
     this.imageUrl,
   });
 
@@ -45,6 +47,7 @@ class TankReading {
       no3: json['no3'] != null ? (json['no3']).toDouble() : null,
       gh: json['gh'] != null ? (json['gh']).toDouble() : null,
       kh: json['kh'] != null ? (json['kh']).toDouble() : null,
+      tds: json['tds'] != null ? (json['tds']).toDouble() : null,
       imageUrl: json['image_url'] != null ? (json['image_url']) : null,
     );
   }
@@ -63,6 +66,7 @@ class TankReading {
       'no3': no3,
       'gh': gh,
       'kh': kh,
+      'tds': tds,
       'image_url': imageUrl
     };
   }
@@ -80,6 +84,7 @@ class TankReading {
     double? no3,
     double? gh,
     double? kh,
+    double? tds,
     String? imageUrl,
   }) {
     return TankReading(
@@ -95,6 +100,7 @@ class TankReading {
       no3: no3 ?? this.no3,
       gh: gh ?? this.gh,
       kh: kh ?? this.kh,
+      tds: tds ?? this.tds,
       imageUrl: imageUrl ?? this.imageUrl,
     );
   }

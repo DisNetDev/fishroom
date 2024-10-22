@@ -21,9 +21,9 @@ List<Parameter> readingParameters = [
       shortName: "PH",
       name: "ph",
       values: _generateDoublesForPh(),
-      unit: "",
+      unit: "Acidity",
       min: 4,
-      max: 10),
+      max: 14),
   Parameter(
       shortName: "TA",
       name: "Total Ammonia",
@@ -59,6 +59,13 @@ List<Parameter> readingParameters = [
       min: 0,
       max: 30,
       unit: "dKH"),
+  Parameter(
+      shortName: "TDS",
+      name: "Total Dissolved Solids",
+      values: _generateTDS(),
+      unit: "",
+      max: 500,
+      min: 0)
 ];
 
 //Generate ph Values
@@ -104,6 +111,16 @@ List<double> _generateDoublesForNitrate() {
 List<double> _generateDegrees() {
   List<double> doubles = [];
   for (double i = 0.0; i <= 30.0; i += 1) {
+    // Updated increment and range
+    doubles
+        .add(double.parse(i.toStringAsFixed(2))); // Ensures two decimal places
+  }
+  return doubles;
+}
+
+List<double> _generateTDS() {
+  List<double> doubles = [];
+  for (double i = 0.0; i <= 500.0; i += 1) {
     // Updated increment and range
     doubles
         .add(double.parse(i.toStringAsFixed(2))); // Ensures two decimal places

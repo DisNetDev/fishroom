@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/models/tank_reading.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
-import 'package:fishroom/core/usecases/upload_image.dart';
+import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/root_appbar.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
@@ -48,28 +48,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: isDarkMode(context)
-                      ? const AssetImage("assets/background_dark.png")
-                      : const AssetImage("assets/background_light.png"))),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-        ),
-        Positioned(
-          bottom: 0,
-          child: Opacity(
-            opacity: isDarkMode(context) ? 0.05 : 0.1,
-            child: Image(
-              image: const AssetImage(
-                "assets/bottom_decoration.png",
-              ),
-              width: MediaQuery.of(context).size.width,
-            ),
-          ),
-        ),
+        const CustomBackground(),
         Scaffold(
           appBar: const RootSliverAppBar(title: "Add a Tank Reading"),
           backgroundColor: Colors.transparent,
@@ -113,7 +92,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                   ),
                   const Gap(20),
                   if (tankReading.type == TankReadingType.measurement)
-                    Row(
+                    Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ParameterWheel(
@@ -180,6 +159,17 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading = tankReading.copyWith(kh: 0);
                                 } else {
                                   tankReading.kh = null;
+                                }
+                              }),
+                          ParameterWheel(
+                              valueSelected: (value) =>
+                                  tankReading = tankReading.copyWith(tds: value),
+                              parameter: readingParameters[6],
+                              onEnabled: (value) {
+                                if (value == true) {
+                                  tankReading = tankReading.copyWith(tds: 0);
+                                } else {
+                                  tankReading.tds = null;
                                 }
                               }),
                         ]),

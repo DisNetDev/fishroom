@@ -74,6 +74,16 @@ class SmallEntryGraph extends StatelessWidget {
                 parameter: readingParameters
                     .firstWhere((para) => para.shortName == "KH")),
           ),
+        if (tankReading.tds != null)
+          BarSegment(
+            color: Colors.brown,
+            tag: "TDS",
+            value: tankReading.tds,
+            height: _getValue(
+                value: tankReading.tds!,
+                parameter: readingParameters
+                    .firstWhere((para) => para.shortName == "TDS")),
+          ),
       ],
     );
   }
@@ -83,6 +93,6 @@ double _getValue({required double value, required Parameter parameter}) {
   if (value == 0) {
     return 1;
   }
-  // Scale the value to a range of 1 to 100
-  return ((value - parameter.min) / (parameter.max - parameter.min)) * 90;
+  // Scale the value to a range of 1 to 90
+  return (value / parameter.max) * 70;
 }
