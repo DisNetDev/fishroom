@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/get_filename_from_url.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,21 +27,26 @@ class TankTile extends StatefulWidget {
 }
 
 class _TankTileState extends State<TankTile> {
+  bool loadingImage = false;
   Future<void> updateImagePath() async {
+    fishLog("Image for tank ${widget.tank.name} not found. Getting image...");
     if (widget.tank.imageUrl != null) {
+      setState(() => loadingImage = true);
       widget.tank.imageLocalPath = await cacheImageFromUrl(
           widget.tank.imageUrl!, getFileNameFromUrl(widget.tank.imageUrl!));
 
       if (context.mounted) {
         await context.read<TanksCubit>().updateTank(widget.tank);
-        setState(() {});
+        setState(() => loadingImage = false);
       }
+    } else {
+      fishLog("Image for tank ${widget.tank.name} is empty.");
     }
   }
 
   @override
   void initState() {
-    if (File(widget.tank.imageLocalPath ?? "").existsSync()) {
+    if (!File(widget.tank.imageLocalPath ?? "").existsSync()) {
       updateImagePath();
     }
     super.initState();
@@ -87,13 +93,15 @@ class _TankTileState extends State<TankTile> {
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(borderRadius),
+                borderRadius: BorderRadius.circular(borderRadius),
+                child: Skeletonizer(
+                  enabled: loadingImage,
                   child: Skeleton.replace(
                     child: widget.tank.imageLocalPath != null &&
                             File(widget.tank.imageLocalPath!)
                                 .existsSync() // Check if the local image path is valid
                         ? Image(
-                            image: AssetImage(widget.tank.imageLocalPath!),
+                            image: FileImage(File(widget.tank.imageLocalPath!)),
                             fit: BoxFit.cover,
                           )
                         : CachedNetworkImage(
@@ -105,7 +113,9 @@ class _TankTileState extends State<TankTile> {
                             placeholder: (context, url) =>
                                 const Center(child: Loader()),
                           ),
-                  )),
+                  ),
+                ),
+              ),
             ),
           ),
           Skeleton.replace(

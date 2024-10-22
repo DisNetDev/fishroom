@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/log.dart';
-import 'package:fishroom/features/fishroom/widgets/tank_entry_list_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/models/tank.dart';
@@ -113,20 +112,21 @@ class TanksCubit extends Cubit<TanksState> {
   Future<void> createTankReading(TankReading reading, File? image) async {
     try {
       fishLog("Creating a reading...");
+      TankReading amendedReading = reading;
 
       String? imagePath;
 
       if (image != null) {
         imagePath = await supabaseRepository.uploadImage(image);
-        reading = reading.copyWith(imageUrl: imagePath);
+        amendedReading = reading.copyWith(imageUrl: imagePath);
       }
 
       await supabaseRepository.insert(
         tableName: Table.readings.label,
-        json: reading.toJson(),
+        json: amendedReading.toJson(),
       );
 
-      emit(state.copyWith(readings: [...state.readings, reading]));
+      emit(state.copyWith(readings: [...state.readings, amendedReading]));
     } catch (e) {
       rethrow;
     }

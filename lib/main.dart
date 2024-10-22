@@ -23,6 +23,7 @@ void main() async {
       authOptions: FlutterAuthClientOptions(
         localStorage: MySecureStorage(),
       ));
+
   runApp(const MainApp());
 }
 

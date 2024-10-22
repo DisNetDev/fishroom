@@ -1,6 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_appbar.dart';
+import 'package:fishroom/features/fishroom/widgets/tank_chart.dart';
 import 'package:fishroom/features/tank_reading/create_tank_reading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,10 +91,6 @@ class _TankDetailsState extends State<TankDetails> {
             .where((reading) => reading.tankId == widget.tank.id)
             .toList();
 
-        String tankTypeNonNullable = widget.tank.type ?? "Tank Type";
-        if (tankTypeNonNullable == "") {
-          tankTypeNonNullable = "Tank Type";
-        }
         return RefreshIndicator(
           edgeOffset: 20,
           onRefresh: () async {
@@ -101,28 +98,7 @@ class _TankDetailsState extends State<TankDetails> {
           },
           child: Stack(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: isDarkMode(context)
-                            ? const AssetImage("assets/background_dark.png")
-                            : const AssetImage("assets/background_light.png"))),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-              ),
-              Positioned(
-                bottom: 0,
-                child: Opacity(
-                  opacity: isDarkMode(context) ? 0.05 : 0.1,
-                  child: Image(
-                    image: const AssetImage(
-                      "assets/bottom_decoration.png",
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
-              ),
+              const CustomBackground(),
               Scaffold(
                 backgroundColor: Colors.transparent,
                 floatingActionButton: FloatingActionButton(
@@ -158,6 +134,7 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
+                          const TankHistoryChart(),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
@@ -203,73 +180,6 @@ class _TankDetailsState extends State<TankDetails> {
                           ),
                           const Gap(300),
                         ],
-                      ),
-                      Positioned(
-                        bottom: -20,
-                        child: ShaderMask(
-                          shaderCallback: (rect) {
-                            return const LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                Colors.black,
-                                Colors.transparent,
-                              ],
-                            ).createShader(
-                                Rect.fromLTRB(0, 0, rect.width, rect.height));
-                          },
-                          blendMode: BlendMode.dstIn,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.width / 3 * 1,
-                            child: CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: widget.tank.imageUrl ?? "",
-                              errorWidget: (context, url, error) =>
-                                  const SizedBox(),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 20,
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          width: MediaQuery.of(context).size.width,
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black54,
-                                Colors.transparent
-                              ],
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Material(
-                                color: Colors.transparent,
-                                child: Text(
-                                  widget.tank.name ?? "Tank name not found",
-                                  style: kHeading1TextStyle.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Material(
-                                color: Colors.transparent,
-                                child: Text(
-                                  "$tankTypeNonNullable - ${widget.tank.size}${widget.tank.measurementUnit}",
-                                  style: kHeading2TextStyle.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                     ],
                   ),

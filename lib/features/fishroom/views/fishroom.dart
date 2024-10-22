@@ -2,6 +2,7 @@
 
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/features/fishroom/views/create_tank.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,28 +54,7 @@ class _FishroomState extends State<Fishroom> {
       builder: (context, state) {
         return Stack(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: isDarkMode(context)
-                          ? const AssetImage("assets/background_dark.png")
-                          : const AssetImage("assets/background_light.png"))),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-            ),
-            Positioned(
-              bottom: 0,
-              child: Opacity(
-                opacity: isDarkMode(context) ? 0.05 : 0.1,
-                child: Image(
-                  image: const AssetImage(
-                    "assets/bottom_decoration.png",
-                  ),
-                  width: MediaQuery.of(context).size.width,
-                ),
-              ),
-            ),
+            const CustomBackground(),
             Scaffold(
               backgroundColor: Colors.transparent,
               floatingActionButton: FloatingActionButton(

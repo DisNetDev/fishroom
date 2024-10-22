@@ -2,7 +2,7 @@ name: fishroom
 description: "Fishroom is an app for aquarium hobbyists to keep track of their
   fish and tanks."
 publish_to: "none"
-version: 0.0.7
+version: 0.0.8
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -10,6 +10,7 @@ environment:
 dependencies:
   cached_network_image: ^3.4.1
   crop_your_image: ^1.1.0
+  fl_chart: ^0.69.0
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
@@ -18,16 +19,18 @@ dependencies:
   flutter_svg: ^2.0.10+1
   gap: ^3.0.1
   gradient_borders: ^1.0.1
+  http: null
   hydrated_bloc: ^9.1.5
   image_picker: ^1.1.2
   lottie: ^3.1.2
   package_info_plus: ^8.0.2
   path_provider: ^2.1.4
+  rive: ^0.13.15
   skeletonizer: ^1.4.2
   supabase_flutter: ^2.6.0
+  svg_flutter: ^0.0.1
   toastification: ^2.3.0
   uuid: ^4.5.0
-  http:
 
 dev_dependencies:
   flutter_lints: ^4.0.0
