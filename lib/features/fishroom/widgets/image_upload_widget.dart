@@ -6,17 +6,12 @@ import 'package:gradient_borders/gradient_borders.dart';
 import '../../../core/constants.dart';
 import '../../../core/usecases/upload_image.dart';
 
-class ImageUploadWidget extends StatefulWidget {
-  const ImageUploadWidget({super.key, required this.onImagePicked});
+class ImageUploadWidget extends StatelessWidget {
+  const ImageUploadWidget(
+      {super.key, required this.onImagePicked, required this.image});
 
   final Function(File) onImagePicked;
-
-  @override
-  State<ImageUploadWidget> createState() => _ImageUploadWidgetState();
-}
-
-class _ImageUploadWidgetState extends State<ImageUploadWidget> {
-  File? image;
+  final File? image;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +19,11 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
 
     return InkWell(
       onTap: () async {
-        image = await pickImage(context);
-        setState(() {});
+        File? pickedFile = await pickImage(context);
+
+        if (pickedFile != null) {
+          onImagePicked(pickedFile);
+        }
       },
       child: AspectRatio(
         aspectRatio: 16 / 9,

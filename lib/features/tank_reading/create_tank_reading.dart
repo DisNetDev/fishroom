@@ -162,8 +162,8 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                 }
                               }),
                           ParameterWheel(
-                              valueSelected: (value) =>
-                                  tankReading = tankReading.copyWith(tds: value),
+                              valueSelected: (value) => tankReading =
+                                  tankReading.copyWith(tds: value),
                               parameter: readingParameters[6],
                               onEnabled: (value) {
                                 if (value == true) {
@@ -183,7 +183,10 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                   ),
                   const Gap(20),
                   ImageUploadWidget(
-                    onImagePicked: (image) => _image = image,
+                    image: _image,
+                    onImagePicked: (image) => setState(
+                      () => _image = image,
+                    ),
                   ),
                   const Gap(50),
                   CustomButton(

@@ -194,22 +194,30 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
 
   void login() async {
     setState(() => loading = true);
-    await context
-        .read<AuthCubit>()
-        .signInWithPassword(email: emailAddress, password: password1);
-    if (context.read<AuthCubit>().state.user != null) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const Fishroom()));
-    } else {
-      String message = "Something went wrong logging you in. Please try again.";
+    try {
+      await context
+          .read<AuthCubit>()
+          .signInWithPassword(email: emailAddress, password: password1);
+      if (context.read<AuthCubit>().state.user != null) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Fishroom()));
+      } else {
+        String message =
+            "Something went wrong logging you in. Please try again.";
 
-      setState(() => loading = false);
-      showToast(
-        context,
-        title: "Something went wrong.",
-        description: message,
-        toastType: ToastType.error,
-      );
+        setState(() => loading = false);
+        showToast(
+          context,
+          title: "Something went wrong.",
+          description: message,
+          toastType: ToastType.error,
+        );
+      }
+    } on Exception catch (e) {
+      showToast(context,
+          title: "Something went wrong.",
+          toastType: ToastType.error,
+          description: e.toString());
     }
     setState(() => loading = false);
   }

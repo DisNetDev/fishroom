@@ -14,6 +14,7 @@ import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_entry_list_item.dart';
+import 'edit_tank.dart';
 
 class TankDetails extends StatefulWidget {
   const TankDetails({super.key, required this.tank});
@@ -45,40 +46,7 @@ class _TankDetailsState extends State<TankDetails> {
     getTankReadings();
   }
 
-  // Function to show a confirmation dialog for deleting a tank
-  void _showDeleteConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Confirm Deletion"),
-          content: const Text("Are you sure you want to delete this tank?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                try {
-                  context.read<TanksCubit>().deleteTank(widget.tank);
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  showToast(context,
-                      title: "Something went wrong.",
-                      toastType: ToastType.error,
-                      description: e.toString());
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text("Delete"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -117,11 +85,14 @@ class _TankDetailsState extends State<TankDetails> {
                   actions: [
                     IconButton(
                       onPressed: () {
-                        _showDeleteConfirmationDialog(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditTank(tank: widget.tank)));
                       },
                       icon: const Icon(
-                        Icons.delete,
-                        color: Colors.grey,
+                        Icons.edit,
                       ),
                     )
                   ],

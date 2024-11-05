@@ -74,6 +74,7 @@ class TanksCubit extends Cubit<TanksState> {
         for (Map<String, dynamic> tankJson in data) {
           tanks.add(Tank.fromJson(tankJson));
         }
+        tanks.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
         emit(state.copyWith(tanks: tanks));
       } else {
         emit(state.copyWith(error: true));
@@ -132,12 +133,23 @@ class TanksCubit extends Cubit<TanksState> {
     }
   }
 
-  Future<void> updateTank(Tank tank) async {
+  Future<void> updateTank(Tank tank, File? image) async {
     try {
       fishLog("Updating tank...");
+      String? localPath;
+      String? imageUrl;
+
+      if (image != null) {
+        try {
+          localPath = await cacheImageFromFile(image);
+          imageUrl = await supabaseRepository.uploadImage(image);
+          tank.imageUrl = imageUrl;
+          tank.imageLocalPath = localPath;
+        } on Exception catch (_) {}
+      }
 
       await supabaseRepository.update(
-        tableName: Table.readings.label,
+        tableName: Table.tanks.label,
         json: tank.toJson(),
         column: "id",
         condition: tank.id,
@@ -147,6 +159,7 @@ class TanksCubit extends Cubit<TanksState> {
       tanks.addAll(state.tanks);
 
       tanks.removeWhere((tankToCheck) => tank.id == tankToCheck.id);
+      tanks.insert(0, tank);
 
       emit(state.copyWith(tanks: tanks));
     } catch (e) {

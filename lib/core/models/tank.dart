@@ -46,4 +46,27 @@ class Tank {
         imageUrl: json['image_url'],
         imageLocalPath: json['image_local_path']);
   }
+
+  Tank copyWith({
+    String? id,
+    String? name,
+    String? createdAt,
+    String? ownerId,
+    String? type,
+    int? size,
+    String? measurementUnit,
+    String? imageLocalPath,
+    String? imageUrl,
+  }) {
+    return Tank(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        createdAt: createdAt ?? this.createdAt,
+        ownerId: ownerId ?? this.ownerId,
+        type: type ?? this.type,
+        size: size ?? this.size,
+        measurementUnit: measurementUnit ?? this.measurementUnit,
+        imageLocalPath: imageLocalPath ?? this.imageLocalPath,
+        imageUrl: imageUrl ?? this.imageUrl);
+  }
 }

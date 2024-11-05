@@ -8,27 +8,25 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:rive/rive.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
-import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/usecases/show_toast.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/root_appbar.dart';
 import '../../../core/widgets/text_input.dart';
-import '../../auth/cubit/auth_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/image_upload_widget.dart';
 
-class CreateTank extends StatefulWidget {
-  const CreateTank({super.key});
+class EditTank extends StatefulWidget {
+  const EditTank({super.key, required this.tank});
+
+  final Tank tank;
 
   @override
-  State<CreateTank> createState() => _CreateTankState();
+  State<EditTank> createState() => _EditTankState();
 }
 
-class _CreateTankState extends State<CreateTank> {
+class _EditTankState extends State<EditTank> {
   bool loading = false;
   Tank tank = Tank(
     id: const Uuid().v4(),
@@ -36,6 +34,36 @@ class _CreateTankState extends State<CreateTank> {
   File? _image;
 
   List<bool> tankTypeSelection = [false, false, false];
+
+  setTankTypeSelectionOnInit() {
+    switch (widget.tank.type) {
+      case "Freshwater":
+        tankTypeSelection = [true, false, false];
+        break;
+
+      case "Saltwater":
+        tankTypeSelection = [false, true, false];
+        break;
+
+      case "Brackish":
+        tankTypeSelection = [false, false, true];
+        break;
+    }
+  }
+
+  setImage() {
+    if (widget.tank.imageLocalPath != null) {
+      _image = File(widget.tank.imageLocalPath!);
+    }
+  }
+
+  @override
+  void initState() {
+    setTankTypeSelectionOnInit();
+    tank = widget.tank.copyWith();
+    setImage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +73,13 @@ class _CreateTankState extends State<CreateTank> {
         const CustomBackground(),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: const RootSliverAppBar(title: "Create a Tank"),
+          appBar: const RootSliverAppBar(title: "Edit a Tank"),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
                 TextInput(
+                  initialValue: widget.tank.name,
                   margin: const EdgeInsets.symmetric(vertical: 16),
                   label: const Text("Tank Name"),
                   onChanged: (value) {
@@ -63,6 +92,9 @@ class _CreateTankState extends State<CreateTank> {
                   alignment: Alignment.centerRight,
                   children: [
                     TextInput(
+                      initialValue: widget.tank.size != null
+                          ? widget.tank.size.toString()
+                          : "",
                       margin: const EdgeInsets.all(0),
                       onChanged: (value) {
                         setState(
@@ -167,10 +199,10 @@ class _CreateTankState extends State<CreateTank> {
                 ),
                 const SizedBox(height: 20),
                 ImageUploadWidget(
-                  image: _image,
                   onImagePicked: (image) => setState(
                     () => _image = image,
                   ),
+                  image: _image,
                 ),
                 const Expanded(
                   child: SizedBox(),
@@ -178,7 +210,7 @@ class _CreateTankState extends State<CreateTank> {
                 CustomButton(
                   loading: loading,
                   margin: const EdgeInsets.symmetric(vertical: 16),
-                  text: "Create",
+                  text: "Edit",
                   onPressed: () async {
                     bool tankNameFilled = true;
                     bool tankSizeFilled = true;
@@ -206,10 +238,10 @@ class _CreateTankState extends State<CreateTank> {
                               "${requiredFields.substring(0, requiredFields.length - 2)}.");
                     } else {
                       setState(() => loading = true);
-                      tank.createdAt = DateTime.now().toString();
-                      tank.ownerId = context.read<AuthCubit>().state.user!.uuid;
                       try {
-                        await context.read<TanksCubit>().addTank(tank, _image);
+                        await context
+                            .read<TanksCubit>()
+                            .updateTank(tank, _image);
                       } on Exception catch (e) {
                         fishLog(e.toString());
                         showToast(
@@ -225,12 +257,22 @@ class _CreateTankState extends State<CreateTank> {
                         Navigator.pop(context);
                         showToast(
                           context,
-                          title: "Tank Created!",
+                          title: "Tank Edited!",
                           toastType: ToastType.success,
                         );
                       }
                     }
                   },
+                ),
+                CustomButton(
+                  text: "Delete Tank",
+                  onPressed: () {
+                    _showDeleteConfirmationDialog(context);
+                  },
+                  loading: loading,
+                  primary: false,
+                  gradient: kErrorGradient,
+                  textColor: const Color.fromARGB(255, 255, 17, 0),
                 ),
                 const Gap(40),
               ],
@@ -238,6 +280,41 @@ class _CreateTankState extends State<CreateTank> {
           ),
         ),
       ],
+    );
+  }
+
+  // Function to show a confirmation dialog for deleting a tank
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirm Deletion"),
+          content: const Text("Are you sure you want to delete this tank?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                try {
+                  context.read<TanksCubit>().deleteTank(widget.tank);
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  showToast(context,
+                      title: "Something went wrong.",
+                      toastType: ToastType.error,
+                      description: e.toString());
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
