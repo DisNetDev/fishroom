@@ -82,12 +82,16 @@ class AuthCubit extends HydratedCubit<AuthState> {
   }
 
   Future<void> upgradeUserToPro() async {
-    if (state.user != null) {
-      _supabaseRepository.update(
-          tableName: Table.users.label,
-          json: {"premium": true},
-          column: "premium",
-          condition: state.user!.uuid);
+    try {
+      if (state.user != null) {
+        _supabaseRepository.update(
+            tableName: Table.users.label,
+            json: {"premium": true},
+            column: id,
+            condition: state.user!.uuid);
+      }
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 }
