@@ -1,3 +1,4 @@
+import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/auth/usecases/logout.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class RootDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool pro = context.read<AuthCubit>().state.user!.premium;
     return SafeArea(
       child: Drawer(
         child: Column(
@@ -39,13 +41,14 @@ class RootDrawer extends StatelessWidget {
                         builder: (context) => const CreateTank()));
               },
             ),
-
-            ListTile(
-              leading: const Icon(Icons.arrow_upward_outlined),
-              title: Text(context.read<AuthCubit>().state.user!.premium
-                  ? "Version"
-                  : "Upgrade to Pro"),
-            ),
+            if (!pro)
+              ListTile(
+                leading: const Icon(Icons.arrow_upward_outlined),
+                title: const Text("Upgrade to Pro"),
+                onTap: () => showToast(context,
+                    title: "TODO: Implement payments",
+                    toastType: ToastType.error),
+              ),
             const Expanded(child: SizedBox()),
 
             ListTile(
@@ -56,7 +59,8 @@ class RootDrawer extends StatelessWidget {
                 builder: (BuildContext context,
                     AsyncSnapshot<PackageInfo> snapshot) {
                   if (snapshot.hasData) {
-                    return Text("Version: ${snapshot.data!.version}");
+                    return Text(
+                        "Version: ${snapshot.data!.version} - ${pro ? "Pro" : "Free"}");
                   } else {
                     return const Text("Loading version...");
                   }

@@ -1,5 +1,7 @@
 import 'package:fishroom/core/usecases/log.dart';
+import 'package:fishroom/main.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
 import '../models/fish_user.dart';
 
@@ -63,5 +65,29 @@ class AuthCubit extends HydratedCubit<AuthState> {
 
   void clearCubit() {
     emit(AuthState());
+  }
+
+  Future<void> fetchUser() async {
+    FishUser? user;
+    try {
+      fishLog("Getting User Data...");
+      final data = await _supabaseRepository.fetchUser();
+      if (data != null && data.isNotEmpty) {
+        user = FishUser.fromJson(data.first);
+        emit(state.copyWith(user: user));
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> upgradeUserToPro() async {
+    if (state.user != null) {
+      _supabaseRepository.update(
+          tableName: Table.users.label,
+          json: {"premium": true},
+          column: "premium",
+          condition: state.user!.uuid);
+    }
   }
 }
