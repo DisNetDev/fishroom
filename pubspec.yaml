@@ -2,7 +2,7 @@ name: fishroom
 description: "Fishroom is an app for aquarium hobbyists to keep track of their
   fish and tanks."
 publish_to: "none"
-version: 0.0.10
+version: 0.0.11
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -24,6 +24,7 @@ dependencies:
   image_picker: ^1.1.2
   list_wheel_scroll_view_nls: ^0.0.3
   lottie: ^3.1.2
+  material_symbols_icons: ^4.2789.0
   package_info_plus: ^8.0.2
   path_provider: ^2.1.4
   rive: ^0.13.15
