@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/models/tank_reading.dart';
+import 'package:fishroom/core/usecases/is_pro_user.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
@@ -12,7 +13,9 @@ import 'package:fishroom/features/tank_reading/usecases/parameters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/constants.dart';
@@ -182,12 +185,40 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                     initialValue: tankReading.note ?? "",
                   ),
                   const Gap(20),
-                  ImageUploadWidget(
-                    image: _image,
-                    onImagePicked: (image) => setState(
-                      () => _image = image,
+                  if (isProUser(context))
+                    ImageUploadWidget(
+                      image: _image,
+                      onImagePicked: (image) => setState(
+                        () => _image = image,
+                      ),
+                    )
+                  else
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 600),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: const GradientBoxBorder(
+                              gradient: LinearGradient(
+                                colors: [kPrimaryColor, kSecondaryColor],
+                              ),
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Symbols.lock),
+                                Text(
+                                  "Upgrade to Pro to upload a photo.",
+                                  style: kDateTimeTextStyle,
+                                ),
+                              ],
+                            ),
+                          )),
                     ),
-                  ),
                   const Gap(50),
                   CustomButton(
                       loading: loading,

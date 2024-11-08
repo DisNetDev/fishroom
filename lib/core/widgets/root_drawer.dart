@@ -1,3 +1,4 @@
+import 'package:fishroom/core/usecases/can_add_tank.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/auth/usecases/logout.dart';
@@ -30,7 +31,9 @@ class RootDrawer extends StatelessWidget {
                 child: Logo(horizontal: true),
               ),
             ),
+
             ListTile(
+              enabled: canAddTank(context),
               leading: const Icon(Icons.add),
               title: const Text("Create a Tank"),
               onTap: () {
@@ -41,6 +44,7 @@ class RootDrawer extends StatelessWidget {
                         builder: (context) => const CreateTank()));
               },
             ),
+
             if (!pro)
               ListTile(
                 leading: const Icon(Icons.arrow_upward_outlined),

@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/usecases/is_pro_user.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/features/fishroom/views/create_tank.dart';
@@ -10,8 +11,10 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
+import '../../../core/usecases/can_add_tank.dart';
 import '../../../core/widgets/root_appbar.dart';
 import '../../../core/widgets/root_drawer.dart';
+import '../../auth/cubit/auth_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_tile.dart';
 
@@ -26,18 +29,16 @@ class _FishroomState extends State<Fishroom> {
   bool loading = false;
 
   init() async {
-    if (context.read<TanksCubit>().state.tanks.isEmpty) {
-      setState(() => loading = true);
-      try {
-        await context.read<TanksCubit>().getTanks();
-      } on Exception catch (e) {
-        showToast(
-          context,
-          title: "Something went wrong.",
-          description: e.toString(),
-          toastType: ToastType.error,
-        );
-      }
+    setState(() => loading = true);
+    try {
+      await context.read<TanksCubit>().getTanks();
+    } on Exception catch (e) {
+      showToast(
+        context,
+        title: "Something went wrong.",
+        description: e.toString(),
+        toastType: ToastType.error,
+      );
     }
     setState(() => loading = false);
   }
@@ -57,15 +58,17 @@ class _FishroomState extends State<Fishroom> {
             const CustomBackground(),
             Scaffold(
               backgroundColor: Colors.transparent,
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateTank()));
-                },
-                child: const Icon(Icons.add),
-              ),
+              floatingActionButton: canAddTank(context)
+                  ? FloatingActionButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CreateTank()));
+                      },
+                      child: const Icon(Icons.add),
+                    )
+                  : null,
               appBar: state.tanks.isEmpty || loading
                   ? const RootSliverAppBar(
                       implyLeading: false,
