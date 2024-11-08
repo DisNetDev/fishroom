@@ -46,8 +46,6 @@ class _TankDetailsState extends State<TankDetails> {
     getTankReadings();
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TanksCubit, TanksState>(
@@ -57,7 +55,8 @@ class _TankDetailsState extends State<TankDetails> {
             .state
             .readings
             .where((reading) => reading.tankId == widget.tank.id)
-            .toList();
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
         return RefreshIndicator(
           edgeOffset: 20,
@@ -105,7 +104,7 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          const TankHistoryChart(),
+                          // const TankHistoryChart(),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
