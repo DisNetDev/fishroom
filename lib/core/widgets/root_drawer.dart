@@ -1,6 +1,7 @@
 import 'package:fishroom/core/usecases/can_add_tank.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/auth/usecases/logout.dart';
+import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/upgrade/views/upgrade_to_pro.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../features/auth/cubit/auth_cubit.dart';
-import '../../features/fishroom/views/create_tank.dart';
 
 class RootDrawer extends StatelessWidget {
   const RootDrawer({super.key});
@@ -44,7 +44,7 @@ class RootDrawer extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CreateTank()));
+                            builder: (context) => const CreateTankTankName()));
                   },
                 ),
 

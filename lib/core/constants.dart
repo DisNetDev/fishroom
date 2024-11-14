@@ -17,6 +17,9 @@ const TextStyle kHeading1TextStyle = TextStyle(
   fontWeight: FontWeight.w800,
 );
 
+const TextStyle kHeadingTextStyle = TextStyle(
+    fontSize: 20, fontWeight: FontWeight.w800, fontFamily: "CheesyCats");
+
 const Color kPrimaryColor = Color.fromARGB(255, 0, 199, 253);
 const Color kSecondaryColor = Color.fromARGB(255, 32, 61, 224);
 
