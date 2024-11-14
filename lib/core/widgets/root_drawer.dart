@@ -2,6 +2,7 @@ import 'package:fishroom/core/usecases/can_add_tank.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/auth/usecases/logout.dart';
+import 'package:fishroom/features/upgrade/views/upgrade_to_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -47,12 +48,12 @@ class RootDrawer extends StatelessWidget {
 
             if (!pro)
               ListTile(
-                leading: const Icon(Icons.arrow_upward_outlined),
-                title: const Text("Upgrade to Pro"),
-                onTap: () => showToast(context,
-                    title: "TODO: Implement payments",
-                    toastType: ToastType.error),
-              ),
+                  leading: const Icon(Icons.arrow_upward_outlined),
+                  title: const Text("Upgrade to Pro"),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const UpgradeToPro()))),
             const Expanded(child: SizedBox()),
 
             ListTile(

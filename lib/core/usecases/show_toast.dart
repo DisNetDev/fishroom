@@ -12,7 +12,7 @@ void showToast(
 }) {
   toastification.showCustom(
     alignment: Alignment.bottomCenter,
-    autoCloseDuration: const Duration(seconds: 10),
+    autoCloseDuration: const Duration(seconds: 3),
     builder: (BuildContext context, ToastificationItem holder) {
       return Container(
         padding: const EdgeInsets.all(10),
