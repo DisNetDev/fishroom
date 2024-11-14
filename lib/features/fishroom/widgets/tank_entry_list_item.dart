@@ -5,7 +5,6 @@ import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
-import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -27,18 +26,50 @@ class TankEntryListItem extends StatefulWidget {
 
 class _TankEntryListItemState extends State<TankEntryListItem> {
   bool open = false;
+
   @override
   Widget build(BuildContext context) {
     return Skeleton.shade(
       child: Dismissible(
-        background: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+        confirmDismiss: (direction) async {
+          return await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Confirm Deletion'),
+                    content: const Text(
+                        'Are you sure you want to delete this entry?\nThis cannot be undone.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  );
+                },
+              ) ??
+              false;
+        },
+        direction: DismissDirection.endToStart,
+        background: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: const GradientBoxBorder(gradient: kErrorGradient)),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Icon(Icons.delete),
-              Icon(Icons.delete),
+              Text(
+                "Delete",
+                style: kHeading1TextStyle.copyWith(color: Colors.deepOrange),
+              ),
+              const Gap(20),
+              const Icon(Icons.delete, color: Colors.deepOrange),
             ],
           ),
         ),

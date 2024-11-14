@@ -71,67 +71,72 @@ class _TankTileState extends State<TankTile> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: MaterialContainer(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              decoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 5,
-                      offset: Offset(2, 2)),
-                ],
-                color: isDarkMode(context) == false
-                    ? const Color.fromARGB(255, 255, 255, 255)
-                    : Colors.black,
-                border: const GradientBoxBorder(
-                  gradient: LinearGradient(
-                    colors: [kPrimaryColor, kSecondaryColor],
+          if (widget.tank.imageUrl != null)
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: MaterialContainer(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isDarkMode(context) == false
+                      ? const Color.fromARGB(255, 255, 255, 255)
+                      : Colors.black,
+                  border: const GradientBoxBorder(
+                    gradient: LinearGradient(
+                      colors: [kPrimaryColor, kSecondaryColor],
+                    ),
                   ),
+                  borderRadius: BorderRadius.circular(borderRadius),
                 ),
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(borderRadius),
-                child: Skeletonizer(
-                  enabled: loadingImage,
-                  child: Skeleton.replace(
-                    child: widget.tank.imageLocalPath != null &&
-                            File(widget.tank.imageLocalPath!)
-                                .existsSync() // Check if the local image path is valid
-                        ? Image(
-                            image: FileImage(File(widget.tank.imageLocalPath!)),
-                            fit: BoxFit.cover,
-                          )
-                        : CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: widget.tank.imageUrl ?? "",
-                            errorWidget: (context, url, error) {
-                              return const Center(child: SizedBox());
-                            },
-                            placeholder: (context, url) =>
-                                const Center(child: Loader()),
-                          ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  child: Skeletonizer(
+                    enabled: loadingImage,
+                    child: Skeleton.replace(
+                      child: widget.tank.imageLocalPath != null &&
+                              File(widget.tank.imageLocalPath!)
+                                  .existsSync() // Check if the local image path is valid
+                          ? Image(
+                              image:
+                                  FileImage(File(widget.tank.imageLocalPath!)),
+                              fit: BoxFit.cover,
+                            )
+                          : CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: widget.tank.imageUrl ?? "",
+                              errorWidget: (context, url, error) {
+                                return const Center(child: SizedBox());
+                              },
+                              placeholder: (context, url) =>
+                                  const Center(child: Loader()),
+                            ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
           Skeleton.replace(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 11, vertical: 11),
               padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Colors.transparent, Colors.black],
-                ),
+                border: widget.tank.imageUrl != null
+                    ? null
+                    : const GradientBoxBorder(gradient: kPrimaryGradient),
+                gradient: widget.tank.imageUrl != null
+                    ? const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Colors.transparent, Colors.black],
+                      )
+                    : kPrimaryGradient,
                 borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(borderRadius),
-                  bottomLeft: Radius.circular(borderRadius),
-                ),
+                    bottomRight: Radius.circular(borderRadius),
+                    bottomLeft: Radius.circular(borderRadius),
+                    topRight: Radius.circular(
+                        widget.tank.imageUrl != null ? 0 : borderRadius),
+                    topLeft: Radius.circular(
+                        widget.tank.imageUrl != null ? 0 : borderRadius)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

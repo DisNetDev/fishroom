@@ -7,6 +7,7 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/features/fishroom/views/create_tank.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants.dart';
@@ -103,10 +104,15 @@ class _FishroomState extends State<Fishroom> {
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              return TankTile(tank: tanksState.tanks[index]);
+                              if (index == tanksState.tanks.length) {
+                                return const Gap(
+                                    100); //return a gap at the bottom of the screen
+                              } else {
+                                return TankTile(tank: tanksState.tanks[index]);
+                              }
                             },
                             childCount: tanksState.tanks.isNotEmpty
-                                ? tanksState.tanks.length
+                                ? tanksState.tanks.length + 1
                                 : 1,
                           ),
                         ),
