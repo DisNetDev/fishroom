@@ -12,12 +12,23 @@ class FishUser {
     );
   }
 
-  // New toJson method to convert the object to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': uuid,
       'email': email,
       'premium': premium,
     };
+  }
+
+  FishUser copyWith({
+    String? uuid,
+    String? email,
+    bool? premium,
+  }) {
+    return FishUser(
+      uuid: uuid ?? this.uuid,
+      email: email ?? this.email,
+      premium: premium ?? this.premium,
+    );
   }
 }

@@ -50,6 +50,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.bottomCenter,
       children: [
         const CustomBackground(),
         Scaffold(
@@ -186,69 +187,77 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                   ),
                   const Gap(20),
                   if (isProUser(context))
-                    ImageUploadWidget(
-                      image: _image,
-                      onImagePicked: (image) => setState(
-                        () => _image = image,
-                      ),
+                    Column(
+                      children: [
+                        CustomButton(
+                            primary: false,
+                            text: "Attach a Photo",
+                            onPressed: () async {}),
+                        const Gap(20),
+                        Text(
+                          "Disclaimer, although we do compress images, minimal damage is made to the image quality. However, you should always backup your high quality original photos.",
+                          textAlign: TextAlign.center,
+                          style: kHintTextStyle.copyWith(
+                              fontStyle: FontStyle.italic),
+                        ),
+                      ],
                     )
                   else
-                    AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 600),
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: const GradientBoxBorder(
-                              gradient: LinearGradient(
-                                colors: [kPrimaryColor, kSecondaryColor],
-                              ),
-                            ),
-                            borderRadius: BorderRadius.circular(20),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: isDarkMode(context)
+                                  ? Colors.grey
+                                  : Colors.black),
+                          borderRadius: BorderRadius.circular(1000)),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Symbols.lock,
+                            color: Colors.grey,
                           ),
-                          child: const Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Symbols.lock),
-                                Text(
-                                  "Upgrade to Pro to upload a photo.",
-                                  style: kDateTimeTextStyle,
-                                ),
-                              ],
-                            ),
-                          )),
+                          Gap(20),
+                          Text(
+                            "Upgrade to Pro to upload a photo.",
+                            style: kHintTextStyle,
+                          ),
+                        ],
+                      ),
                     ),
-                  const Gap(50),
-                  CustomButton(
-                      loading: loading,
-                      text: "Save",
-                      onPressed: () async {
-                        setState(() => loading = true);
-                        try {
-                          await context.read<TanksCubit>().createTankReading(
-                                tankReading,
-                                _image,
-                              );
-                          setState(() => loading = false);
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                          }
-                        } on Exception catch (e) {
-                          if (context.mounted) {
-                            showToast(context,
-                                title: "Something went wrong.",
-                                description: e.toString(),
-                                toastType: ToastType.error);
-                            setState(() => loading = false);
-                          }
-                        }
-                      }),
-                  const Gap(50),
+                  const Gap(200)
                 ],
               ),
             ),
           ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+          child: CustomButton(
+              loading: loading,
+              text: "Save",
+              onPressed: () async {
+                setState(() => loading = true);
+                try {
+                  await context.read<TanksCubit>().createTankReading(
+                        tankReading,
+                        _image,
+                      );
+                  setState(() => loading = false);
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                } on Exception catch (e) {
+                  if (context.mounted) {
+                    showToast(context,
+                        title: "Something went wrong.",
+                        description: e.toString(),
+                        toastType: ToastType.error);
+                    setState(() => loading = false);
+                  }
+                }
+              }),
         ),
       ],
     );

@@ -26,6 +26,13 @@ class AuthCubit extends HydratedCubit<AuthState> {
     };
   }
 
+  void debugToggleFreeAndPro() {
+    if (state.user != null) {
+      emit(state.copyWith(
+          user: state.user!.copyWith(premium: !state.user!.premium)));
+    }
+  }
+
   Future<void> signUpWithPassword(
       {required String email, required String password}) async {
     try {

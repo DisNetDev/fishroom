@@ -51,8 +51,11 @@ class _FishroomState extends State<Fishroom> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TanksCubit, TanksState>(
-      builder: (context, state) {
+    return Builder(
+      builder: (context) {
+        context.watch<AuthCubit>().state;
+        final TanksState tanksState = context.watch<TanksCubit>().state;
+
         return Stack(
           children: [
             const CustomBackground(),
@@ -69,7 +72,7 @@ class _FishroomState extends State<Fishroom> {
                       child: const Icon(Icons.add),
                     )
                   : null,
-              appBar: state.tanks.isEmpty || loading
+              appBar: tanksState.tanks.isEmpty || loading
                   ? const RootSliverAppBar(
                       implyLeading: false,
                       title: "Fishroom",
@@ -89,7 +92,7 @@ class _FishroomState extends State<Fishroom> {
                       ],
                     );
                   }
-                  if (state.tanks.isNotEmpty) {
+                  if (tanksState.tanks.isNotEmpty) {
                     return CustomScrollView(
                       physics: const BouncingScrollPhysics(),
                       slivers: [
@@ -100,10 +103,11 @@ class _FishroomState extends State<Fishroom> {
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              return TankTile(tank: state.tanks[index]);
+                              return TankTile(tank: tanksState.tanks[index]);
                             },
-                            childCount:
-                                state.tanks.isNotEmpty ? state.tanks.length : 1,
+                            childCount: tanksState.tanks.isNotEmpty
+                                ? tanksState.tanks.length
+                                : 1,
                           ),
                         ),
                       ],
