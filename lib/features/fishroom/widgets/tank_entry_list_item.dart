@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -147,6 +149,9 @@ class _TankEntryListItemState extends State<TankEntryListItem> {
                           borderRadius: const BorderRadius.vertical(
                               bottom: Radius.circular(10)),
                           child: CachedNetworkImage(
+                              placeholder: (context, url) => const AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: SizedBox(child: Loader())),
                               imageUrl: widget.reading.imageUrl!))
                   ],
                 ),
