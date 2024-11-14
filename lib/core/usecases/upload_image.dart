@@ -97,7 +97,7 @@ Future<XFile?> _pickAndCompress(ImageSource source) async {
 
       XFile? compressedImage = await FlutterImageCompress.compressAndGetFile(
           file.absolute.path, targetPath,
-          quality: 25, numberOfRetries: 5, format: CompressFormat.jpeg);
+          quality: 10, numberOfRetries: 5, format: CompressFormat.jpeg);
       return compressedImage;
     }
   } on Exception catch (_) {
