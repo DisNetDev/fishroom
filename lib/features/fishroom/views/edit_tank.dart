@@ -290,7 +290,8 @@ class _EditTankState extends State<EditTank> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Confirm Deletion"),
-          content: const Text("Are you sure you want to delete this tank?"),
+          content: const Text(
+              "Are you sure you want to delete this tank?\nThis cannot be undone."),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -300,6 +301,7 @@ class _EditTankState extends State<EditTank> {
               onPressed: () {
                 try {
                   context.read<TanksCubit>().deleteTank(widget.tank);
+                  Navigator.of(context).pop();
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 } catch (e) {
