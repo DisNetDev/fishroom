@@ -169,6 +169,12 @@ class _CreateTankState extends State<CreateTank> {
                     () => _image = image,
                   ),
                 ),
+                const Gap(20),
+                Text(
+                  "Tip: To get the best looking thumbnail, \nthe image should be landscape, \n16:9 ratio and the tank should fill the whole photo.",
+                  textAlign: TextAlign.center,
+                  style: kHintTextStyle.copyWith(fontStyle: FontStyle.italic),
+                ),
                 const Expanded(
                   child: SizedBox(),
                 ),

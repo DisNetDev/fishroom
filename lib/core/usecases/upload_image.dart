@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gradient_borders/gradient_borders.dart';
-import 'package:image_picker/image_picker.dart'; // Import Material package for UI components
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart'; // Import Material package for UI components
 
 Future<File?> pickImage(BuildContext context) async {
   File? filePicked;
@@ -26,7 +30,8 @@ Future<File?> pickImage(BuildContext context) async {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        XFile? pickedImage = await _pick(ImageSource.gallery);
+                        XFile? pickedImage =
+                            await _pickAndCompress(ImageSource.gallery);
                         if (pickedImage != null && context.mounted) {
                           filePicked = File(pickedImage.path);
                           Navigator.of(context).pop();
@@ -49,7 +54,8 @@ Future<File?> pickImage(BuildContext context) async {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        XFile? pickedImage = await _pick(ImageSource.camera);
+                        XFile? pickedImage =
+                            await _pickAndCompress(ImageSource.camera);
                         if (pickedImage != null && context.mounted) {
                           filePicked = File(pickedImage.path);
                           Navigator.of(context).pop();
@@ -78,8 +84,24 @@ Future<File?> pickImage(BuildContext context) async {
   return filePicked;
 }
 
-Future<XFile?> _pick(ImageSource source) async {
+Future<XFile?> _pickAndCompress(ImageSource source) async {
   ImagePicker picker = ImagePicker();
-  XFile? file = await picker.pickImage(source: source);
-  return file;
+  XFile? xFile = await picker.pickImage(source: source);
+
+  try {
+    if (xFile != null) {
+      File file = File(xFile.path);
+
+      var dir = await getTemporaryDirectory();
+      final String targetPath = "${dir.path}${const Uuid().v4()}.jpeg";
+
+      XFile? compressedImage = await FlutterImageCompress.compressAndGetFile(
+          file.absolute.path, targetPath,
+          quality: 25, numberOfRetries: 5, format: CompressFormat.jpeg);
+      return compressedImage;
+    }
+  } on Exception catch (_) {
+    rethrow;
+  }
+  return null;
 }
