@@ -77,9 +77,13 @@ class SupabaseRepository {
 
   Future<void> insert(
       {required String tableName, required Map<String, dynamic> json}) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
     try {
       await supabase.from(tableName).insert(json);
+      stopwatch.stop();
+      fishLog("Insert was done in ${stopwatch.elapsedMilliseconds}");
     } on Exception catch (_) {
+      stopwatch.stop();
       rethrow;
     }
   }
@@ -88,11 +92,17 @@ class SupabaseRepository {
       {required String tableName,
       required String column,
       required String condition}) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+
     try {
       final data =
           await supabase.from(tableName).select().eq(column, condition);
+      stopwatch.stop();
+      fishLog("Fetch was done in ${stopwatch.elapsedMilliseconds}");
+
       return data;
     } on Exception catch (_) {
+      stopwatch.stop();
       rethrow;
     }
   }
@@ -102,21 +112,41 @@ class SupabaseRepository {
       required Map<String, dynamic> json,
       required String column,
       required String condition}) async {
-    await supabase.from(tableName).update(json).eq(column, condition);
+    final Stopwatch stopwatch = Stopwatch()..start();
+
+    try {
+      await supabase.from(tableName).update(json).eq(column, condition);
+      stopwatch.stop();
+
+      fishLog("Update was done in ${stopwatch.elapsedMilliseconds}");
+    } on Exception catch (_) {
+      stopwatch.stop();
+
+      rethrow;
+    }
   }
 
   Future<void> delete(
       {required String tableName,
       required String column,
       required String condition}) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+
     try {
       await supabase.from(tableName).delete().eq(column, condition);
+      stopwatch.stop();
+
+      fishLog("Insert was done in ${stopwatch.elapsedMilliseconds}");
     } on Exception catch (_) {
+      stopwatch.stop();
+
       rethrow;
     }
   }
 
   Future<String?> uploadImage(File file) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+
     try {
       final String fileName = file.path.split('/').last;
       await supabase.storage.from('tank_images').upload(
@@ -128,9 +158,12 @@ class SupabaseRepository {
       final String url = supabase.storage
           .from('tank_images')
           .getPublicUrl('${user!.id}/$fileName');
-
+      stopwatch.stop();
+      fishLog("Upload was done in ${stopwatch.elapsedMilliseconds}");
       return url;
     } on Exception catch (_) {
+      stopwatch.stop();
+
       rethrow;
     }
   }
