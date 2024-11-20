@@ -81,7 +81,7 @@ class SupabaseRepository {
     try {
       await supabase.from(tableName).insert(json);
       stopwatch.stop();
-      fishLog("Insert was done in ${stopwatch.elapsedMilliseconds}");
+      fishLog("Insert took ${stopwatch.elapsedMilliseconds}ms");
     } on Exception catch (_) {
       stopwatch.stop();
       rethrow;
@@ -98,7 +98,7 @@ class SupabaseRepository {
       final data =
           await supabase.from(tableName).select().eq(column, condition);
       stopwatch.stop();
-      fishLog("Fetch was done in ${stopwatch.elapsedMilliseconds}");
+      fishLog("Fetch took ${stopwatch.elapsedMilliseconds}ms");
 
       return data;
     } on Exception catch (_) {
@@ -118,7 +118,7 @@ class SupabaseRepository {
       await supabase.from(tableName).update(json).eq(column, condition);
       stopwatch.stop();
 
-      fishLog("Update was done in ${stopwatch.elapsedMilliseconds}");
+      fishLog("Update took ${stopwatch.elapsedMilliseconds}ms");
     } on Exception catch (_) {
       stopwatch.stop();
 
@@ -136,7 +136,7 @@ class SupabaseRepository {
       await supabase.from(tableName).delete().eq(column, condition);
       stopwatch.stop();
 
-      fishLog("Insert was done in ${stopwatch.elapsedMilliseconds}");
+      fishLog("Insert took ${stopwatch.elapsedMilliseconds}ms");
     } on Exception catch (_) {
       stopwatch.stop();
 
@@ -159,7 +159,7 @@ class SupabaseRepository {
           .from('tank_images')
           .getPublicUrl('${user!.id}/$fileName');
       stopwatch.stop();
-      fishLog("Upload was done in ${stopwatch.elapsedMilliseconds}");
+      fishLog("Upload took ${stopwatch.elapsedMilliseconds}ms");
       return url;
     } on Exception catch (_) {
       stopwatch.stop();
