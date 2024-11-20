@@ -32,11 +32,15 @@ class TankReading {
   });
 
   factory TankReading.fromJson(Map<String, dynamic> json) {
+    final typeStr = json['type'] as String;
+    final type = TankReadingType.values.firstWhere(
+      (e) => e.label == typeStr,
+      orElse: () => TankReadingType.note,
+    );
+
     return TankReading(
       id: json['id'] as String,
-      type: json['type'] == "Note"
-          ? TankReadingType.note
-          : TankReadingType.measurement,
+      type: type,
       tankId: json['tank_id'] as String,
       ownerId: json['owner_id'] as String,
       createdAt: json['created_at'] as String,
@@ -109,6 +113,12 @@ class TankReading {
 enum TankReadingType {
   measurement,
   note,
+  waterChange,
+  trim,
+  feed,
+  fertilize,
+  glassScrape,
+  clean,
 }
 
 extension TankReadingTypeExtension on TankReadingType {
@@ -118,6 +128,18 @@ extension TankReadingTypeExtension on TankReadingType {
         return "Measurement";
       case TankReadingType.note:
         return "Note";
+      case TankReadingType.waterChange:
+        return "Water Change";
+      case TankReadingType.trim:
+        return "Trim";
+      case TankReadingType.feed:
+        return "Feed";
+      case TankReadingType.fertilize:
+        return "Fertilize";
+      case TankReadingType.glassScrape:
+        return "Glass Scrape";
+      case TankReadingType.clean:
+        return "General Clean";
     }
   }
 }
