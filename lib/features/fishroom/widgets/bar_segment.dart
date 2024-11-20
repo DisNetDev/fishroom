@@ -53,6 +53,8 @@ class _BarSegmentState extends State<BarSegment> {
               Alignment.bottomCenter, // Align the animated container to bottom
           child: AnimatedContainer(
             decoration: BoxDecoration(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
               color: widget.color ?? Colors.red,
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
@@ -74,7 +76,9 @@ class _BarSegmentState extends State<BarSegment> {
                 Transform.translate(
                   offset: const Offset(0, -20),
                   child: Text(
-                    widget.value.toString(),
+                    widget.value.toString().endsWith('.0')
+                        ? widget.value.toString().replaceFirst('.0', '')
+                        : widget.value.toString(),
                     style: kDateTimeTextStyle.copyWith(
                       fontStyle: FontStyle.italic,
                       color: Colors.grey,

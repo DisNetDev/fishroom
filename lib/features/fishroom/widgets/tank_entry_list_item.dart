@@ -250,20 +250,24 @@ class _OpenedReading extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Note",
-                      style: kHeading1TextStyle,
-                    ),
-                    Text(
-                      reading.note ?? "",
-                      style: kPlainTextStyle,
-                    ),
+                    if (reading.note != null)
+                      const Text(
+                        "Note",
+                        style: kHeading1TextStyle,
+                      ),
+                    if (reading.note != null)
+                      Text(
+                        reading.note ?? "",
+                        style: kPlainTextStyle,
+                      ),
                     const Gap(20),
-                    const Text(
-                      "Readings",
-                      style: kHeading1TextStyle,
-                    ),
-                    SmallEntryGraph(tankReading: reading)
+                    if (reading.type == TankReadingType.measurement)
+                      const Text(
+                        "Reading",
+                        style: kHeading1TextStyle,
+                      ),
+                    if (reading.type == TankReadingType.measurement)
+                      SmallEntryGraph(tankReading: reading)
                   ],
                 ),
               ),
