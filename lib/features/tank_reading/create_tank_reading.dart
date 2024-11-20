@@ -4,6 +4,7 @@ import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/models/tank_reading.dart';
 import 'package:fishroom/core/usecases/is_pro_user.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/usecases/upload_image.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/root_appbar.dart';
@@ -186,13 +187,15 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                     initialValue: tankReading.note ?? "",
                   ),
                   const Gap(20),
-                  if (isProUser(context))
+                  if (isProUser(context) && _image == null)
                     Column(
                       children: [
                         CustomButton(
                             primary: false,
                             text: "Attach a Photo",
-                            onPressed: () async {}),
+                            onPressed: () async {
+                              _image = await pickImage(context);
+                            }),
                         const Gap(20),
                         Text(
                           "Disclaimer, although we do compress images, minimal damage is made to the image quality. However, you should always backup your high quality original photos.",
@@ -202,7 +205,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         ),
                       ],
                     )
-                  else
+                  else if (isProUser(context) && _image == null)
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
@@ -225,39 +228,45 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                           ),
                         ],
                       ),
+                    )
+                  else
+                    ImageUploadWidget(
+                      image: _image,
+                      onImagePicked: (image) => setState(() => _image = image),
                     ),
-                  const Gap(200)
+                  const Gap(100),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30, horizontal: 16),
+                    child: CustomButton(
+                        loading: loading,
+                        text: "Save",
+                        onPressed: () async {
+                          setState(() => loading = true);
+                          try {
+                            await context.read<TanksCubit>().createTankReading(
+                                  tankReading,
+                                  _image,
+                                );
+                            setState(() => loading = false);
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                          } on Exception catch (e) {
+                            if (context.mounted) {
+                              showToast(context,
+                                  title: "Something went wrong.",
+                                  description: e.toString(),
+                                  toastType: ToastType.error);
+                              setState(() => loading = false);
+                            }
+                          }
+                        }),
+                  ),
                 ],
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
-          child: CustomButton(
-              loading: loading,
-              text: "Save",
-              onPressed: () async {
-                setState(() => loading = true);
-                try {
-                  await context.read<TanksCubit>().createTankReading(
-                        tankReading,
-                        _image,
-                      );
-                  setState(() => loading = false);
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                } on Exception catch (e) {
-                  if (context.mounted) {
-                    showToast(context,
-                        title: "Something went wrong.",
-                        description: e.toString(),
-                        toastType: ToastType.error);
-                    setState(() => loading = false);
-                  }
-                }
-              }),
         ),
       ],
     );

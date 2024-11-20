@@ -1,9 +1,12 @@
 import 'dart:ui';
 
+import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
+import 'package:fishroom/core/widgets/root_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -68,7 +71,8 @@ class _TankEntryListItemState extends State<TankEntryListItem> {
             children: [
               Text(
                 "Delete",
-                style: kHeading1TextStyle.copyWith(color: Colors.deepOrange),
+                style: kHeading1TextStyle.copyWith(
+                    color: Colors.deepOrange, fontWeight: FontWeight.w500),
               ),
               const Gap(20),
               const Icon(Icons.delete, color: Colors.deepOrange),
@@ -80,137 +84,192 @@ class _TankEntryListItemState extends State<TankEntryListItem> {
           widget.onDismissed();
         },
         child: Skeleton.shade(
-          child: Stack(
-            children: [
-              ClipRRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                  child: Container(
-                    alignment: Alignment.topCenter,
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    constraints: BoxConstraints(
-                      minHeight:
-                          widget.reading.type == TankReadingType.measurement
-                              ? 120
-                              : 80,
-                    ),
-                    decoration: BoxDecoration(
-                      border: const GradientBoxBorder(
-                          width: 0.3, gradient: kPrimaryGradient),
-                      borderRadius: BorderRadius.circular(10),
-                      color: isDarkMode(context)
-                          ? const Color.fromARGB(0, 0, 0, 0)
-                          : const Color.fromARGB(55, 255, 255, 255),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      widget.reading.type.label,
-                                      style: kHeading1TextStyle,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(
-                                      widget.reading.note ?? "",
-                                      style: kPlainTextStyle,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (widget.reading.type ==
-                                  TankReadingType.measurement)
-                                const Expanded(child: SizedBox())
-                            ],
-                          ),
-                        ),
-                        if (widget.reading.imageUrl != null)
-                          GestureDetector(
-                            onTap: () => setState(() => open = !open),
-                            child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 5),
-                                decoration: BoxDecoration(
-                                    borderRadius: open
-                                        ? null
-                                        : const BorderRadius.vertical(
-                                            bottom: Radius.circular(10)),
-                                    gradient: const LinearGradient(colors: [
-                                      Color.fromARGB(102, 0, 198, 253),
-                                      Colors.transparent
-                                    ])),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Symbols.attach_file,
-                                      size: 16,
-                                    ),
-                                    const Text(
-                                      "Photo Attached",
-                                      style: kDateTimeTextStyle,
-                                    ),
-                                    const Gap(20),
-                                    Icon(
-                                      !open
-                                          ? Symbols.keyboard_arrow_down
-                                          : Symbols.keyboard_arrow_up,
-                                      size: 16,
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        if (open && widget.reading.imageUrl != null)
+          child: OpenContainer(
+            closedColor: Colors.transparent,
+            openColor: isDarkMode(context) ? Colors.black : Colors.white,
+            closedElevation: 0,
+            openElevation: 0,
+            middleColor: Colors.transparent,
+            openBuilder: (context, action) =>
+                _OpenedReading(reading: widget.reading),
+            closedBuilder: (context, action) => Stack(
+              children: [
+                ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      constraints: BoxConstraints(
+                        minHeight:
+                            widget.reading.type == TankReadingType.measurement
+                                ? 120
+                                : 80,
+                      ),
+                      decoration: BoxDecoration(
+                        border: const GradientBoxBorder(
+                            width: 0.3, gradient: kPrimaryGradient),
+                        borderRadius: BorderRadius.circular(10),
+                        color: isDarkMode(context)
+                            ? const Color.fromARGB(0, 0, 0, 0)
+                            : const Color.fromARGB(55, 255, 255, 255),
+                      ),
+                      child: Column(
+                        children: [
                           Container(
-                            alignment: Alignment.center,
-                            height: 50,
-                            child: GestureDetector(
-                              onTap: () => showToast(context,
-                                  title: "Nope not yet :)",
-                                  toastType: ToastType.error),
-                              child: const Text(
-                                "Download",
-                                style: kHeading2TextStyle,
-                              ),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.reading.type.label,
+                                        style: kHeading1TextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        widget.reading.note ?? "",
+                                        style: kPlainTextStyle,
+                                      ),
+                                      SmallEntryGraph(
+                                          tankReading: widget.reading),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        if (open && widget.reading.imageUrl != null)
-                          ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                  bottom: Radius.circular(10)),
-                              child: CachedNetworkImage(
-                                  placeholder: (context, url) =>
-                                      const AspectRatio(
-                                          aspectRatio: 16 / 9,
-                                          child: SizedBox(child: Loader())),
-                                  imageUrl: widget.reading.imageUrl!))
-                      ],
+                          if (widget.reading.imageUrl != null)
+                            GestureDetector(
+                              onTap: () => setState(() => open = !open),
+                              child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 5),
+                                  decoration: BoxDecoration(
+                                      borderRadius: open
+                                          ? null
+                                          : const BorderRadius.vertical(
+                                              bottom: Radius.circular(10)),
+                                      gradient: const LinearGradient(colors: [
+                                        Color.fromARGB(102, 0, 198, 253),
+                                        Colors.transparent
+                                      ])),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Symbols.attach_file,
+                                        size: 16,
+                                      ),
+                                      const Text(
+                                        "Photo Attached",
+                                        style: kDateTimeTextStyle,
+                                      ),
+                                      const Gap(20),
+                                      Icon(
+                                        !open
+                                            ? Symbols.keyboard_arrow_down
+                                            : Symbols.keyboard_arrow_up,
+                                        size: 16,
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          if (open && widget.reading.imageUrl != null)
+                            Container(
+                              alignment: Alignment.center,
+                              height: 50,
+                              child: GestureDetector(
+                                onTap: () => showToast(context,
+                                    title: "Nope not yet :)",
+                                    toastType: ToastType.error),
+                                child: const Text(
+                                  "Download",
+                                  style: kHeading2TextStyle,
+                                ),
+                              ),
+                            ),
+                          if (open && widget.reading.imageUrl != null)
+                            ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                    bottom: Radius.circular(10)),
+                                child: CachedNetworkImage(
+                                    placeholder: (context, url) =>
+                                        const AspectRatio(
+                                            aspectRatio: 16 / 9,
+                                            child: SizedBox(child: Loader())),
+                                    imageUrl: widget.reading.imageUrl!))
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                  top: 10,
-                  right: 20,
-                  child: DateTimeText(dateTime: widget.reading.createdAt)),
-              Positioned(
-                bottom: 8,
-                right: 15,
-                child: widget.reading.type == TankReadingType.note
-                    ? const SizedBox()
-                    : SmallEntryGraph(tankReading: widget.reading),
-              )
-            ],
+                Positioned(
+                    top: 10,
+                    right: 20,
+                    child: DateTimeText(dateTime: widget.reading.createdAt)),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _OpenedReading extends StatelessWidget {
+  const _OpenedReading({required this.reading});
+
+  final TankReading reading;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: isDarkMode(context) ? Colors.black : Colors.white,
+      appBar: RootSliverAppBar(
+        title: reading.type.label,
+      ),
+      body: Stack(
+        children: [
+          const CustomBackground(),
+          Column(
+            children: [
+              if (reading.imageUrl != null)
+                CachedNetworkImage(
+                  placeholder: (context, url) => const AspectRatio(
+                      aspectRatio: 16 / 9, child: SizedBox(child: Loader())),
+                  imageUrl: reading.imageUrl!,
+                ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Note",
+                      style: kHeading1TextStyle,
+                    ),
+                    Text(
+                      reading.note ?? "",
+                      style: kPlainTextStyle,
+                    ),
+                    const Gap(20),
+                    const Text(
+                      "Readings",
+                      style: kHeading1TextStyle,
+                    ),
+                    SmallEntryGraph(tankReading: reading)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -36,35 +36,54 @@ class _BarSegmentState extends State<BarSegment> {
     });
   }
 
-  double animatedValue = 0;
+  double animatedValue = 0; // Start at 0 and animate up
+
   @override
   Widget build(BuildContext context) {
+    final targetHeight = widget.height ?? getRandomValue();
+    const textOffset = 20.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          widget.value.toString(),
-          style: kDateTimeTextStyle.copyWith(
-              fontStyle: FontStyle.italic, color: Colors.grey),
-        ),
         const Gap(5),
-        AnimatedContainer(
-          decoration: BoxDecoration(
-            color: widget.color ?? Colors.red,
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [
-                isDarkMode(context) ? Colors.black87 : Colors.white,
-                widget.color ?? Colors.red
+        Container(
+          height:
+              targetHeight + textOffset, // Add extra space for the text offset
+          alignment:
+              Alignment.bottomCenter, // Align the animated container to bottom
+          child: AnimatedContainer(
+            decoration: BoxDecoration(
+              color: widget.color ?? Colors.red,
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  isDarkMode(context) ? Colors.black87 : Colors.white,
+                  widget.color ?? Colors.red
+                ],
+              ),
+            ),
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            curve: Curves.bounceOut,
+            duration: const Duration(milliseconds: 1000),
+            width: 20,
+            height: animatedValue,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Transform.translate(
+                  offset: const Offset(0, -20),
+                  child: Text(
+                    widget.value.toString(),
+                    style: kDateTimeTextStyle.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          margin: const EdgeInsets.symmetric(horizontal: 5),
-          curve: Curves.bounceOut,
-          duration: const Duration(milliseconds: 1000),
-          width: 20,
-          height: animatedValue,
         ),
         Text(
           widget.tag ?? "NA",
