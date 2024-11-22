@@ -92,7 +92,7 @@ class AuthCubit extends HydratedCubit<AuthState> {
     try {
       if (state.user != null) {
         _supabaseRepository.update(
-            tableName: Table.users.label,
+            tableName: Table.users.,
             json: {"premium": true},
             column: id,
             condition: state.user!.uuid);
