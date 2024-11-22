@@ -137,7 +137,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         ),
                       ],
                     )
-                  else if (isProUser(context) && _image == null)
+                  else if (!isProUser(context) && _image == null)
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(

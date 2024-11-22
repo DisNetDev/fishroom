@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +37,6 @@ class _CreateTankState extends State<CreateTank> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-
     return Stack(
       children: [
         const CustomBackground(),
@@ -130,7 +129,9 @@ class _CreateTankState extends State<CreateTank> {
                 Container(
                   padding: EdgeInsets.zero,
                   decoration: BoxDecoration(
-                    color: isDarkTheme ? Colors.black26 : Colors.transparent,
+                    color: isDarkMode(context)
+                        ? Colors.black26
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(1000),
                   ),
                   child: ToggleButtons(
