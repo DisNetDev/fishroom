@@ -6,10 +6,10 @@ import 'package:fishroom/features/upgrade/views/upgrade_to_pro.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../features/app/cubit/app_cubit.dart';
-import '../../features/settings/views/settings_view.dart';
 
 class RootDrawer extends StatelessWidget {
   const RootDrawer({super.key});
@@ -50,14 +50,12 @@ class RootDrawer extends StatelessWidget {
                   },
                 ),
 
-                if (!pro)
-                  ListTile(
-                      leading: const Icon(Icons.arrow_upward_outlined),
-                      title: const Text("Upgrade to Pro"),
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UpgradeToPro()))),
+                ListTile(
+                  title: const Text("Tank Parameters"),
+                  subtitle: const Text("Adjust your tank parameters"),
+                  leading: const Icon(Symbols.bar_chart_rounded),
+                  onTap: () {},
+                ),
 
                 const Expanded(child: SizedBox()),
 
@@ -71,13 +69,19 @@ class RootDrawer extends StatelessWidget {
                     },
                   ),
 
+                if (!pro)
+                  ListTile(
+                      leading: const Icon(Icons.arrow_upward_outlined),
+                      title: const Text("Upgrade to Pro"),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UpgradeToPro()))),
+
                 ListTile(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SettingsView())),
-                  leading: const Icon(Icons.settings),
-                  title: const Text("Settings"),
+                  enabled: false,
+                  leading: const Icon(Symbols.info_rounded),
+                  title: const Text("Version Info"),
                   subtitle: FutureBuilder(
                     future: PackageInfo.fromPlatform(),
                     builder: (BuildContext context,
