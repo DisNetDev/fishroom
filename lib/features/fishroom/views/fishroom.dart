@@ -119,6 +119,7 @@ class _FishroomState extends State<Fishroom> {
                     );
                   } else {
                     return InkWell(
+                      radius: 50,
                       onTap: () {
                         Navigator.push(
                             context,
