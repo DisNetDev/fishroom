@@ -1,27 +1,31 @@
+import 'package:fishroom/features/settings/models/settings.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
 import '../models/fish_user.dart';
 
-part 'auth_state.dart';
+part 'app_state.dart';
 
-class AppCubit extends HydratedCubit<AuthState> {
-  AppCubit(this._supabaseRepository) : super(AuthState());
+class AppCubit extends HydratedCubit<AppState> {
+  AppCubit(this._supabaseRepository) : super(AppState());
 
   final SupabaseRepository _supabaseRepository;
 
   @override
-  AuthState? fromJson(Map<String, dynamic> json) {
-    return AuthState(
+  AppState? fromJson(Map<String, dynamic> json) {
+    return AppState(
       user: json['user'] != null ? FishUser.fromJson(json['user']) : null,
+      settings:
+          json['settings'] != null ? Settings.fromJson(json['settings']) : null,
     );
   }
 
   @override
-  Map<String, dynamic>? toJson(AuthState state) {
+  Map<String, dynamic>? toJson(AppState state) {
     return {
       'user': state.user?.toJson(),
+      'settings': state.settings?.toJson(),
     };
   }
 
@@ -70,7 +74,7 @@ class AppCubit extends HydratedCubit<AuthState> {
   }
 
   void clearCubit() {
-    emit(AuthState());
+    emit(AppState());
   }
 
   Future<void> fetchUser() async {
@@ -87,13 +91,43 @@ class AppCubit extends HydratedCubit<AuthState> {
     }
   }
 
+  Future<void> fetchSettings() async {
+    try {
+      fishLog("Getting Settings...");
+
+      final data = await _supabaseRepository.fetch(
+          tableName: Table.users.tableName,
+          conditionalColumn: Table.users.id,
+          condition: state.user!.uuid);
+      if (data != null && data.isNotEmpty) {
+        emit(state.copyWith(
+            settings: Settings.fromJson(data.first["settings"])));
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateSettings(Settings settings) async {
+    try {
+      await _supabaseRepository.update(
+          tableName: Table.users.tableName,
+          json: {Table.users.settings: settings.toJson()},
+          conditionalColumn: id,
+          condition: state.user!.uuid);
+      emit(state.copyWith(settings: settings));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> upgradeUserToPro() async {
     try {
       if (state.user != null) {
         _supabaseRepository.update(
             tableName: Table.users.tableName,
             json: {Table.users.premium: true},
-            column: id,
+            conditionalColumn: id,
             condition: state.user!.uuid);
       }
     } on Exception catch (_) {

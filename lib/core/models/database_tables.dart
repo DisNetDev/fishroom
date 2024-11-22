@@ -14,12 +14,12 @@ class Users extends DatabaseTables {
   String get id => _id.columnName;
   String get email => _email.columnName;
   String get premium => _premium.columnName;
-  String get parameters => _parameters.columnName;
+  String get settings => _settings.columnName;
 
   static const DBColumn _id = DBColumn('id');
   static const DBColumn _email = DBColumn('email');
   static const DBColumn _premium = DBColumn('premium');
-  static const DBColumn _parameters = DBColumn('saved_params');
+  static const DBColumn _settings = DBColumn('settings');
 }
 
 class UsersCheck extends DatabaseTables {

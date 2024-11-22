@@ -4,7 +4,7 @@ import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
-import 'package:fishroom/features/auth/cubit/app_cubit.dart';
+import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

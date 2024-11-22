@@ -14,7 +14,7 @@ import '../../../core/usecases/show_toast.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/root_sliver_app_bar.dart';
 import '../../../core/widgets/text_input.dart';
-import '../../auth/cubit/app_cubit.dart';
+import '../../app/cubit/app_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/image_upload_widget.dart';
 

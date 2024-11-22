@@ -100,12 +100,12 @@ class SupabaseRepository {
 
   Future<PostgrestList?> fetch(
       {required String tableName,
-      required String column,
+      required String conditionalColumn,
       required String condition}) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     try {
-      final data = await _retryOperation(
-          () => supabase.from(tableName).select().eq(column, condition));
+      final data = await _retryOperation(() =>
+          supabase.from(tableName).select().eq(conditionalColumn, condition));
       stopwatch.stop();
       fishLog("Fetch took ${stopwatch.elapsedMilliseconds}ms");
 
@@ -119,12 +119,14 @@ class SupabaseRepository {
   Future<void> update(
       {required String tableName,
       required Map<String, dynamic> json,
-      required String column,
+      required String conditionalColumn,
       required String condition}) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     try {
-      await _retryOperation(
-          () => supabase.from(tableName).update(json).eq(column, condition));
+      await _retryOperation(() => supabase
+          .from(tableName)
+          .update(json)
+          .eq(conditionalColumn, condition));
       stopwatch.stop();
       fishLog("Update took ${stopwatch.elapsedMilliseconds}ms");
     } catch (e) {

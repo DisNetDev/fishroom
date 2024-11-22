@@ -1,6 +1,6 @@
 import 'package:fishroom/core/usecases/can_add_tank.dart';
 import 'package:fishroom/core/widgets/logo.dart';
-import 'package:fishroom/features/auth/usecases/logout.dart';
+import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/upgrade/views/upgrade_to_pro.dart';
 import 'package:flutter/foundation.dart';
@@ -8,14 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../features/auth/cubit/app_cubit.dart';
+import '../../features/app/cubit/app_cubit.dart';
+import '../../features/settings/views/settings_view.dart';
 
 class RootDrawer extends StatelessWidget {
   const RootDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppCubit, AuthState>(
+    return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) {
         bool pro = state.user!.premium;
 
@@ -71,6 +72,10 @@ class RootDrawer extends StatelessWidget {
                   ),
 
                 ListTile(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsView())),
                   leading: const Icon(Icons.settings),
                   title: const Text("Settings"),
                   subtitle: FutureBuilder(
@@ -90,7 +95,6 @@ class RootDrawer extends StatelessWidget {
                     fontStyle: FontStyle.italic,
                     color: Colors.grey,
                   ),
-                  enabled: false,
                 ),
                 ListTile(
                   enabled: false,

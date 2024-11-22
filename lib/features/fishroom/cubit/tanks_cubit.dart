@@ -67,7 +67,7 @@ class TanksCubit extends Cubit<TanksState> {
       fishLog("Getting tanks...");
       final data = await supabaseRepository.fetch(
           tableName: Table.tanks.tableName,
-          column: Table.tanks.ownerId,
+          conditionalColumn: Table.tanks.ownerId,
           condition: supabaseRepository.user!.id);
       fishLog(data.toString());
 
@@ -92,7 +92,7 @@ class TanksCubit extends Cubit<TanksState> {
 
       final data = await supabaseRepository.fetch(
           tableName: Table.tankReadings.tableName,
-          column: Table.tankReadings.tankId,
+          conditionalColumn: Table.tankReadings.tankId,
           condition: tank.id);
 
       if (data != null) {
@@ -153,7 +153,7 @@ class TanksCubit extends Cubit<TanksState> {
       await supabaseRepository.update(
         tableName: Table.tanks.tableName,
         json: tank.toJson(),
-        column: Table.tanks.id,
+        conditionalColumn: Table.tanks.id,
         condition: tank.id,
       );
 

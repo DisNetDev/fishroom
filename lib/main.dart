@@ -9,8 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'core/repositories/supabase_repository.dart';
-import 'features/auth/cubit/app_cubit.dart';
-import 'features/auth/usecases/my_secure_storage.dart';
+import 'features/app/cubit/app_cubit.dart';
+import 'features/app/usecases/my_secure_storage.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 
 void main() async {

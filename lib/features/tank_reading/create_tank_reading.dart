@@ -21,7 +21,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/constants.dart';
 import '../../core/usecases/is_dark_mode.dart';
 import '../../core/widgets/fish_text_box.dart';
-import '../auth/cubit/app_cubit.dart';
+import '../app/cubit/app_cubit.dart';
 import 'widgets/parameter_wheel.dart';
 
 class CreateTankReading extends StatefulWidget {
@@ -96,87 +96,20 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                   ),
                   const Gap(20),
                   if (tankReading.type == TankReadingType.measurement)
-                    Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ParameterWheel(
-                              valueSelected: (value) =>
-                                  tankReading = tankReading.copyWith(ph: value),
-                              parameter: readingParameters[0],
-                              onEnabled: (value) {
-                                if (value) {
-                                  tankReading = tankReading.copyWith(ph: 4);
-                                } else {
-                                  tankReading.ph = null;
-                                }
-                              }),
-                          ParameterWheel(
-                              valueSelected: (value) =>
-                                  tankReading = tankReading.copyWith(ta: value),
-                              parameter: readingParameters[1],
-                              onEnabled: (value) {
-                                if (value) {
-                                  tankReading = tankReading.copyWith(ta: 0);
-                                } else {
-                                  tankReading.ta = null;
-                                }
-                              }),
-                          ParameterWheel(
-                              valueSelected: (value) => tankReading =
-                                  tankReading.copyWith(no2: value),
-                              parameter: readingParameters[2],
-                              onEnabled: (value) {
-                                if (value) {
-                                  tankReading = tankReading.copyWith(no2: 0);
-                                } else {
-                                  tankReading.no2 = null;
-                                }
-                              }),
-                          ParameterWheel(
-                              valueSelected: (value) => tankReading =
-                                  tankReading.copyWith(no3: value),
-                              parameter: readingParameters[3],
-                              onEnabled: (value) {
-                                if (value) {
-                                  tankReading = tankReading.copyWith(no3: 0);
-                                } else {
-                                  tankReading.no3 = null;
-                                }
-                              }),
-                          ParameterWheel(
-                              valueSelected: (value) =>
-                                  tankReading = tankReading.copyWith(gh: value),
-                              parameter: readingParameters[4],
-                              onEnabled: (value) {
-                                if (value) {
-                                  tankReading = tankReading.copyWith(gh: 0);
-                                } else {
-                                  tankReading.gh = null;
-                                }
-                              }),
-                          ParameterWheel(
-                              valueSelected: (value) =>
-                                  tankReading = tankReading.copyWith(kh: value),
-                              parameter: readingParameters[5],
-                              onEnabled: (value) {
-                                if (value) {
-                                  tankReading = tankReading.copyWith(kh: 0);
-                                } else {
-                                  tankReading.kh = null;
-                                }
-                              }),
-                          ParameterWheel(
-                              valueSelected: (value) => tankReading =
-                                  tankReading.copyWith(tds: value),
-                              parameter: readingParameters[6],
-                              onEnabled: (value) {
-                                if (value) {
-                                  tankReading = tankReading.copyWith(tds: 0);
-                                } else {
-                                  tankReading.tds = null;
-                                }
-                              }),
-                        ]),
+                    BlocBuilder<AppCubit, AppState>(
+                      builder: (context, state) {
+                        return Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(
+                                state.settings?.parameters.length ?? 0,
+                                (index) => ParameterWheel(
+                                    onEnabled: (value) {}, //TODO
+                                    valueSelected: (value) {}, //TODO
+                                    parameter:
+                                        state.settings?.parameters[index] ??
+                                            Parameter())));
+                      },
+                    ),
                   const Gap(20),
                   FishTextBox(
                     hintText: "Note",
