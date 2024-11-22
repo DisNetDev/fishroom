@@ -73,6 +73,7 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
           title: "Your tank needs a name!",
           description: 'Even if its just "Tank 1" ;)',
           toastType: ToastType.error);
+
       return;
     }
     nameFocusNode.unfocus();

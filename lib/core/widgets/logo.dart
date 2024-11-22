@@ -27,6 +27,7 @@ class Logo extends StatelessWidget {
         ),
       ),
     ];
+
     return horizontal ? Row(children: children) : Column(children: children);
   }
 }

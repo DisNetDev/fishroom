@@ -12,9 +12,9 @@ import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/usecases/show_toast.dart';
 import '../../../core/widgets/custom_button.dart';
-import '../../../core/widgets/root_appbar.dart';
+import '../../../core/widgets/root_sliver_app_bar.dart';
 import '../../../core/widgets/text_input.dart';
-import '../../auth/cubit/auth_cubit.dart';
+import '../../auth/cubit/app_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/image_upload_widget.dart';
 
@@ -37,6 +37,7 @@ class _CreateTankState extends State<CreateTank> {
   @override
   Widget build(BuildContext context) {
     final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       children: [
         const CustomBackground(),
@@ -210,7 +211,7 @@ class _CreateTankState extends State<CreateTank> {
                     } else {
                       setState(() => loading = true);
                       tank.createdAt = DateTime.now().toString();
-                      tank.ownerId = context.read<AuthCubit>().state.user!.uuid;
+                      tank.ownerId = context.read<AppCubit>().state.user!.uuid;
                       try {
                         await context.read<TanksCubit>().addTank(tank, _image);
                       } on Exception catch (e) {

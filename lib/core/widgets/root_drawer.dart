@@ -8,16 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../features/auth/cubit/auth_cubit.dart';
+import '../../features/auth/cubit/app_cubit.dart';
 
 class RootDrawer extends StatelessWidget {
   const RootDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
+    return BlocBuilder<AppCubit, AuthState>(
       builder: (context, state) {
         bool pro = state.user!.premium;
+
         return SafeArea(
           child: Drawer(
             child: Column(
@@ -63,9 +64,9 @@ class RootDrawer extends StatelessWidget {
                   ListTile(
                     title: const Text("(DEBUG)"),
                     subtitle: Text(
-                        "Switch to ${context.read<AuthCubit>().state.user!.premium ? "FREE" : "PRO"}"),
+                        "Switch to ${context.read<AppCubit>().state.user!.premium ? "FREE" : "PRO"}"),
                     onTap: () {
-                      context.read<AuthCubit>().debugToggleFreeAndPro();
+                      context.read<AppCubit>().debugToggleFreeAndPro();
                     },
                   ),
 
@@ -96,7 +97,7 @@ class RootDrawer extends StatelessWidget {
                   leading: const Icon(Icons.person),
                   title: const Text("Logged in as:"),
                   subtitle: Text(
-                      context.read<AuthCubit>().state.user?.email ?? "No One?"),
+                      context.read<AppCubit>().state.user?.email ?? "No One?"),
                   subtitleTextStyle: const TextStyle(
                     fontSize: 12,
                     fontStyle: FontStyle.italic,

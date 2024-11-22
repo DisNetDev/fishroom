@@ -6,7 +6,7 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
-import 'package:fishroom/core/widgets/root_appbar.dart';
+import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';

@@ -1,5 +1,4 @@
 import 'package:fishroom/core/usecases/log.dart';
-import 'package:fishroom/main.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
@@ -7,8 +6,8 @@ import '../models/fish_user.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends HydratedCubit<AuthState> {
-  AuthCubit(this._supabaseRepository) : super(AuthState());
+class AppCubit extends HydratedCubit<AuthState> {
+  AppCubit(this._supabaseRepository) : super(AuthState());
 
   final SupabaseRepository _supabaseRepository;
 
@@ -92,8 +91,8 @@ class AuthCubit extends HydratedCubit<AuthState> {
     try {
       if (state.user != null) {
         _supabaseRepository.update(
-            tableName: Table.users.,
-            json: {"premium": true},
+            tableName: Table.users.tableName,
+            json: {Table.users.premium: true},
             column: id,
             condition: state.user!.uuid);
       }

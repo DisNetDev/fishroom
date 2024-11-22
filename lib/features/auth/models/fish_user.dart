@@ -1,22 +1,25 @@
+import '../../../core/models/database_tables.dart';
+
 class FishUser {
   FishUser({required this.uuid, required this.email, required this.premium});
   final String uuid;
   final String email;
   bool premium;
+  
 
   factory FishUser.fromJson(Map<String, dynamic> json) {
     return FishUser(
-      uuid: json['id'] ?? "",
-      email: json['email'] ?? "",
-      premium: json['premium'] ?? false,
+      uuid: json[Table.users.id],
+      email: json[Table.users.email],
+      premium: json[Table.users.premium] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': uuid,
-      'email': email,
-      'premium': premium,
+      Table.users.id: uuid,
+      Table.users.email: email,
+      Table.users.premium: premium,
     };
   }
 

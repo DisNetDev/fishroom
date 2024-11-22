@@ -7,6 +7,7 @@ PasswordValidatorObject isPasswordsValid(String password1, String password2) {
     return PasswordValidatorObject(
         isValid: false, message: "Passwords do not match");
   }
+
   return PasswordValidatorObject(isValid: true, message: "");
 }
 

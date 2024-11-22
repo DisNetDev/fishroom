@@ -12,7 +12,7 @@ import 'package:uuid/uuid.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/usecases/show_toast.dart';
 import '../../../core/widgets/custom_button.dart';
-import '../../../core/widgets/root_appbar.dart';
+import '../../../core/widgets/root_sliver_app_bar.dart';
 import '../../../core/widgets/text_input.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/image_upload_widget.dart';
@@ -68,6 +68,7 @@ class _EditTankState extends State<EditTank> {
   @override
   Widget build(BuildContext context) {
     final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       children: [
         const CustomBackground(),

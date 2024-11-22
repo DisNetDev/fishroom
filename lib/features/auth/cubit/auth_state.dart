@@ -1,4 +1,4 @@
-part of 'auth_cubit.dart';
+part of 'app_cubit.dart';
 
 class AuthState {
   final FishUser? user;

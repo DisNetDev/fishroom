@@ -39,6 +39,7 @@ void showToast(
   );
 }
 
+// ignore: prefer-match-file-name
 enum ToastType {
   error(kErrorGradient),
   info(kPrimaryGradient),

@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/features/tank_reading/usecases/parameters.dart';
+import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+
+import '../usecases/calculate_values_for_parameter.dart';
 
 class ParameterWheel extends StatefulWidget {
   const ParameterWheel(
@@ -22,6 +24,15 @@ class ParameterWheel extends StatefulWidget {
 
 class _ParameterWheelState extends State<ParameterWheel> {
   bool enabled = false;
+  List<double> values = [];
+
+  @override
+  void initState() {
+    values = calculateValuesForParameter(widget.parameter);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -48,7 +59,7 @@ class _ParameterWheelState extends State<ParameterWheel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.parameter.shortName,
+                    widget.parameter.shortName ?? "N/A",
                     style: kHeading1TextStyle,
                     textScaler: TextScaler.noScaling,
                   ),
@@ -111,8 +122,7 @@ class _ParameterWheelState extends State<ParameterWheel> {
                         width: 50,
                         child: ListWheelScrollView.useDelegate(
                           onSelectedItemChanged: (index) {
-                            widget
-                                .valueSelected(widget.parameter.values[index]);
+                            widget.valueSelected(values[index]);
                           },
                           diameterRatio: 0.9,
                           physics: enabled
@@ -120,18 +130,16 @@ class _ParameterWheelState extends State<ParameterWheel> {
                               : const NeverScrollableScrollPhysics(),
                           itemExtent: 30,
                           childDelegate: ListWheelChildBuilderDelegate(
-                            childCount: widget.parameter.values.length,
+                            childCount: values.length,
                             builder: (context, index) {
                               return Padding(
                                 padding: const EdgeInsets.only(top: 10),
                                 child: Transform.rotate(
                                   angle: pi / 2,
                                   child: Text(
-                                    widget.parameter.values[index] % 1 == 0
-                                        ? widget.parameter.values[index]
-                                            .toStringAsFixed(0)
-                                        : widget.parameter.values[index]
-                                            .toString(),
+                                    values[index] % 1 == 0
+                                        ? values[index].toStringAsFixed(0)
+                                        : values[index].toString(),
                                     style: kHeading1TextStyle,
                                     textScaler: TextScaler.noScaling,
                                   ),

@@ -30,7 +30,7 @@ class TanksCubit extends Cubit<TanksState> {
       }
 
       await supabaseRepository.insert(
-          tableName: Table.tanks.label, json: tank.toJson());
+          tableName: Table.tanks.tableName, json: tank.toJson());
 
       emit(state.copyWith(tanks: [...state.tanks, tank]));
     } on Exception catch (_) {
@@ -41,10 +41,12 @@ class TanksCubit extends Cubit<TanksState> {
   Future<void> deleteTank(Tank tank) async {
     try {
       await supabaseRepository.delete(
-          tableName: Table.tanks.label, column: "id", condition: tank.id);
+          tableName: Table.tanks.tableName,
+          column: Table.tanks.id,
+          condition: tank.id);
       await supabaseRepository.delete(
-          tableName: Table.readings.label,
-          column: "tank_id",
+          tableName: Table.tankReadings.tableName,
+          column: Table.tankReadings.tankId,
           condition: tank.id);
       List<Tank> stateTanks = state.tanks
           .where((tankInState) => tank.id != tankInState.id)
@@ -64,8 +66,8 @@ class TanksCubit extends Cubit<TanksState> {
     try {
       fishLog("Getting tanks...");
       final data = await supabaseRepository.fetch(
-          tableName: Table.tanks.label,
-          column: "owner_id",
+          tableName: Table.tanks.tableName,
+          column: Table.tanks.ownerId,
           condition: supabaseRepository.user!.id);
       fishLog(data.toString());
 
@@ -89,8 +91,8 @@ class TanksCubit extends Cubit<TanksState> {
       fishLog("Getting Tank Readings...");
 
       final data = await supabaseRepository.fetch(
-          tableName: Table.readings.label,
-          column: "tank_id",
+          tableName: Table.tankReadings.tableName,
+          column: Table.tankReadings.tankId,
           condition: tank.id);
 
       if (data != null) {
@@ -123,7 +125,7 @@ class TanksCubit extends Cubit<TanksState> {
       }
 
       await supabaseRepository.insert(
-        tableName: Table.readings.label,
+        tableName: Table.tankReadings.tableName,
         json: amendedReading.toJson(),
       );
 
@@ -149,9 +151,9 @@ class TanksCubit extends Cubit<TanksState> {
       }
 
       await supabaseRepository.update(
-        tableName: Table.tanks.label,
+        tableName: Table.tanks.tableName,
         json: tank.toJson(),
-        column: "id",
+        column: Table.tanks.id,
         condition: tank.id,
       );
 
@@ -171,7 +173,9 @@ class TanksCubit extends Cubit<TanksState> {
     try {
       fishLog("Deleting tank reading...");
       await supabaseRepository.delete(
-          tableName: Table.readings.label, column: "id", condition: reading.id);
+          tableName: Table.tankReadings.tableName,
+          column: Table.tankReadings.id,
+          condition: reading.id);
       List<TankReading> readings = [];
       readings.addAll(state.readings);
       readings.removeWhere((removedReading) => removedReading.id == reading.id);

@@ -78,7 +78,7 @@ class _TankTileState extends State<TankTile> {
                 margin:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
-                  color: isDarkMode(context) == false
+                  color: !isDarkMode(context)
                       ? const Color.fromARGB(255, 255, 255, 255)
                       : Colors.black,
                   border: const GradientBoxBorder(

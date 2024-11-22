@@ -11,6 +11,7 @@ Future<String> cacheImageFromUrl(String imageUrl, String fileName) async {
   if (response.statusCode == 200) {
     final file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
+
     return filePath;
   } else {
     throw Exception('Failed to download image');
@@ -24,5 +25,6 @@ Future<String> cacheImageFromFile(File imageFile) async {
   final bytes = await imageFile.readAsBytes();
   final file = File(filePath);
   await file.writeAsBytes(bytes);
+
   return filePath;
 }

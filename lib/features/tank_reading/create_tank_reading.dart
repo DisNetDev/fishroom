@@ -7,22 +7,21 @@ import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/usecases/upload_image.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
-import 'package:fishroom/core/widgets/root_appbar.dart';
+import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
 import 'package:fishroom/features/fishroom/widgets/image_upload_widget.dart';
-import 'package:fishroom/features/tank_reading/usecases/parameters.dart';
+import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/constants.dart';
 import '../../core/usecases/is_dark_mode.dart';
-import '../../core/widgets/text_box.dart';
-import '../auth/cubit/auth_cubit.dart';
+import '../../core/widgets/fish_text_box.dart';
+import '../auth/cubit/app_cubit.dart';
 import 'widgets/parameter_wheel.dart';
 
 class CreateTankReading extends StatefulWidget {
@@ -37,7 +36,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
   bool loading = false;
   late TankReading tankReading = TankReading(
     id: const Uuid().v4(),
-    ownerId: context.read<AuthCubit>().state.user!.uuid,
+    ownerId: context.read<AppCubit>().state.user!.uuid,
     type: TankReadingType.measurement,
     tankId: widget.tank.id,
     createdAt: DateTime.now().toString(),
@@ -83,7 +82,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                           }
                           setState(() {
                             selectedTypeButtons[index] = true;
-                            if (selectedTypeButtons[0] == true) {
+                            if (selectedTypeButtons[0]) {
                               tankReading = tankReading.copyWith(
                                   type: TankReadingType.measurement);
                             } else {
@@ -105,7 +104,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading = tankReading.copyWith(ph: value),
                               parameter: readingParameters[0],
                               onEnabled: (value) {
-                                if (value == true) {
+                                if (value) {
                                   tankReading = tankReading.copyWith(ph: 4);
                                 } else {
                                   tankReading.ph = null;
@@ -116,7 +115,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading = tankReading.copyWith(ta: value),
                               parameter: readingParameters[1],
                               onEnabled: (value) {
-                                if (value == true) {
+                                if (value) {
                                   tankReading = tankReading.copyWith(ta: 0);
                                 } else {
                                   tankReading.ta = null;
@@ -127,7 +126,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading.copyWith(no2: value),
                               parameter: readingParameters[2],
                               onEnabled: (value) {
-                                if (value == true) {
+                                if (value) {
                                   tankReading = tankReading.copyWith(no2: 0);
                                 } else {
                                   tankReading.no2 = null;
@@ -138,7 +137,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading.copyWith(no3: value),
                               parameter: readingParameters[3],
                               onEnabled: (value) {
-                                if (value == true) {
+                                if (value) {
                                   tankReading = tankReading.copyWith(no3: 0);
                                 } else {
                                   tankReading.no3 = null;
@@ -149,7 +148,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading = tankReading.copyWith(gh: value),
                               parameter: readingParameters[4],
                               onEnabled: (value) {
-                                if (value == true) {
+                                if (value) {
                                   tankReading = tankReading.copyWith(gh: 0);
                                 } else {
                                   tankReading.gh = null;
@@ -160,7 +159,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading = tankReading.copyWith(kh: value),
                               parameter: readingParameters[5],
                               onEnabled: (value) {
-                                if (value == true) {
+                                if (value) {
                                   tankReading = tankReading.copyWith(kh: 0);
                                 } else {
                                   tankReading.kh = null;
@@ -171,7 +170,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                   tankReading.copyWith(tds: value),
                               parameter: readingParameters[6],
                               onEnabled: (value) {
-                                if (value == true) {
+                                if (value) {
                                   tankReading = tankReading.copyWith(tds: 0);
                                 } else {
                                   tankReading.tds = null;

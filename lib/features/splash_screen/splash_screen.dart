@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 
-import '../auth/cubit/auth_cubit.dart';
-import '../auth/views/logon.dart';
+import '../auth/cubit/app_cubit.dart';
+import '../auth/views/logon_view.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 1));
     if (supabase.auth.currentSession != null) {
       context.read<SupabaseRepository>().setSession();
-      await context.read<AuthCubit>().fetchUser();
+      await context.read<AppCubit>().fetchUser();
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {

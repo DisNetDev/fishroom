@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -81,6 +80,7 @@ Future<File?> pickImage(BuildContext context) async {
       );
     },
   );
+
   return filePicked;
 }
 
@@ -97,12 +97,13 @@ Future<XFile?> _pickAndCompress(ImageSource source) async {
 
       XFile? compressedImage = await FlutterImageCompress.compressAndGetFile(
           file.absolute.path, targetPath,
-          
           quality: 10, numberOfRetries: 5, format: CompressFormat.jpeg);
+
       return compressedImage;
     }
   } on Exception catch (_) {
     rethrow;
   }
+
   return null;
 }

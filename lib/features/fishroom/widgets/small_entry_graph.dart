@@ -1,7 +1,7 @@
 import 'package:fishroom/core/models/tank_reading.dart';
 import 'package:flutter/material.dart';
 
-import '../../tank_reading/usecases/parameters.dart';
+import '../../tank_reading/models/parameter.dart';
 import 'bar_segment.dart';
 
 class SmallEntryGraph extends StatelessWidget {
@@ -93,6 +93,10 @@ double _getValue({required double value, required Parameter parameter}) {
   if (value == 0) {
     return 1;
   }
-  // Scale the value to a range of 1 to 90
-  return (value / parameter.max) * 70;
+
+  if (parameter.max != null) {
+    return (value / parameter.max!) * 70;
+  }
+
+  return value;
 }

@@ -4,14 +4,14 @@ import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
-import 'package:fishroom/features/auth/cubit/auth_cubit.dart';
+import 'package:fishroom/features/auth/cubit/app_cubit.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../../core/usecases/email_validator.dart';
-import '../../../core/usecases/password_validator.dart';
+import '../../../core/usecases/password_validator_object.dart';
 
 class LogonView extends StatefulWidget {
   const LogonView({super.key});
@@ -133,7 +133,10 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             CustomButton(
               text: "Continue with Google",
               primary: false,
-              onPressed: () {},
+              onPressed: () {
+                showToast(context,
+                    title: "Not Implemented", toastType: ToastType.error);
+              },
               margin: const EdgeInsets.symmetric(horizontal: 80),
             ),
             const Gap(30),
@@ -153,6 +156,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         description: "Please enter a valid email",
         toastType: ToastType.error,
       );
+
       return false;
     }
   }
@@ -168,6 +172,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         description: isValid.message,
         toastType: ToastType.error,
       );
+
       return false;
     }
   }
@@ -175,9 +180,9 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
   void signUp() async {
     setState(() => loading = true);
     await context
-        .read<AuthCubit>()
+        .read<AppCubit>()
         .signUpWithPassword(email: emailAddress, password: password1);
-    if (context.read<AuthCubit>().state.user != null) {
+    if (context.read<AppCubit>().state.user != null) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {
@@ -196,9 +201,9 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     setState(() => loading = true);
     try {
       await context
-          .read<AuthCubit>()
+          .read<AppCubit>()
           .signInWithPassword(email: emailAddress, password: password1);
-      if (context.read<AuthCubit>().state.user != null) {
+      if (context.read<AppCubit>().state.user != null) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const Fishroom()));
       } else {
@@ -228,7 +233,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         if (checkIfEmailIsValid()) {
           setState(() => loading = true);
           bool userIsSignedUp =
-              await context.read<AuthCubit>().checkIfEmailExists(emailAddress);
+              await context.read<AppCubit>().checkIfEmailExists(emailAddress);
           if (userIsSignedUp) {
             showPassword1 = true;
             userShouldLogIn = true;

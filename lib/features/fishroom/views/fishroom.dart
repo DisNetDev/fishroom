@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
-import 'package:fishroom/core/usecases/is_pro_user.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/features/fishroom/views/create_tank.dart';
@@ -13,9 +12,9 @@ import 'package:uuid/uuid.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/usecases/can_add_tank.dart';
-import '../../../core/widgets/root_appbar.dart';
+import '../../../core/widgets/root_sliver_app_bar.dart';
 import '../../../core/widgets/root_drawer.dart';
-import '../../auth/cubit/auth_cubit.dart';
+import '../../auth/cubit/app_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_tile.dart';
 
@@ -54,7 +53,7 @@ class _FishroomState extends State<Fishroom> {
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        context.watch<AuthCubit>().state;
+        context.watch<AppCubit>().state;
         final TanksState tanksState = context.watch<TanksCubit>().state;
 
         return Stack(

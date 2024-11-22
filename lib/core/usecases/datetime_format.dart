@@ -32,6 +32,7 @@ String _getDayName(int weekday) {
     'Saturday',
     'Sunday'
   ];
+
   return days[weekday - 1];
 }
 
@@ -50,5 +51,6 @@ String _getMonthName(int month) {
     'November',
     'December'
   ];
+
   return months[month - 1];
 }

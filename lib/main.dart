@@ -1,3 +1,5 @@
+// ignore_for_file: prefer-match-file-name
+
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'core/repositories/supabase_repository.dart';
-import 'features/auth/cubit/auth_cubit.dart';
+import 'features/auth/cubit/app_cubit.dart';
 import 'features/auth/usecases/my_secure_storage.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 
@@ -47,7 +49,7 @@ class MainApp extends StatelessWidget {
                   supabaseRepository: context.read<SupabaseRepository>())),
           BlocProvider(
               create: (context) =>
-                  AuthCubit(context.read<SupabaseRepository>())),
+                  AppCubit(context.read<SupabaseRepository>())),
         ],
         child: ToastificationWrapper(
           child: MaterialApp(

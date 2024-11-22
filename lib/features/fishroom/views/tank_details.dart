@@ -1,7 +1,6 @@
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
-import 'package:fishroom/core/widgets/root_appbar.dart';
-import 'package:fishroom/features/fishroom/widgets/tank_chart.dart';
+import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/tank_reading/create_tank_reading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

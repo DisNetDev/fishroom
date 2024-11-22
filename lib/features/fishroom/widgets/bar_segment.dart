@@ -42,6 +42,7 @@ class _BarSegmentState extends State<BarSegment> {
   Widget build(BuildContext context) {
     final targetHeight = widget.height ?? getRandomValue();
     const textOffset = 20.0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
