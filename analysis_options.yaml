@@ -1,5 +1,11 @@
 include: package:flutter_lints/flutter.yaml
 
+linter:
+  rules:
+    prefer_const_constructors: false
+    prefer_const_literals_to_create_immutables: false
+    prefer_const_declarations: false
+
 dart_code_metrics:
   metrics:
     cyclomatic-complexity: 20
@@ -27,4 +33,3 @@ dart_code_metrics:
     - avoid-self-assignment
     - avoid-unnecessary-nullable-return-type
     - avoid-unrelated-type-casts
-    - prefer-declaring-const-constructor

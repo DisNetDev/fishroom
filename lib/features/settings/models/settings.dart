@@ -20,4 +20,12 @@ class Settings {
       'parameters': parameters.map((e) => e.toJson()).toList(),
     };
   }
+
+  Settings copyWith({
+    List<Parameter>? parameters,
+  }) {
+    return Settings(
+      parameters: parameters ?? this.parameters,
+    );
+  }
 }

@@ -3,6 +3,7 @@ import 'package:fishroom/core/usecases/log.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
+import '../../tank_reading/models/parameter.dart';
 import '../models/fish_user.dart';
 
 part 'app_state.dart';
@@ -108,16 +109,41 @@ class AppCubit extends HydratedCubit<AppState> {
     }
   }
 
-  Future<void> updateSettings(Settings settings) async {
+  Future<void> setParametersDefaults() async {
+    fishLog("Resetting parameters...");
     try {
-      await _supabaseRepository.update(
-          tableName: Table.users.tableName,
-          json: {Table.users.settings: settings.toJson()},
-          conditionalColumn: id,
-          condition: state.user!.uuid);
-      emit(state.copyWith(settings: settings));
-    } catch (e) {
+      final data = await _supabaseRepository.fetch(
+          tableName: Table.appDefaults.tableName,
+          conditionalColumn: Table.appDefaults.name,
+          condition: "default_params");
+      if (data != null && data.isNotEmpty) {
+        List<Parameter> parameters = [];
+        for (Map<String, dynamic> param in data.first["value"]) {
+          parameters.add(Parameter.fromJson(param));
+        }
+        fishLog(parameters.length.toString());
+        emit(state.copyWith(settings: Settings(parameters: parameters)));
+
+        await updateSettings(
+            state.settings ?? Settings(parameters: parameters));
+      }
+    } catch (_) {
       rethrow;
+    }
+  }
+
+  Future<void> updateSettings(Settings settings) async {
+    if (state.user != null) {
+      try {
+        await _supabaseRepository.update(
+            tableName: Table.users.tableName,
+            json: {Table.users.settings: settings.toJson()},
+            conditionalColumn: Table.users.id,
+            condition: state.user!.uuid);
+        emit(state.copyWith(settings: settings));
+      } catch (e) {
+        rethrow;
+      }
     }
   }
 

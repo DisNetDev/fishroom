@@ -42,4 +42,24 @@ class Parameter {
       'step': step,
     };
   }
+
+  Parameter copyWith({
+    String? name,
+    String? shortName,
+    String? description,
+    String? unit,
+    double? max,
+    double? min,
+    double? step,
+  }) {
+    return Parameter(
+      name: name ?? this.name,
+      shortName: shortName ?? this.shortName,
+      description: description ?? this.description,
+      unit: unit ?? this.unit,
+      max: max ?? this.max,
+      min: min ?? this.min,
+      step: step ?? this.step,
+    );
+  }
 }

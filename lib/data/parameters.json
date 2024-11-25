@@ -1,0 +1,65 @@
+[
+  {
+    "name": "PH",
+    "unit": "ph",
+    "shortName": "PH",
+    "max": 13,
+    "min": 4,
+    "step": 0.1,
+    "description": "A measure of water acidity or alkalinity. Most aquatic life thrives in a specific pH range, making it crucial for fish health and biological processes."
+  },
+  {
+    "name": "Total Ammonia",
+    "unit": "ppm",
+    "shortName": "NH3",
+    "max": 10,
+    "min": 0,
+    "step": 0.25,
+    "description": "A toxic compound produced from fish waste and decaying organic matter. Any levels can be lethal to fish and must be kept as close to zero as possible."
+  },
+  {
+    "name": "Nitrite",
+    "unit": "ppm",
+    "shortName": "NO2",
+    "max": 10,
+    "min": 0,
+    "step": 0.25,
+    "description": "An intermediate product in the nitrogen cycle, converted from ammonia by beneficial bacteria. Highly toxic to fish and should be maintained at near-zero levels."
+  },
+  {
+    "name": "Nitrate",
+    "unit": "ppm",
+    "shortName": "NO3",
+    "max": 150,
+    "min": 0,
+    "step": 5,
+    "description": "The end product of the nitrogen cycle. Less toxic than ammonia and nitrite, but should be controlled through regular water changes to prevent long-term stress on fish."
+  },
+  {
+    "name": "General Hardness",
+    "unit": "dGH",
+    "shortName": "GH",
+    "max": 50,
+    "min": 0,
+    "step": 1,
+    "description": "Measures the concentration of dissolved minerals, primarily calcium and magnesium."
+  },
+  {
+    "name": "Carbonate Hardness",
+    "unit": "dKH",
+    "shortName": "KH",
+    "max": 50,
+    "min": 0,
+    "step": 1,
+    "description": "Measures the water's buffering capacity to resist pH changes."
+  },
+  {
+    "name": "Total Dissolved Solids",
+    "unit": "",
+    "shortName": "TDS",
+    "max": 499,
+    "min": 0,
+    "step": 1,
+    "description": "The total concentration of dissolved substances in water, including minerals, salts, and metals."
+  }
+]

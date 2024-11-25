@@ -1,11 +1,14 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:gradient_borders/input_borders/gradient_underline_input_border.dart';
 
 class TextInput extends StatefulWidget {
   const TextInput(
       {super.key,
       this.hintText,
+      this.characterLimit,
+      this.exampleText,
       this.focusNode,
       this.initialValue,
       this.obscureText = false,
@@ -20,6 +23,8 @@ class TextInput extends StatefulWidget {
       this.prefixIcon});
 
   final String? hintText;
+  final int? characterLimit;
+  final String? exampleText;
   final Function(String)? onChanged;
   final FocusNode? focusNode;
   final String? initialValue;
@@ -51,49 +56,67 @@ class _TextInputState extends State<TextInput> {
       ),
       child: Align(
         alignment: Alignment.center,
-        child: TextFormField(
-          focusNode: widget.focusNode,
-          initialValue: widget.initialValue,
-          onChanged: widget.onChanged,
-          onEditingComplete: widget.onEditingComplete,
-          keyboardType: widget.keyboardType,
-          obscureText: widget.obscureText,
-          decoration: widget.height == 0
-              ? const InputDecoration(
-                  border: InputBorder.none,
-                )
-              : InputDecoration(
-                  alignLabelWithHint: true,
-                  labelStyle: kHintTextStyle,
-                  label: widget.label,
-                  prefixIcon: widget.prefixIcon,
-                  suffix: widget.suffix,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  focusedBorder: const GradientUnderlineInputBorder(
-                    width: 0.5,
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        kPrimaryColor,
-                        kPrimaryColor,
-                        Colors.transparent,
-                      ],
+        child: Column(
+          children: [
+            TextFormField(
+              buildCounter: (context,
+                      {required currentLength,
+                      required isFocused,
+                      required maxLength}) =>
+                  null,
+              maxLength: widget.characterLimit,
+              focusNode: widget.focusNode,
+              initialValue: widget.initialValue,
+              onChanged: widget.onChanged,
+              onEditingComplete: widget.onEditingComplete,
+              keyboardType: widget.keyboardType,
+              obscureText: widget.obscureText,
+              decoration: widget.height == 0
+                  ? const InputDecoration(
+                      border: InputBorder.none,
+                    )
+                  : InputDecoration(
+                      alignLabelWithHint: true,
+                      labelStyle: kHintTextStyle,
+                      label: widget.label,
+                      prefixIcon: widget.prefixIcon,
+                      suffix: widget.suffix,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
+                      focusedBorder: const GradientUnderlineInputBorder(
+                        width: 0.5,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            kPrimaryColor,
+                            kPrimaryColor,
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                      enabledBorder: const GradientUnderlineInputBorder(
+                        width: 0.5,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            Colors.grey,
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                      hintText: widget.hintText,
+                      hintStyle: const TextStyle(color: Colors.grey),
                     ),
-                  ),
-                  enabledBorder: const GradientUnderlineInputBorder(
-                    width: 0.5,
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        Colors.grey,
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                  hintText: widget.hintText,
-                  hintStyle: const TextStyle(color: Colors.grey),
-                ),
+            ),
+            if (widget.exampleText != null) ...[
+              const Gap(5),
+              Text(
+                textAlign: TextAlign.center,
+                widget.exampleText!,
+                style: kDateTimeTextStyle.copyWith(color: Colors.grey),
+              )
+            ]
+          ],
         ),
       ),
     );

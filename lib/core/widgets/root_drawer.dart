@@ -2,6 +2,7 @@ import 'package:fishroom/core/usecases/can_add_tank.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
+import 'package:fishroom/features/settings/views/tank_parameters_settings.dart';
 import 'package:fishroom/features/upgrade/views/upgrade_to_pro.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,8 @@ class RootDrawer extends StatelessWidget {
                   title: const Text("Tank Parameters"),
                   subtitle: const Text("Adjust your tank parameters"),
                   leading: const Icon(Symbols.bar_chart_rounded),
-                  onTap: () {},
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const TankParametersSettings())),
                 ),
 
                 const Expanded(child: SizedBox()),
