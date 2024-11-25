@@ -26,7 +26,23 @@ void main() async {
         localStorage: MySecureStorage(),
       ));
 
-  runApp(const MainApp());
+  runApp(MultiRepositoryProvider(
+    providers: [
+      //Global Repositories
+      RepositoryProvider(create: (context) => SupabaseRepository()),
+    ],
+    child: MultiBlocProvider(
+      providers: [
+        //Global Blocs
+        BlocProvider(
+            create: (context) => TanksCubit(
+                supabaseRepository: context.read<SupabaseRepository>())),
+        BlocProvider(
+            create: (context) => AppCubit(context.read<SupabaseRepository>())),
+      ],
+      child: ToastificationWrapper(child: const MainApp()),
+    ),
+  ));
 }
 
 final SupabaseClient supabase = Supabase.instance.client;
@@ -36,58 +52,39 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        //Global Repositories
-        RepositoryProvider(create: (context) => SupabaseRepository()),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          //Global Blocs
-          BlocProvider(
-              create: (context) => TanksCubit(
-                  supabaseRepository: context.read<SupabaseRepository>())),
-          BlocProvider(
-              create: (context) =>
-                  AppCubit(context.read<SupabaseRepository>())),
-        ],
-        child: ToastificationWrapper(
-          child: MaterialApp(
-            theme: ThemeData.from(
-              colorScheme: const ColorScheme.light(
-                primary: Color.fromARGB(255, 33, 138, 243),
-              ),
-            ).copyWith(
-              //Snackbar theme, remember to change this here and in dark theme below
-              snackBarTheme: SnackBarThemeData(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(1000),
-                ),
-                backgroundColor: Colors.black,
-                behavior: SnackBarBehavior.floating,
-                contentTextStyle: const TextStyle(color: Colors.white),
-              ),
-            ),
-            darkTheme: ThemeData.from(
-              colorScheme: const ColorScheme.dark(
-                primary: Color.fromARGB(255, 33, 138, 243),
-              ),
-            ).copyWith(
-              // Snackbar theme, remember to change this here and in light theme above
-              snackBarTheme: SnackBarThemeData(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(1000),
-                ),
-                backgroundColor: Colors.white,
-                behavior: SnackBarBehavior.floating,
-                contentTextStyle: const TextStyle(color: Colors.black),
-              ),
-            ),
-            themeMode: ThemeMode.system,
-            home: const SplashScreen(),
+    return MaterialApp(
+      theme: ThemeData.from(
+        colorScheme: const ColorScheme.light(
+          primary: Color.fromARGB(255, 33, 138, 243),
+        ),
+      ).copyWith(
+        //Snackbar theme, remember to change this here and in dark theme below
+        snackBarTheme: SnackBarThemeData(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1000),
           ),
+          backgroundColor: Colors.black,
+          behavior: SnackBarBehavior.floating,
+          contentTextStyle: const TextStyle(color: Colors.white),
         ),
       ),
+      darkTheme: ThemeData.from(
+        colorScheme: const ColorScheme.dark(
+          primary: Color.fromARGB(255, 33, 138, 243),
+        ),
+      ).copyWith(
+        // Snackbar theme, remember to change this here and in light theme above
+        snackBarTheme: SnackBarThemeData(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1000),
+          ),
+          backgroundColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          contentTextStyle: const TextStyle(color: Colors.black),
+        ),
+      ),
+      themeMode: ThemeMode.system,
+      home: const SplashScreen(),
     );
   }
 }
