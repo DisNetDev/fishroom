@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../core/constants.dart';
+import '../../core/usecases/show_toast.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/text_input.dart';
 import '../fishroom/cubit/tanks_cubit.dart';
@@ -19,6 +20,8 @@ class CreateTankTankSize extends StatefulWidget {
 }
 
 class _CreateTankTankSizeState extends State<CreateTankTankSize> {
+  FocusNode measurementFocusNode = FocusNode();
+  FocusNode sizeFocusNode = FocusNode();
   Tank get tank => widget.tank;
   @override
   Widget build(BuildContext context) {
@@ -44,7 +47,8 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
               ),
               TextInput(
                   hintText: "Gallons, Litres, Feet, Cm's, etc.",
-                  onEditingComplete: () {},
+                  focusNode: measurementFocusNode,
+                  onEditingComplete: () => sizeFocusNode.requestFocus(),
                   onChanged: (p0) => setState(() => tank.measurementUnit = p0)),
               Gap(50),
               Text(
@@ -53,6 +57,7 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
                 textAlign: TextAlign.center,
               ),
               TextInput(
+                  focusNode: sizeFocusNode,
                   keyboardType: TextInputType.number,
                   onEditingComplete: () => onComplete(),
                   onChanged: (p0) =>
@@ -68,5 +73,15 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
     );
   }
 
-  void onComplete() {}
+  void onComplete() {
+    if (tank.size == null || tank.size == 0 || tank.measurementUnit == null) {
+      showToast(context,
+          title: "Your tank needs a size!", toastType: ToastType.error);
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreateTankTankType(tank: tank)));
+    }
+  }
 }
