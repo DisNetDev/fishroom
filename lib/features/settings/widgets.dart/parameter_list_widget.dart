@@ -2,6 +2,8 @@ import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../../core/usecases/is_dark_mode.dart';
+
 class ParameterListWidget extends StatelessWidget {
   const ParameterListWidget(
       {super.key, required this.parameter, required this.onDismissed});
@@ -42,7 +44,10 @@ class ParameterListWidget extends StatelessWidget {
       },
       background: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.red, Colors.transparent]),
+          gradient: LinearGradient(colors: [
+            Colors.red,
+            isDarkMode(context) ? Colors.transparent : Colors.white
+          ]),
         ),
         alignment: Alignment.centerRight,
         child: Icon(Symbols.delete, color: Colors.orange.shade900),

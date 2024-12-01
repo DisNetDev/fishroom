@@ -4,7 +4,9 @@ import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
+import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:uuid/uuid.dart';
 
@@ -40,8 +42,10 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "Lets create a tank!",
+                Text(
+                  context.read<TanksCubit>().state.tanks.isEmpty
+                      ? "Welcome to Fishroom!\nLet's create your first tank!"
+                      : "Woah! Another tank!\nLet's give it a name!",
                   style: kHeadingTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -78,7 +82,9 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
     }
     nameFocusNode.unfocus();
 
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const CreateTankTankSize()));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CreateTankTankSize(tank: tank)));
   }
 }

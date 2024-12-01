@@ -11,9 +11,7 @@ class CustomBackground extends StatelessWidget {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: isDarkMode(context)
-            ? Color.fromARGB(255, 32, 32, 32)
-            : Colors.white,
+        color: isDarkMode(context) ? Colors.black : Colors.white,
         // gradient: LinearGradient(
         //   begin: Alignment.topLeft,
         //   end: Alignment.bottomRight,

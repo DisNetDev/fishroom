@@ -2,6 +2,7 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
+import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/features/settings/usecases/are_parameters_edited.dart';
 import 'package:fishroom/features/settings/widgets.dart/add_tank_parameter.dart';
 import 'package:fishroom/features/settings/widgets.dart/parameter_list_widget.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../../core/usecases/is_dark_mode.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../tank_reading/models/parameter.dart';
 import '../models/settings.dart';
@@ -24,11 +26,12 @@ class TankParametersSettings extends StatefulWidget {
 class _TankParametersSettingsState extends State<TankParametersSettings> {
   bool resettingDefaults = false;
   List<Parameter> parameters = [];
+  bool loading = false;
 
   @override
   void initState() {
-    parameters =
-        List.from(context.read<AppCubit>().state.settings?.parameters ?? []);
+    parameters
+        .addAll(context.read<AppCubit>().state.settings?.parameters ?? []);
     super.initState();
   }
 
@@ -42,14 +45,20 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
           ? null
           : FloatingActionButton(
               onPressed: () async {
+                if (loading) return;
                 try {
+                  setState(() => loading = true);
                   await context.read<AppCubit>().updateSettings(context
                           .read<AppCubit>()
                           .state
                           .settings
                           ?.copyWith(parameters: parameters) ??
                       Settings(parameters: parameters));
-                } on Exception catch (e) {
+                  setState(() => loading = false);
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  setState(() => loading = false);
+
                   // ignore: use_build_context_synchronously
                   showToast(context,
                       title: "Something went wrong.",
@@ -57,9 +66,13 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
                       description: e.toString());
                 }
               },
-              child: const Icon(
-                Symbols.save_rounded,
-              ),
+              child: loading
+                  ? Loader(
+                      color: isDarkMode(context) ? Colors.black : Colors.white,
+                    )
+                  : const Icon(
+                      Symbols.save_rounded,
+                    ),
             ),
       body: Stack(
         children: [
@@ -78,7 +91,7 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
                       Text(
                         "Which water parameters do you normally test?",
                         textAlign: TextAlign.center,
-                        style: kHeading1TextStyle.copyWith(fontSize: 24),
+                        style: kHeadingTextStyle.copyWith(fontSize: 24),
                       ),
                       const Gap(40),
                       ...List.generate(
@@ -90,11 +103,13 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
                           },
                         ),
                       ),
-                      Text(
-                        "<- Swipe to remove",
-                        style: kDateTimeTextStyle.copyWith(color: Colors.grey),
-                        textAlign: TextAlign.right,
-                      ),
+                      if (parameters.isNotEmpty)
+                        Text(
+                          "<- Swipe to remove",
+                          style:
+                              kDateTimeTextStyle.copyWith(color: Colors.grey),
+                          textAlign: TextAlign.right,
+                        ),
                       const Gap(20),
                       AddTankParameter(
                         onParameterAdded: (parameter) =>
