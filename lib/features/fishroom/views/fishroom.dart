@@ -3,7 +3,7 @@
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
-import 'package:fishroom/features/fishroom/views/create_tank.dart';
+import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -67,7 +67,8 @@ class _FishroomState extends State<Fishroom> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const CreateTank()));
+                                builder: (context) =>
+                                    const CreateTankTankName()));
                       },
                       child: const Icon(Icons.add),
                     )
@@ -124,7 +125,8 @@ class _FishroomState extends State<Fishroom> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const CreateTank()));
+                                builder: (context) =>
+                                    const CreateTankTankName()));
                       },
                       child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,

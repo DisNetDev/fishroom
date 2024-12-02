@@ -4,7 +4,7 @@ import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/models/tank_reading.dart';
 import 'package:fishroom/core/usecases/is_pro_user.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
-import 'package:fishroom/core/usecases/upload_image.dart';
+import 'package:fishroom/core/usecases/pick_image.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';

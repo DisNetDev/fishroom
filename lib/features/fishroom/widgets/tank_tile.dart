@@ -157,7 +157,7 @@ class _TankTileState extends State<TankTile> {
                   Material(
                     color: Colors.transparent,
                     child: Text(
-                      "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""}${widget.tank.measurementUnit ?? ""}",
+                      "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""} ${widget.tank.measurementUnit ?? ""}",
                       textAlign: TextAlign.end,
                       style: const TextStyle(
                         color: Colors.white,

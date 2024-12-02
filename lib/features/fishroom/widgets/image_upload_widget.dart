@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 
 import '../../../core/constants.dart';
-import '../../../core/usecases/upload_image.dart';
+import '../../../core/usecases/pick_image.dart';
 
 class ImageUploadWidget extends StatelessWidget {
   const ImageUploadWidget(

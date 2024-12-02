@@ -1,6 +1,6 @@
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
-import 'package:fishroom/features/create_tank_flow/create_tank_tank_type.dart';
+import 'package:fishroom/features/create_tank_flow/create_tank_upload_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -9,18 +9,16 @@ import '../../core/usecases/show_toast.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/text_input.dart';
 
-class CreateTankTankSize extends StatefulWidget {
-  const CreateTankTankSize({super.key, required this.tank});
+class CreateTankTankType extends StatefulWidget {
+  const CreateTankTankType({super.key, required this.tank});
 
   final Tank tank;
 
   @override
-  State<CreateTankTankSize> createState() => _CreateTankTankSizeState();
+  State<CreateTankTankType> createState() => _CreateTankTankTypeState();
 }
 
-class _CreateTankTankSizeState extends State<CreateTankTankSize> {
-  FocusNode measurementFocusNode = FocusNode();
-  FocusNode sizeFocusNode = FocusNode();
+class _CreateTankTankTypeState extends State<CreateTankTankType> {
   Tank get tank => widget.tank;
   @override
   Widget build(BuildContext context) {
@@ -34,33 +32,19 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "What size is your tank?",
+                "What type of tank do you have?",
                 style: kHeadingTextStyle,
                 textAlign: TextAlign.center,
               ),
               Gap(50),
               Text(
-                "What will you be measuring in?",
+                "Eg. Freshwater, Saltwater, Brackish...\nCan be a certain Biotope...\nAmazonian, Tanganyikan.\n\nYour imagination is the limit!",
                 style: kHeading2TextStyle,
                 textAlign: TextAlign.center,
               ),
               TextInput(
-                  hintText: "Gallons, Litres, Feet, Cm's, etc.",
-                  focusNode: measurementFocusNode,
-                  onEditingComplete: () => sizeFocusNode.requestFocus(),
-                  onChanged: (p0) => setState(() => tank.measurementUnit = p0)),
-              Gap(50),
-              Text(
-                "How many ${tank.measurementUnit == "" || tank.measurementUnit == null ? "_______" : tank.measurementUnit} is your tank?",
-                style: kHeading2TextStyle,
-                textAlign: TextAlign.center,
-              ),
-              TextInput(
-                  focusNode: sizeFocusNode,
-                  keyboardType: TextInputType.number,
                   onEditingComplete: () => onComplete(),
-                  onChanged: (p0) =>
-                      setState(() => tank.size = int.tryParse(p0))),
+                  onChanged: (p0) => setState(() => tank.type = p0)),
             ],
           ),
         ),
@@ -73,14 +57,16 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
   }
 
   void onComplete() {
-    if (tank.size == null || tank.size == 0 || tank.measurementUnit == null) {
+    if (tank.type == null || tank.type == "") {
       showToast(context,
-          title: "Your tank needs a size!", toastType: ToastType.error);
+          title: "Your tank needs a type!",
+          toastType: ToastType.error,
+          description: 'Even if its just "Freshwater" :)');
     } else {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CreateTankTankType(tank: tank)));
+              builder: (context) => CreateTankUploadPhoto(tank: tank)));
     }
   }
 }

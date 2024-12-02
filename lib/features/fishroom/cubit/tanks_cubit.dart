@@ -29,6 +29,8 @@ class TanksCubit extends Cubit<TanksState> {
         tank.imageLocalPath = localPath;
       }
 
+      tank.createdAt = DateTime.now().toString();
+
       await supabaseRepository.insert(
           tableName: Table.tanks.tableName, json: tank.toJson());
 
