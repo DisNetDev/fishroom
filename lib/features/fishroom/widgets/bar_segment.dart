@@ -69,7 +69,7 @@ class _BarSegmentState extends State<BarSegment> {
             margin: const EdgeInsets.symmetric(horizontal: 5),
             curve: Curves.bounceOut,
             duration: const Duration(milliseconds: 1000),
-            width: 20,
+            width: 10,
             height: animatedValue,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

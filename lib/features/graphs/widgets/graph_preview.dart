@@ -9,6 +9,7 @@ import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/models/tank_reading.dart';
+import '../../../core/usecases/is_dark_mode.dart';
 import '../../app/cubit/app_cubit.dart';
 
 // ignore: prefer-match-file-name
@@ -50,10 +51,13 @@ class _ParameterChartDataState extends State<ParameterChartData> {
       BarChartData(
         extraLinesData: ExtraLinesData(horizontalLines: [
           HorizontalLine(
-              y: 0, color: Colors.grey, strokeWidth: 0.5, dashArray: [5]),
+              y: 0,
+              color: isDarkMode(context) ? Colors.grey : Colors.black,
+              strokeWidth: 0.5,
+              dashArray: [5]),
           HorizontalLine(
               y: highestValue,
-              color: Colors.grey,
+              color: isDarkMode(context) ? Colors.grey : Colors.black,
               strokeWidth: 0.5,
               dashArray: [5])
         ]),
@@ -66,8 +70,10 @@ class _ParameterChartDataState extends State<ParameterChartData> {
           horizontalInterval: lineInterval,
           show: true,
           getDrawingHorizontalLine: (value) {
-            return const FlLine(
-                color: Colors.grey, strokeWidth: 0.5, dashArray: [5]);
+            return FlLine(
+                color: isDarkMode(context) ? Colors.white24 : Colors.grey,
+                strokeWidth: 0.5,
+                dashArray: [5]);
           },
           drawVerticalLine: false,
         ),
@@ -78,10 +84,13 @@ class _ParameterChartDataState extends State<ParameterChartData> {
   }
 
   BarTouchData get barTouchData => BarTouchData(
-        enabled: false,
+        enabled: true,
         touchTooltipData: BarTouchTooltipData(
-          tooltipPadding: EdgeInsets.zero,
-          tooltipMargin: 0,
+          tooltipRoundedRadius: 200,
+          getTooltipColor: (_) => kSecondaryColor,
+          direction: TooltipDirection.auto,
+          tooltipPadding: EdgeInsets.all(8),
+          tooltipMargin: 10,
           getTooltipItem: (
             BarChartGroupData group,
             int groupIndex,
@@ -89,11 +98,11 @@ class _ParameterChartDataState extends State<ParameterChartData> {
             int rodIndex,
           ) {
             return BarTooltipItem(
-              rod.toY.round().toString(),
-              const TextStyle(
-                  color: Colors.transparent,
+              rod.toY.toString(),
+              TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 0),
+                  fontSize: 12,
+                  color: Colors.white),
             );
           },
         ),
@@ -219,7 +228,7 @@ class ParameterChartState extends State<ParameterChart> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Gap(20),
+        Gap(50),
         AspectRatio(
           aspectRatio: 2,
           child: Padding(
