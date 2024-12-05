@@ -1,6 +1,7 @@
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
+import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/tank_reading/create_tank_reading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -101,7 +102,14 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          // if (!loading) GraphPreview(),
+                          if (!loading &&
+                              context
+                                  .read<AppCubit>()
+                                  .state
+                                  .settings
+                                  .parameters
+                                  .isNotEmpty)
+                            ParameterChart(data: readings),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
