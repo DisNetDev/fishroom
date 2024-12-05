@@ -1,7 +1,7 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_borders/gradient_borders.dart';
+import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 
 import 'loader.dart';
 import 'material_container.dart';
@@ -32,41 +32,41 @@ class CustomButton extends StatelessWidget {
         ? const Loader(color: Colors.black)
         : const Loader();
 
-    return MaterialContainer(
-      constraints:
-          const BoxConstraints(minHeight: 50, maxHeight: 50, minWidth: 100),
-      margin: margin,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+    return GestureDetector(
       onTap: onPressed,
-      decoration: BoxDecoration(
-        border: primary
-            ? null
-            : gradient != null
-                ? GradientBoxBorder(gradient: gradient!)
-                : Border.all(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
+      child: Container(
+        constraints:
+            const BoxConstraints(minHeight: 50, maxHeight: 50, minWidth: 100),
+        margin: margin,
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+        decoration: BoxDecoration(
+          border: primary
+              ? null
+              : gradient != null
+                  ? GradientBoxBorder(gradient: gradient!)
+                  : Border.all(
+                      color: isDarkMode(context) ? Colors.white : Colors.black,
+                    ),
+          gradient: primary ? kPrimaryGradient : null,
+          borderRadius: BorderRadius.circular(2000),
+        ),
+        child: Center(
+          child: loading
+              ? loader
+              : Text(
+                  text,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: textColor ??
+                        (primary
+                            ? Colors.white
+                            : isDarkMode(context)
+                                ? Colors.white
+                                : Colors.black),
                   ),
-        gradient: primary ? kPrimaryGradient : null,
-        borderRadius: BorderRadius.circular(2000),
-      ),
-      child: Center(
-        child: loading
-            ? loader
-            : Text(
-                text,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: textColor ??
-                      (primary
-                          ? Colors.white
-                          : isDarkMode(context)
-                              ? Colors.white
-                              : Colors.black),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
+        ),
       ),
     );
   }

@@ -10,9 +10,11 @@ import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/text_input.dart';
 
 class CreateTankTankType extends StatefulWidget {
-  const CreateTankTankType({super.key, required this.tank});
+  const CreateTankTankType(
+      {super.key, required this.tank, required this.editTank});
 
   final Tank tank;
+  final bool editTank;
 
   @override
   State<CreateTankTankType> createState() => _CreateTankTankTypeState();
@@ -43,6 +45,7 @@ class _CreateTankTankTypeState extends State<CreateTankTankType> {
                 textAlign: TextAlign.center,
               ),
               TextInput(
+                  initialValue: tank.type,
                   onEditingComplete: () => onComplete(),
                   onChanged: (p0) => setState(() => tank.type = p0)),
             ],
@@ -66,7 +69,8 @@ class _CreateTankTankTypeState extends State<CreateTankTankType> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CreateTankUploadPhoto(tank: tank)));
+              builder: (context) => CreateTankUploadPhoto(
+                  tank: tank, editTank: widget.editTank)));
     }
   }
 }

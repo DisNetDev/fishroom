@@ -14,7 +14,9 @@ import 'package:uuid/uuid.dart';
 import 'create_tank_tank_size.dart';
 
 class CreateTankTankName extends StatefulWidget {
-  const CreateTankTankName({super.key});
+  const CreateTankTankName({super.key, this.tank});
+
+  final Tank? tank;
 
   @override
   State<CreateTankTankName> createState() => _CreateTankTankNameState();
@@ -23,13 +25,21 @@ class CreateTankTankName extends StatefulWidget {
 class _CreateTankTankNameState extends State<CreateTankTankName> {
   FocusNode nameFocusNode = FocusNode();
   Tank tank = Tank(id: const Uuid().v4());
+  bool editTank = false;
+  bool loading = false;
 
   @override
   void initState() {
     nameFocusNode.requestFocus();
-    if (context.read<AppCubit>().state.user != null) {
-      tank.ownerId = context.read<AppCubit>().state.user!.uuid;
+    if (widget.tank != null) {
+      tank = widget.tank!;
+      editTank = true;
+    } else {
+      if (context.read<AppCubit>().state.user != null) {
+        tank.ownerId = context.read<AppCubit>().state.user!.uuid;
+      }
     }
+
     super.initState();
   }
 
@@ -47,9 +57,11 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  context.read<TanksCubit>().state.tanks.isEmpty
-                      ? "Welcome to Fishroom!\nLet's create your first tank!"
-                      : "Woah! Another tank!\nLet's give it a name!",
+                  editTank
+                      ? "Editing your tank? Great!"
+                      : context.read<TanksCubit>().state.tanks.isEmpty
+                          ? "Welcome to Fishroom!\nLet's create your first tank!"
+                          : "Woah! Another tank!\nLet's give it a name!",
                   style: kHeadingTextStyle,
                   textAlign: TextAlign.center,
                 ),
@@ -60,6 +72,7 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
                   textAlign: TextAlign.center,
                 ),
                 TextInput(
+                    initialValue: tank.name,
                     focusNode: nameFocusNode,
                     onEditingComplete: () => onComplete(),
                     onChanged: (p0) => setState(() => tank.name = p0)),
@@ -67,11 +80,65 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
             ),
           ),
           Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-              child: CustomButton(
-                  text: "Continue", onPressed: () => onComplete())),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomButton(text: "Continue", onPressed: () => onComplete()),
+                Gap(20),
+                if (editTank)
+                  CustomButton(
+                    text: "Delete Tank",
+                    onPressed: () {
+                      _showDeleteConfirmationDialog(context);
+                    },
+                    loading: loading,
+                    primary: false,
+                    gradient: kErrorGradient,
+                    textColor: const Color.fromARGB(255, 255, 17, 0),
+                  ),
+                Gap(50)
+              ],
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  // Function to show a confirmation dialog for deleting a tank
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirm Deletion"),
+          content: const Text(
+              "Are you sure you want to delete this tank?\nThis cannot be undone."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                try {
+                  context.read<TanksCubit>().deleteTank(tank);
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  showToast(context,
+                      title: "Something went wrong.",
+                      toastType: ToastType.error,
+                      description: e.toString());
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -89,6 +156,7 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CreateTankTankSize(tank: tank)));
+            builder: (context) =>
+                CreateTankTankSize(tank: tank, editTank: editTank)));
   }
 }
