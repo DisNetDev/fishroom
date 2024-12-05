@@ -30,30 +30,36 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
 
   @override
   void initState() {
-    parameters
-        .addAll(context.read<AppCubit>().state.settings?.parameters ?? []);
+    parameters.addAll(context.read<AppCubit>().state.settings.parameters ?? []);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     bool edited = areParametersEdited(
-        parameters, context.read<AppCubit>().state.settings?.parameters ?? []);
+        parameters, context.read<AppCubit>().state.settings.parameters ?? []);
 
     return Scaffold(
       floatingActionButton: !edited
           ? null
-          : FloatingActionButton(
+          : FloatingActionButton.extended(
+              label: loading
+                  ? Loader(
+                      color: isDarkMode(context) ? Colors.black : Colors.white,
+                    )
+                  : const Text(
+                      "Save",
+                    ),
+              icon: loading ? null : const Icon(Symbols.save),
               onPressed: () async {
                 if (loading) return;
                 try {
                   setState(() => loading = true);
                   await context.read<AppCubit>().updateSettings(context
-                          .read<AppCubit>()
-                          .state
-                          .settings
-                          ?.copyWith(parameters: parameters) ??
-                      Settings(parameters: parameters));
+                      .read<AppCubit>()
+                      .state
+                      .settings
+                      .copyWith(parameters: parameters));
                   setState(() => loading = false);
                   Navigator.of(context).pop();
                 } catch (e) {
@@ -66,13 +72,6 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
                       description: e.toString());
                 }
               },
-              child: loading
-                  ? Loader(
-                      color: isDarkMode(context) ? Colors.black : Colors.white,
-                    )
-                  : const Icon(
-                      Symbols.save_rounded,
-                    ),
             ),
       body: Stack(
         children: [
@@ -152,9 +151,11 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
                             try {
                               setState(() => resettingDefaults = true);
                               if (context.mounted) {
-                                await context
-                                    .read<AppCubit>()
-                                    .setParametersDefaults();
+                                List<Parameter> fetchedParameters =
+                                    await context
+                                        .read<AppCubit>()
+                                        .setParametersDefaults();
+                                setState(() => parameters = fetchedParameters);
                               }
                               setState(() => resettingDefaults = false);
                             } on Exception catch (e) {

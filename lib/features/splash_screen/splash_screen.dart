@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/repositories/supabase_repository.dart';
+import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:fishroom/main.dart';
@@ -20,10 +21,19 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   void checkLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 1));
+    // await Future.delayed(const Duration(seconds: 1));
     if (supabase.auth.currentSession != null) {
       context.read<SupabaseRepository>().setSession();
-      await context.read<AppCubit>().fetchUser();
+      try {
+        await context.read<AppCubit>().fetchUser();
+      } catch (e) {
+        showToast(context,
+            title: "Something went wrong. Please try again",
+            toastType: ToastType.error,
+            description: e.toString());
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => LogonView()));
+      }
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {

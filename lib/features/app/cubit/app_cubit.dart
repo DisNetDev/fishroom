@@ -26,7 +26,7 @@ class AppCubit extends HydratedCubit<AppState> {
   Map<String, dynamic>? toJson(AppState state) {
     return {
       'user': state.user?.toJson(),
-      'settings': state.settings?.toJson(),
+      'settings': state.settings.toJson(),
     };
   }
 
@@ -80,12 +80,15 @@ class AppCubit extends HydratedCubit<AppState> {
 
   Future<void> fetchUser() async {
     FishUser? user;
+    Settings? settings;
     try {
       fishLog("Getting User Data...");
       final data = await _supabaseRepository.fetchUser();
       if (data != null && data.isNotEmpty) {
         user = FishUser.fromJson(data.first);
-        emit(state.copyWith(user: user));
+        settings = Settings.fromJson(data.first["settings"]);
+
+        emit(state.copyWith(user: user, settings: settings));
       }
     } catch (e) {
       rethrow;
@@ -109,7 +112,7 @@ class AppCubit extends HydratedCubit<AppState> {
     }
   }
 
-  Future<void> setParametersDefaults() async {
+  Future<List<Parameter>> setParametersDefaults() async {
     fishLog("Resetting parameters...");
     try {
       final data = await _supabaseRepository.fetch(
@@ -121,12 +124,12 @@ class AppCubit extends HydratedCubit<AppState> {
         for (Map<String, dynamic> param in data.first["value"]) {
           parameters.add(Parameter.fromJson(param));
         }
-        fishLog(parameters.length.toString());
-        emit(state.copyWith(settings: Settings(parameters: parameters)));
+        fishLog("${parameters.length.toString()} parameters found.");
 
-        await updateSettings(
-            state.settings ?? Settings(parameters: parameters));
+        return parameters;
       }
+
+      return [];
     } catch (_) {
       rethrow;
     }
