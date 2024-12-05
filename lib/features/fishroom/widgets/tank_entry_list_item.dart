@@ -222,58 +222,79 @@ class _TankEntryListItemState extends State<TankEntryListItem> {
   }
 }
 
-class _OpenedReading extends StatelessWidget {
+class _OpenedReading extends StatefulWidget {
   const _OpenedReading({required this.reading});
 
   final TankReading reading;
 
   @override
+  State<_OpenedReading> createState() => _OpenedReadingState();
+}
+
+class _OpenedReadingState extends State<_OpenedReading> {
+  double _startDragX = 0;
+  static const int _dragDistanceToGoBack =
+      60; // How far the user has to drag to go back in pixels
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: isDarkMode(context) ? Colors.black : Colors.white,
-      appBar: RootSliverAppBar(
-        title: reading.type.label,
-      ),
-      body: Stack(
-        children: [
-          const CustomBackground(),
-          Column(
-            children: [
-              if (reading.imageUrl != null)
-                CachedNetworkImage(
-                  placeholder: (context, url) => const AspectRatio(
-                      aspectRatio: 16 / 9, child: SizedBox(child: Loader())),
-                  imageUrl: reading.imageUrl!,
+    return GestureDetector(
+      // Since the back gesture doesnt work on this widget, we need to detect the drag and close it
+      onHorizontalDragStart: (details) {
+        _startDragX = details.globalPosition.dx;
+      },
+      onHorizontalDragUpdate: (details) {
+        double dragDistance = details.globalPosition.dx - _startDragX;
+        if (dragDistance.abs() > _dragDistanceToGoBack) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: isDarkMode(context) ? Colors.black : Colors.white,
+        appBar: RootSliverAppBar(
+          title: widget.reading.type.label,
+        ),
+        body: Stack(
+          children: [
+            const CustomBackground(),
+            Column(
+              children: [
+                if (widget.reading.imageUrl != null)
+                  CachedNetworkImage(
+                    placeholder: (context, url) => const AspectRatio(
+                        aspectRatio: 16 / 9, child: SizedBox(child: Loader())),
+                    imageUrl: widget.reading.imageUrl!,
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (widget.reading.note != null)
+                        const Text(
+                          "Note",
+                          style: kHeading1TextStyle,
+                        ),
+                      if (widget.reading.note != null)
+                        Text(
+                          widget.reading.note ?? "",
+                          style: kPlainTextStyle,
+                        ),
+                      const Gap(20),
+                      if (widget.reading.type == TankReadingType.measurement)
+                        const Text(
+                          "Reading",
+                          style: kHeading1TextStyle,
+                        ),
+                      if (widget.reading.type == TankReadingType.measurement)
+                        SmallEntryGraph(tankReading: widget.reading)
+                    ],
+                  ),
                 ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (reading.note != null)
-                      const Text(
-                        "Note",
-                        style: kHeading1TextStyle,
-                      ),
-                    if (reading.note != null)
-                      Text(
-                        reading.note ?? "",
-                        style: kPlainTextStyle,
-                      ),
-                    const Gap(20),
-                    if (reading.type == TankReadingType.measurement)
-                      const Text(
-                        "Reading",
-                        style: kHeading1TextStyle,
-                      ),
-                    if (reading.type == TankReadingType.measurement)
-                      SmallEntryGraph(tankReading: reading)
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

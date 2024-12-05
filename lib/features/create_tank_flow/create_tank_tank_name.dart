@@ -4,6 +4,7 @@ import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
+import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +27,9 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
   @override
   void initState() {
     nameFocusNode.requestFocus();
+    if (context.read<AppCubit>().state.user != null) {
+      tank.ownerId = context.read<AppCubit>().state.user!.uuid;
+    }
     super.initState();
   }
 
