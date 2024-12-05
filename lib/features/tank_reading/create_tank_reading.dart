@@ -47,6 +47,22 @@ class _CreateTankReadingState extends State<CreateTankReading> {
   File? _image;
   ImagePicker imagePicker = ImagePicker();
 
+  List<Parameter> parameters = [];
+
+  @override
+  void initState() {
+    tankReading = TankReading(
+      id: const Uuid().v4(),
+      ownerId: context.read<AppCubit>().state.user!.uuid,
+      type: TankReadingType.measurement,
+      tankId: widget.tank.id,
+      createdAt: DateTime.now().toString(),
+    );
+
+    parameters.addAll(context.read<AppCubit>().state.settings.parameters);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -101,38 +117,32 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(
-                                state.settings.parameters.length,
+                                parameters.length,
                                 (index) => ParameterWheel(
                                     onEnabled: (value) {
                                       setState(() {
                                         if (value) {
                                           tankReading.parameters.add(
-                                              state.settings.parameters[index]);
+                                              Parameter.from(parameters[index],
+                                                  parameters[index].min));
                                         } else {
                                           tankReading.parameters.removeWhere(
                                               (test) =>
                                                   test.name ==
-                                                  state.settings
-                                                      .parameters[index].name);
+                                                  parameters[index].name);
                                         }
                                       });
                                     },
                                     valueSelected: (value) {
                                       setState(() {
-                                        Parameter param = state
-                                            .settings.parameters[index]
-                                            .copyWith();
-                                        param = param.copyWith(value: value);
                                         tankReading.parameters
                                             .firstWhere((test) =>
                                                 test.name ==
-                                                state.settings.parameters[index]
-                                                    .name)
+                                                parameters[index].name)
                                             .value = value;
                                       });
                                     },
-                                    parameter:
-                                        state.settings.parameters[index])));
+                                    parameter: parameters[index])));
                       },
                     ),
                   const Gap(20),

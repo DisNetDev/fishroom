@@ -11,6 +11,7 @@ import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
+import '../../graphs/widgets/graph_preview.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_entry_list_item.dart';
 import 'edit_tank.dart';
@@ -47,63 +48,60 @@ class _TankDetailsState extends State<TankDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TanksCubit, TanksState>(
-      builder: (context, state) {
-        List<TankReading> readings = context
-            .read<TanksCubit>()
-            .state
-            .readings
-            .where((reading) => reading.tankId == widget.tank.id)
-            .toList()
-          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
-        return RefreshIndicator(
-          edgeOffset: 20,
-          onRefresh: () async {
-            await context.read<TanksCubit>().getReadingsForTank(widget.tank);
-          },
-          child: Stack(
-            children: [
-              const CustomBackground(),
-              Scaffold(
-                backgroundColor: Colors.transparent,
-                floatingActionButton: FloatingActionButton(
+    return RefreshIndicator(
+      edgeOffset: 20,
+      onRefresh: () async {
+        await context.read<TanksCubit>().getReadingsForTank(widget.tank);
+      },
+      child: Stack(
+        children: [
+          const CustomBackground(),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateTankReading(
+                      tank: widget.tank,
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
+            appBar: RootSliverAppBar(
+              title: widget.tank.name ?? "Tank Details",
+              actions: [
+                IconButton(
                   onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CreateTankReading(
-                                  tank: widget.tank,
-                                )));
+                            builder: (context) => EditTank(tank: widget.tank)));
                   },
-                  child: const Icon(Icons.add),
-                ),
-                appBar: RootSliverAppBar(
-                  title: widget.tank.name ?? "Tank Details",
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    EditTank(tank: widget.tank)));
-                      },
-                      icon: const Icon(
-                        Icons.edit,
-                      ),
-                    )
-                  ],
-                ),
-                body: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: Stack(
-                    children: [
-                      ListView(
+                  icon: const Icon(
+                    Icons.edit,
+                  ),
+                )
+              ],
+            ),
+            body: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Stack(
+                children: [
+                  BlocBuilder<TanksCubit, TanksState>(
+                    builder: (context, state) {
+                      List<TankReading> readings = state.readings
+                          .where((reading) => reading.tankId == widget.tank.id)
+                          .toList();
+
+                      return ListView(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          // const TankHistoryChart(),
+                          // if (!loading) GraphPreview(),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
@@ -121,46 +119,37 @@ class _TankDetailsState extends State<TankDetails> {
                                           note: "Some Dummy Info"))),
                           ...List.generate(
                             readings.length,
-                            (index) {
-                              return Skeletonizer(
-                                effect: isDarkMode(context)
-                                    ? kDarkModeShimmer
-                                    : kLightModeShimmer,
-                                enabled: loading,
-                                child: TankEntryListItem(
-                                  onDismissed: () {
-                                    try {
-                                      final readingToRemove = readings[index];
-                                      readings
-                                          .removeAt(index); // Remove by index
-                                      context
-                                          .read<TanksCubit>()
-                                          .deleteTankReading(readingToRemove);
-                                    } on Exception catch (e) {
-                                      if (context.mounted) {
-                                        showToast(context,
-                                            title: "Something went wrong.",
-                                            toastType: ToastType.error,
-                                            description: e.toString());
-                                      }
-                                    }
-                                  },
-                                  reading: readings[index],
-                                ),
-                              );
-                            },
+                            (index) => TankEntryListItem(
+                              onDismissed: () {
+                                try {
+                                  final readingToRemove = readings[index];
+                                  readings.removeAt(index); // Remove by index
+                                  context
+                                      .read<TanksCubit>()
+                                      .deleteTankReading(readingToRemove);
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    showToast(context,
+                                        title: "Something went wrong.",
+                                        toastType: ToastType.error,
+                                        description: e.toString());
+                                  }
+                                }
+                              },
+                              reading: readings[index],
+                            ),
                           ),
                           const Gap(300),
                         ],
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

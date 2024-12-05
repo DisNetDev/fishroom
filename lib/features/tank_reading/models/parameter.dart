@@ -19,6 +19,21 @@ class Parameter {
     this.value,
   });
 
+  factory Parameter.from(Parameter param, double? value) {
+    param = param.copyWith(value: value);
+
+    return Parameter(
+      shortName: param.shortName,
+      name: param.name,
+      description: param.description,
+      unit: param.unit,
+      max: param.max,
+      min: param.min,
+      step: param.step,
+      value: param.value,
+    );
+  }
+
   factory Parameter.fromJson(Map<String, dynamic>? json) {
     if (json == null) return Parameter();
 

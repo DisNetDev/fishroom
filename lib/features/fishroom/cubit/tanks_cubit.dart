@@ -107,6 +107,7 @@ class TanksCubit extends Cubit<TanksState> {
             readings.add(reading);
           }
         }
+        readings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
         emit(state.copyWith(readings: readings));
       }
     } catch (e) {
@@ -131,7 +132,11 @@ class TanksCubit extends Cubit<TanksState> {
         json: amendedReading.toJson(),
       );
 
-      emit(state.copyWith(readings: [...state.readings, amendedReading]));
+      List<TankReading> readings = state.readings;
+      readings.insert(0, amendedReading);
+      readings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      emit(state.copyWith(readings: readings));
     } catch (e) {
       rethrow;
     }
