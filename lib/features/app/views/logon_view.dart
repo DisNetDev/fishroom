@@ -1,12 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
-import 'package:fishroom/features/fishroom/views/my_tanks.dart';
+import 'package:fishroom/features/app/cubit/app_cubit.dart';
+import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../../core/usecases/email_validator.dart';
-import '../../../core/usecases/password_validator.dart';
+import '../../../core/usecases/password_validator_object.dart';
 
 class LogonView extends StatefulWidget {
   const LogonView({super.key});
@@ -16,7 +21,10 @@ class LogonView extends StatefulWidget {
 }
 
 class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
-  int step = 1;
+  //if userShouldLogIn is null, should only show email field.
+  //if false, should show password1 and password2 for signup.
+  //if true, should only show password1 and login
+  bool? userShouldLogIn;
   bool runAnimationEmailField = true;
   String emailAddress = "";
   bool showPassword1 = false;
@@ -113,14 +121,22 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             ),
             CustomButton(
               primary: true,
-              text: "Continue",
+              loading: loading,
+              text: userShouldLogIn == null
+                  ? "Continue"
+                  : userShouldLogIn!
+                      ? "Login"
+                      : "Sign Up",
               onPressed: onEditingComplete,
               margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
             ),
             CustomButton(
               text: "Continue with Google",
               primary: false,
-              onPressed: () {},
+              onPressed: () {
+                showToast(context,
+                    title: "Not Implemented", toastType: ToastType.error);
+              },
               margin: const EdgeInsets.symmetric(horizontal: 80),
             ),
             const Gap(30),
@@ -130,48 +146,131 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     );
   }
 
-  void onEditingComplete() {
+  bool checkIfEmailIsValid() {
     if (isEmailValid(emailAddress)) {
-      setState(() {
-        showPassword1 = true;
-        showPassword2 = true;
-      });
-      if (focusNodePassword2.hasFocus) {
-        focusNodePassword2.unfocus();
-      }
-      if (focusNodePassword1.hasFocus) {
-        focusNodePassword1.unfocus();
-        focusNodePassword2.requestFocus();
-        return;
-      }
-
-      if (focusNodeEmail.hasFocus) {
-        focusNodeEmail.unfocus();
-        focusNodePassword1.requestFocus();
-      }
+      return true;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter a valid email address.")));
-      return;
+      showToast(
+        context,
+        title: "Invalid Email",
+        description: "Please enter a valid email",
+        toastType: ToastType.error,
+      );
+
+      return false;
     }
-    if (step == 2) {
-      setState(() {
-        PasswordValidatorObject passwordValidator =
-            isPasswordsValid(password1, password2);
+  }
 
-        if (passwordValidator.isValid) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const MyTanks()));
-        } else {
-          if (showPassword1) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(passwordValidator.message)));
-          }
-          return;
-        }
-      });
+  bool checkIfPasswordIsValid() {
+    PasswordValidatorObject isValid = isPasswordsValid(password1, password2);
+    if (isValid.isValid) {
+      return true;
     } else {
-      setState(() => step = 2);
+      showToast(
+        context,
+        title: "Invalid Password",
+        description: isValid.message,
+        toastType: ToastType.error,
+      );
+
+      return false;
+    }
+  }
+
+  void signUp() async {
+    setState(() => loading = true);
+    await context
+        .read<AppCubit>()
+        .signUpWithPassword(email: emailAddress, password: password1);
+    if (context.read<AppCubit>().state.user != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const Fishroom()));
+    } else {
+      String message = "Something went wrong singing you up. Please try again.";
+      setState(() => loading = false);
+      showToast(
+        context,
+        title: "Something went wrong.",
+        description: message,
+        toastType: ToastType.error,
+      );
+    }
+  }
+
+  void login() async {
+    setState(() => loading = true);
+    try {
+      await context
+          .read<AppCubit>()
+          .signInWithPassword(email: emailAddress, password: password1);
+      if (context.read<AppCubit>().state.user != null) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Fishroom()));
+      } else {
+        String message =
+            "Something went wrong logging you in. Please try again.";
+
+        setState(() => loading = false);
+        showToast(
+          context,
+          title: "Something went wrong.",
+          description: message,
+          toastType: ToastType.error,
+        );
+      }
+    } on Exception catch (e) {
+      showToast(context,
+          title: "Something went wrong.",
+          toastType: ToastType.error,
+          description: e.toString());
+    }
+    setState(() => loading = false);
+  }
+
+  void onEditingComplete() async {
+    switch (userShouldLogIn) {
+      case null:
+        if (checkIfEmailIsValid()) {
+          setState(() => loading = true);
+          bool userIsSignedUp =
+              await context.read<AppCubit>().checkIfEmailExists(emailAddress);
+          if (userIsSignedUp) {
+            showPassword1 = true;
+            userShouldLogIn = true;
+          } else {
+            showPassword1 = true;
+            showPassword2 = true;
+            userShouldLogIn = false;
+          }
+          focusNodeEmail.unfocus();
+          focusNodePassword1.requestFocus();
+        }
+        setState(() => loading = false);
+        break;
+
+      case false:
+        if (focusNodePassword1.hasFocus) {
+          focusNodePassword2.requestFocus();
+        } else if (focusNodePassword2.hasFocus) {
+          if (checkIfEmailIsValid()) {
+            if (checkIfPasswordIsValid()) {
+              setState(() => loading = true);
+              signUp();
+            }
+          }
+        } else {
+          focusNodeEmail.unfocus();
+          focusNodePassword1.unfocus();
+          focusNodePassword2.unfocus();
+        }
+        break;
+
+      case true:
+        if (checkIfEmailIsValid()) {
+          setState(() => loading = true);
+          login();
+        }
+        break;
     }
   }
 
@@ -198,7 +297,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             ).animate(
               CurvedAnimation(
                 parent: controller,
-                curve: Curves.decelerate,
+                curve: Curves.bounceIn,
               ),
             ),
             child: child,

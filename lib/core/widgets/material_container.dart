@@ -32,6 +32,7 @@ class MaterialContainer extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(
+          curve: Curves.bounceIn,
           clipBehavior: Clip.none,
           duration: const Duration(milliseconds: 400),
           constraints: constraints,

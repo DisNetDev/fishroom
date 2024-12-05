@@ -1,4 +1,4 @@
-package com.fishroom.staging
+package com.fishroom
 
 import io.flutter.embedding.android.FlutterActivity
 

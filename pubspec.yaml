@@ -2,29 +2,42 @@ name: fishroom
 description: "Fishroom is an app for aquarium hobbyists to keep track of their
   fish and tanks."
 publish_to: "none"
-version: 0.0.4
+version: 0.1.0
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
 
 dependencies:
-  awesome_snackbar_content: ^0.1.3
+  animations: ^2.0.11
+  cached_network_image: ^3.4.1
   crop_your_image: ^1.1.0
+  fl_chart: ^0.69.0
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
+  flutter_dotenv: ^5.1.0
+  flutter_image_compress: ^2.3.0
+  flutter_secure_storage: ^9.2.2
   flutter_svg: ^2.0.10+1
   gap: ^3.0.1
   gradient_borders: ^1.0.1
+  http: null
+  hydrated_bloc: ^9.1.5
   image_picker: ^1.1.2
+  list_wheel_scroll_view_nls: ^0.0.3
   lottie: ^3.1.2
-  package_info_plus: ^8.0.0
+  material_symbols_icons: ^4.2789.0
+  package_info_plus: ^8.0.2
+  path_provider: ^2.1.4
+  rive: ^0.13.15
   skeletonizer: ^1.4.2
-  supabase_flutter: ^2.5.5
-  uuid: ^4.4.0
+  supabase_flutter: ^2.6.0
+  svg_flutter: ^0.0.1
+  toastification: ^2.3.0
+  uuid: ^4.5.0
 
 dev_dependencies:
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
 
@@ -34,6 +47,7 @@ flutter:
   assets:
     - assets/
     - assets/fonts/
+    - .env
 
   fonts:
     - family: CheesyCats

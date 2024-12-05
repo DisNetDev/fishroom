@@ -2,14 +2,14 @@
   "project_info": {
     "project_number": "925799751096",
     "project_id": "fishroom-7be74",
-    "storage_bucket": "fishroom-7be74.appspot.com"
+    "storage_bucket": "fishroom-7be74.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:925799751096:android:be0b339543e4a6e5b6834d",
+        "mobilesdk_app_id": "1:925799751096:android:58fd41e40bf111e3b6834d",
         "android_client_info": {
-          "package_name": "com.fishroom.staging"
+          "package_name": "com.fishroom"
         }
       },
       "oauth_client": [],
