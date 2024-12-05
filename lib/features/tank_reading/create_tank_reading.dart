@@ -101,13 +101,38 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(
-                                state.settings?.parameters.length ?? 0,
+                                state.settings.parameters.length,
                                 (index) => ParameterWheel(
-                                    onEnabled: (value) {}, //TODO
-                                    valueSelected: (value) {}, //TODO
+                                    onEnabled: (value) {
+                                      setState(() {
+                                        if (value) {
+                                          tankReading.parameters.add(
+                                              state.settings.parameters[index]);
+                                        } else {
+                                          tankReading.parameters.removeWhere(
+                                              (test) =>
+                                                  test.name ==
+                                                  state.settings
+                                                      .parameters[index].name);
+                                        }
+                                      });
+                                    },
+                                    valueSelected: (value) {
+                                      setState(() {
+                                        Parameter param = state
+                                            .settings.parameters[index]
+                                            .copyWith();
+                                        param = param.copyWith(value: value);
+                                        tankReading.parameters
+                                            .firstWhere((test) =>
+                                                test.name ==
+                                                state.settings.parameters[index]
+                                                    .name)
+                                            .value = value;
+                                      });
+                                    },
                                     parameter:
-                                        state.settings?.parameters[index] ??
-                                            Parameter())));
+                                        state.settings.parameters[index])));
                       },
                     ),
                   const Gap(20),

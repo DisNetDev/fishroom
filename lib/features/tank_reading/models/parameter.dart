@@ -6,6 +6,7 @@ class Parameter {
   final double? max;
   final double? min;
   final double? step;
+  double? value;
 
   Parameter({
     this.shortName,
@@ -15,6 +16,7 @@ class Parameter {
     this.max,
     this.min,
     this.step,
+    this.value,
   });
 
   factory Parameter.fromJson(Map<String, dynamic>? json) {
@@ -28,6 +30,7 @@ class Parameter {
       max: json['max'] != null ? (json['max'] as num).toDouble() : null,
       min: json['min'] != null ? (json['min'] as num).toDouble() : null,
       step: json['step'] != null ? (json['step'] as num).toDouble() : null,
+      value: json['value'] as double?,
     );
   }
 
@@ -40,6 +43,7 @@ class Parameter {
       'max': max,
       'min': min,
       'step': step,
+      'value': value,
     };
   }
 
@@ -51,6 +55,7 @@ class Parameter {
     double? max,
     double? min,
     double? step,
+    double? value,
   }) {
     return Parameter(
       name: name ?? this.name,
@@ -60,6 +65,7 @@ class Parameter {
       max: max ?? this.max,
       min: min ?? this.min,
       step: step ?? this.step,
+      value: value ?? this.value,
     );
   }
 }

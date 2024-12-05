@@ -54,7 +54,7 @@ class _TankTileState extends State<TankTile> {
 
   @override
   Widget build(BuildContext context) {
-    double borderRadius = 25;
+    double borderRadius = 16;
 
     String tankTypeNonNullable = widget.tank.type ?? "Tank Type";
     if (tankTypeNonNullable == "") {
@@ -75,6 +75,7 @@ class _TankTileState extends State<TankTile> {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: MaterialContainer(
+                elevation: 5,
                 margin:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(

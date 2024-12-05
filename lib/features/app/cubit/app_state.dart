@@ -2,12 +2,12 @@ part of 'app_cubit.dart';
 
 class AppState {
   final FishUser? user;
-  final Settings? settings;
+  final Settings settings;
 
   AppState({
     this.user,
-    this.settings,
-  });
+    Settings? settings,
+  }) : settings = settings ?? Settings(parameters: []);
 
   AppState copyWith({
     FishUser? user,
