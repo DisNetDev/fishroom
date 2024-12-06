@@ -3,18 +3,28 @@ import 'dart:io';
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/log.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 
 part 'tanks_state.dart';
 
-class TanksCubit extends Cubit<TanksState> {
+class TanksCubit extends HydratedCubit<TanksState> {
   TanksCubit({required this.supabaseRepository})
       : super(const TanksState(tanks: [], error: false, readings: []));
 
   final SupabaseRepository supabaseRepository;
+
+  @override
+  TanksState? fromJson(Map<String, dynamic> json) {
+    return TanksState.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(TanksState state) {
+    return state.toJson();
+  }
 
   Future<void> addTank(Tank tank, File? image) async {
     try {
@@ -193,7 +203,7 @@ class TanksCubit extends Cubit<TanksState> {
     }
   }
 
-  void clear() {
+  void clearCubit() {
     emit(const TanksState(tanks: [], error: false, readings: []));
   }
 }

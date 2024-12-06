@@ -110,8 +110,13 @@ class _TankDetailsState extends State<TankDetails> {
                                   .state
                                   .settings
                                   .parameters
-                                  .isNotEmpty)
-                            ParameterChart(data: readings),
+                                  .isNotEmpty &&
+                              readings.isNotEmpty)
+                            ParameterChart(data: readings)
+                          else
+                            const Center(
+                                child:
+                                    Text("Add some readings to get started!")),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
