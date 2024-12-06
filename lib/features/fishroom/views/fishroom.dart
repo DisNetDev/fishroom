@@ -3,6 +3,7 @@
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
+import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,9 +61,14 @@ class _FishroomState extends State<Fishroom> {
           children: [
             const CustomBackground(),
             Scaffold(
+              extendBody: true,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+              bottomNavigationBar: RootNavbar(currentIndex: 0),
               backgroundColor: Colors.transparent,
               floatingActionButton: canAddTank(context)
                   ? FloatingActionButton(
+                      shape: CircleBorder(),
                       onPressed: () {
                         Navigator.push(
                             context,

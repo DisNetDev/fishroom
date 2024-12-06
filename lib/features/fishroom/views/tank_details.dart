@@ -16,7 +16,6 @@ import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/graph_preview.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_entry_list_item.dart';
-import 'edit_tank.dart';
 
 class TankDetails extends StatefulWidget {
   const TankDetails({super.key, required this.tank});
@@ -61,6 +60,7 @@ class _TankDetailsState extends State<TankDetails> {
           Scaffold(
             backgroundColor: Colors.transparent,
             floatingActionButton: FloatingActionButton(
+              shape: CircleBorder(),
               onPressed: () {
                 Navigator.push(
                   context,
