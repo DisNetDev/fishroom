@@ -174,6 +174,8 @@ class _ParameterChartDataState extends State<ParameterChartData> {
       }
     }
 
+    parameters = parameters.reversed.toList();
+
     return List.generate(parameters.length, (index) {
       double value = parameters[index].value!;
 
