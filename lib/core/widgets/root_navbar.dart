@@ -50,6 +50,7 @@ class RootNavbar extends StatelessWidget {
             tag: "bottomNavBar",
             child: BottomNavigationBar(
               backgroundColor: Colors.transparent,
+              elevation: 0,
               currentIndex: currentIndex,
               items: _navbarItems,
               onTap: (index) {

@@ -18,6 +18,7 @@ import '../../../core/widgets/root_drawer.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_tile.dart';
+import '../widgets/tank_tile_compact.dart';
 
 class Fishroom extends StatefulWidget {
   const Fishroom({super.key});
@@ -99,7 +100,14 @@ class _FishroomState extends State<Fishroom> {
                             effect: isDarkMode(context)
                                 ? kDarkModeShimmer
                                 : kLightModeShimmer,
-                            child: TankTile(tank: Tank(id: const Uuid().v4())))
+                            child: context
+                                    .read<AppCubit>()
+                                    .state
+                                    .settings
+                                    .compactTankTile
+                                ? TankTileCompact(
+                                    tank: Tank(id: const Uuid().v4()))
+                                : TankTile(tank: Tank(id: const Uuid().v4())))
                       ],
                     );
                   }
@@ -118,7 +126,13 @@ class _FishroomState extends State<Fishroom> {
                                 return const Gap(
                                     200); //return a gap at the bottom of the screen
                               } else {
-                                return TankTile(tank: sortedTanks[index]);
+                                return context
+                                        .read<AppCubit>()
+                                        .state
+                                        .settings
+                                        .compactTankTile
+                                    ? TankTileCompact(tank: sortedTanks[index])
+                                    : TankTile(tank: sortedTanks[index]);
                               }
                             },
                             childCount: sortedTanks.length + 1,
