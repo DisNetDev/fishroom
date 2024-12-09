@@ -6,11 +6,14 @@ import '../../../core/usecases/is_dark_mode.dart';
 
 class ParameterListWidget extends StatelessWidget {
   const ParameterListWidget(
-      {super.key, required this.parameter, required this.onDismissed});
+      {super.key,
+      required this.parameter,
+      required this.onDismissed,
+      required this.onEdit});
 
   final Parameter parameter;
   final Function() onDismissed;
-
+  final Function() onEdit;
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -57,7 +60,12 @@ class ParameterListWidget extends StatelessWidget {
         onTap: () {},
         title: Text(parameter.shortName ?? "Name Not Found"),
         subtitle: Text(parameter.name ?? "Description Not Found"),
-        trailing: Icon(Symbols.edit, fill: 0.8),
+        trailing: GestureDetector(
+          onTap: () {
+            onEdit();
+          },
+          child: Icon(Symbols.edit, fill: 0.8),
+        ),
       ),
     );
   }

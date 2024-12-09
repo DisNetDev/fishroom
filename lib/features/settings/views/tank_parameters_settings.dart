@@ -14,7 +14,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../../tank_reading/models/parameter.dart';
-import '../models/settings.dart';
 
 class TankParametersSettings extends StatefulWidget {
   const TankParametersSettings({super.key});
@@ -99,6 +98,15 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
                           parameter: parameters[index],
                           onDismissed: () {
                             setState(() => parameters.removeAt(index));
+                          },
+                          onEdit: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => EditParameter(
+                                    onParameterAdded: (parameter) {
+                                      setState(
+                                          () => parameters[index] = parameter);
+                                    },
+                                    parameter: parameters[index])));
                           },
                         ),
                       ),
