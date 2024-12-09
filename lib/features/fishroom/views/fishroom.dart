@@ -57,6 +57,10 @@ class _FishroomState extends State<Fishroom> {
         context.watch<AppCubit>().state;
         final TanksState tanksState = context.watch<TanksCubit>().state;
 
+        // Sort tanks by createdAt date, oldest first
+        final sortedTanks = List<Tank>.from(tanksState.tanks)
+          ..sort((a, b) => (a.createdAt ?? '').compareTo(b.createdAt ?? ''));
+
         return Stack(
           children: [
             const CustomBackground(),
@@ -99,7 +103,7 @@ class _FishroomState extends State<Fishroom> {
                       ],
                     );
                   }
-                  if (tanksState.tanks.isNotEmpty) {
+                  if (sortedTanks.isNotEmpty) {
                     return CustomScrollView(
                       physics: const BouncingScrollPhysics(),
                       slivers: [
@@ -110,16 +114,14 @@ class _FishroomState extends State<Fishroom> {
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              if (index == tanksState.tanks.length) {
+                              if (index == sortedTanks.length) {
                                 return const Gap(
                                     200); //return a gap at the bottom of the screen
                               } else {
-                                return TankTile(tank: tanksState.tanks[index]);
+                                return TankTile(tank: sortedTanks[index]);
                               }
                             },
-                            childCount: tanksState.tanks.isNotEmpty
-                                ? tanksState.tanks.length + 1
-                                : 1,
+                            childCount: sortedTanks.length + 1,
                           ),
                         ),
                       ],
