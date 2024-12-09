@@ -40,6 +40,8 @@ class RootNavbar extends StatelessWidget {
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
+          bottomLeft: Radius.circular(10),
+          bottomRight: Radius.circular(10),
         ),
         child: BottomAppBar(
           shape: const CircularNotchedRectangle(),
@@ -47,11 +49,16 @@ class RootNavbar extends StatelessWidget {
           child: Hero(
             tag: "bottomNavBar",
             child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
               currentIndex: currentIndex,
               items: _navbarItems,
               onTap: (index) {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => _viewList[index]));
+                if (index != currentIndex) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => _viewList[index]));
+                }
               },
             ),
           ),
