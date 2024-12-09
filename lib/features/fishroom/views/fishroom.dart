@@ -112,7 +112,7 @@ class _FishroomState extends State<Fishroom> {
                             (BuildContext context, int index) {
                               if (index == tanksState.tanks.length) {
                                 return const Gap(
-                                    100); //return a gap at the bottom of the screen
+                                    200); //return a gap at the bottom of the screen
                               } else {
                                 return TankTile(tank: tanksState.tanks[index]);
                               }
