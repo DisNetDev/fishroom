@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/get_filename_from_url.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'dart:io'; // Import the dart:io library
 
 import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
+import '../../../core/widgets/material_container.dart';
 import '../cubit/tanks_cubit.dart';
 import '../views/tank_details.dart';
 
@@ -66,55 +68,68 @@ class _TankTileCompactState extends State<TankTileCompact> {
             MaterialPageRoute(
                 builder: (context) => TankDetails(tank: widget.tank)));
       },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: GradientBoxBorder(gradient: kPrimaryGradient),
-        ),
-        child: Stack(
-          alignment: Alignment.centerLeft,
-          children: [
-            SizedBox(
-              height: 80,
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        children: [
+          if (widget.tank.imageUrl != null)
+            MaterialContainer(
               width: double.infinity,
+              height: 75,
+              elevation: 5,
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: !isDarkMode(context)
+                    ? const Color.fromARGB(255, 255, 255, 255)
+                    : Colors.black,
+                border: const GradientBoxBorder(
+                  gradient: LinearGradient(
+                    colors: [kPrimaryColor, kSecondaryColor],
+                  ),
+                ),
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(borderRadius),
                 child: Skeletonizer(
                   enabled: loadingImage,
-                  child: widget.tank.imageLocalPath != null &&
-                          File(widget.tank.imageLocalPath!).existsSync()
-                      ? Image(
-                          image: FileImage(File(widget.tank.imageLocalPath!)),
-                          fit: BoxFit.cover,
-                        )
-                      : CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: widget.tank.imageUrl ?? "",
-                          errorWidget: (context, url, error) {
-                            return const Center(child: SizedBox());
-                          },
-                          placeholder: (context, url) =>
-                              const Center(child: Loader()),
-                        ),
+                  child: Skeleton.replace(
+                    child: widget.tank.imageLocalPath != null &&
+                            File(widget.tank.imageLocalPath!)
+                                .existsSync() // Check if the local image path is valid
+                        ? Image(
+                            image: FileImage(File(widget.tank.imageLocalPath!)),
+                            fit: BoxFit.cover,
+                          )
+                        : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: widget.tank.imageUrl ?? "",
+                            errorWidget: (context, url, error) {
+                              return const Center(child: SizedBox());
+                            },
+                            placeholder: (context, url) =>
+                                const Center(child: Loader()),
+                          ),
+                  ),
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(left: 10),
-              height: 80,
+          Skeleton.replace(
+            child: Container(
+              height: 75,
+              margin: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+              padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(borderRadius),
                 border: widget.tank.imageUrl != null
                     ? null
                     : const GradientBoxBorder(gradient: kPrimaryGradient),
                 gradient: widget.tank.imageUrl != null
                     ? const LinearGradient(
-                        begin: Alignment.centerRight,
-                        end: Alignment.centerLeft,
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
                         colors: [Colors.transparent, Colors.black],
                       )
                     : kPrimaryGradient,
+                borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -124,7 +139,7 @@ class _TankTileCompactState extends State<TankTileCompact> {
                     color: Colors.transparent,
                     child: Text(
                       widget.tank.name ?? "Tank Name",
-                      textAlign: TextAlign.start,
+                      textAlign: TextAlign.end,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -136,7 +151,7 @@ class _TankTileCompactState extends State<TankTileCompact> {
                     color: Colors.transparent,
                     child: Text(
                       "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""} ${widget.tank.measurementUnit ?? ""}",
-                      textAlign: TextAlign.start,
+                      textAlign: TextAlign.end,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -147,8 +162,8 @@ class _TankTileCompactState extends State<TankTileCompact> {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
