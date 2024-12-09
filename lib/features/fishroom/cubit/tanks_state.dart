@@ -22,4 +22,24 @@ class TanksState {
       error: error ?? false,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tanks': tanks.map((tank) => tank.toJson()).toList(),
+      'readings': readings.map((reading) => reading.toJson()).toList(),
+      'error': error,
+    };
+  }
+
+  factory TanksState.fromJson(Map<String, dynamic> json) {
+    return TanksState(
+      tanks: (json['tanks'] as List<dynamic>)
+          .map((item) => Tank.fromJson(item))
+          .toList(),
+      readings: (json['readings'] as List<dynamic>)
+          .map((item) => TankReading.fromJson(item))
+          .toList(),
+      error: json['error'] as bool,
+    );
+  }
 }

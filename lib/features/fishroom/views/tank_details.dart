@@ -1,6 +1,8 @@
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
+import 'package:fishroom/features/app/cubit/app_cubit.dart';
+import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/tank_reading/create_tank_reading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +16,6 @@ import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/graph_preview.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_entry_list_item.dart';
-import 'edit_tank.dart';
 
 class TankDetails extends StatefulWidget {
   const TankDetails({super.key, required this.tank});
@@ -59,6 +60,7 @@ class _TankDetailsState extends State<TankDetails> {
           Scaffold(
             backgroundColor: Colors.transparent,
             floatingActionButton: FloatingActionButton(
+              shape: CircleBorder(),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -79,7 +81,8 @@ class _TankDetailsState extends State<TankDetails> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EditTank(tank: widget.tank)));
+                            builder: (context) =>
+                                CreateTankTankName(tank: widget.tank)));
                   },
                   icon: const Icon(
                     Icons.edit,
@@ -101,7 +104,19 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          // if (!loading) GraphPreview(),
+                          if (!loading &&
+                              context
+                                  .read<AppCubit>()
+                                  .state
+                                  .settings
+                                  .parameters
+                                  .isNotEmpty &&
+                              readings.isNotEmpty)
+                            ParameterChart(data: readings)
+                          else
+                            const Center(
+                                child:
+                                    Text("Add some readings to get started!")),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:fishroom/core/models/tank.dart';
@@ -13,9 +15,11 @@ import '../../core/widgets/custom_button.dart';
 import '../fishroom/widgets/image_upload_widget.dart';
 
 class CreateTankUploadPhoto extends StatefulWidget {
-  const CreateTankUploadPhoto({super.key, required this.tank});
+  const CreateTankUploadPhoto(
+      {super.key, required this.tank, required this.editTank});
 
   final Tank tank;
+  final bool editTank;
 
   @override
   State<CreateTankUploadPhoto> createState() => CreateTankUploadPhotoState();
@@ -25,6 +29,21 @@ class CreateTankUploadPhotoState extends State<CreateTankUploadPhoto> {
   Tank get tank => widget.tank;
   File? _image;
   bool loading = false;
+
+  setImage() {
+    if (widget.tank.imageLocalPath != null) {
+      _image = File(widget.tank.imageLocalPath!);
+    }
+  }
+
+  @override
+  void initState() {
+    if (widget.editTank) {
+      setImage();
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,24 +87,25 @@ class CreateTankUploadPhotoState extends State<CreateTankUploadPhoto> {
   }
 
   void onComplete() async {
-    if (_image != null) {
-      try {
-        setState(() => loading = true);
+    try {
+      setState(() => loading = true);
+      if (!widget.editTank) {
         await context.read<TanksCubit>().addTank(tank, _image);
-        setState(() => loading = false);
-        // ignore: use_build_context_synchronously
-        while (Navigator.of(context).canPop()) {
-          // ignore: use_build_context_synchronously
-          Navigator.of(context).pop();
-        }
-      } catch (e) {
-        setState(() => loading = false);
-        // ignore: use_build_context_synchronously
-        showToast(context,
-            title: "Whoops!",
-            toastType: ToastType.error,
-            description: e.toString());
+      } else {
+        await context.read<TanksCubit>().updateTank(tank, _image);
       }
+      setState(() => loading = false);
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    } catch (e) {
+      setState(() => loading = false);
+      // ignore: use_build_context_synchronously
+      showToast(context,
+          title: "Whoops!",
+          toastType: ToastType.error,
+          description: e.toString());
     }
   }
 }

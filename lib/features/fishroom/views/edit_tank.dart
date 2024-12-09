@@ -265,16 +265,7 @@ class _EditTankState extends State<EditTank> {
                     }
                   },
                 ),
-                CustomButton(
-                  text: "Delete Tank",
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(context);
-                  },
-                  loading: loading,
-                  primary: false,
-                  gradient: kErrorGradient,
-                  textColor: const Color.fromARGB(255, 255, 17, 0),
-                ),
+                
                 const Gap(40),
               ],
             ),

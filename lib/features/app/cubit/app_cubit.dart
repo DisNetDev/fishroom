@@ -136,6 +136,11 @@ class AppCubit extends HydratedCubit<AppState> {
   }
 
   Future<void> updateSettings(Settings settings) async {
+    fishLog("Updating settings...");
+    AppState oldState = state;
+
+    emit(state.copyWith(settings: settings));
+
     if (state.user != null) {
       try {
         await _supabaseRepository.update(
@@ -143,8 +148,8 @@ class AppCubit extends HydratedCubit<AppState> {
             json: {Table.users.settings: settings.toJson()},
             conditionalColumn: Table.users.id,
             condition: state.user!.uuid);
-        emit(state.copyWith(settings: settings));
       } catch (e) {
+        emit(oldState);
         rethrow;
       }
     }

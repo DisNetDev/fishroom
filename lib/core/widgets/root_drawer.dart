@@ -1,4 +1,5 @@
 import 'package:fishroom/core/usecases/can_add_tank.dart';
+import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
@@ -11,6 +12,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../features/app/cubit/app_cubit.dart';
+import '../constants.dart';
 
 class RootDrawer extends StatelessWidget {
   const RootDrawer({super.key});
@@ -54,12 +56,42 @@ class RootDrawer extends StatelessWidget {
                 ListTile(
                   title: const Text("Tank Parameters"),
                   subtitle: const Text("Adjust your tank parameters"),
+                  subtitleTextStyle:
+                      kDateTimeTextStyle.copyWith(color: Colors.grey),
                   leading: const Icon(Symbols.bar_chart_rounded),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const TankParametersSettings())),
                 ),
 
                 const Expanded(child: SizedBox()),
+                ListTile(
+                  title: const Text("Compact Mode"),
+                  subtitleTextStyle:
+                      kDateTimeTextStyle.copyWith(color: Colors.grey),
+                  subtitle: const Text(
+                      "Lots of tanks? This will make it easier to view them."),
+                  trailing: SizedBox(
+                    width: 40,
+                    child: FittedBox(
+                      child: Switch(
+                        activeColor: kPrimaryColor,
+                        value: state.settings.compactTankTile,
+                        onChanged: (value) {
+                          try {
+                            context.read<AppCubit>().updateSettings(state
+                                .settings
+                                .copyWith(compactTankTile: value));
+                          } catch (e) {
+                            showToast(context,
+                                title: "Failed to update settings",
+                                description: e.toString(),
+                                toastType: ToastType.error);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
 
                 if (kDebugMode)
                   ListTile(

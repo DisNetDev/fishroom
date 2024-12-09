@@ -10,9 +10,11 @@ import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/text_input.dart';
 
 class CreateTankTankSize extends StatefulWidget {
-  const CreateTankTankSize({super.key, required this.tank});
+  const CreateTankTankSize(
+      {super.key, required this.tank, this.editTank = false});
 
   final Tank tank;
+  final bool editTank;
 
   @override
   State<CreateTankTankSize> createState() => _CreateTankTankSizeState();
@@ -45,6 +47,7 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
                 textAlign: TextAlign.center,
               ),
               TextInput(
+                  initialValue: tank.measurementUnit,
                   hintText: "Gallons, Litres, Feet, Cm's, etc.",
                   focusNode: measurementFocusNode,
                   onEditingComplete: () => sizeFocusNode.requestFocus(),
@@ -56,6 +59,7 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
                 textAlign: TextAlign.center,
               ),
               TextInput(
+                  initialValue: tank.size != null ? tank.size.toString() : "",
                   focusNode: sizeFocusNode,
                   keyboardType: TextInputType.number,
                   onEditingComplete: () => onComplete(),
@@ -80,7 +84,8 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CreateTankTankType(tank: tank)));
+              builder: (context) =>
+                  CreateTankTankType(tank: tank, editTank: widget.editTank)));
     }
   }
 }

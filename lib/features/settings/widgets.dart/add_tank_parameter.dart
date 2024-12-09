@@ -14,11 +14,16 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../core/constants.dart';
 
-class AddTankParameter extends StatelessWidget {
+class AddTankParameter extends StatefulWidget {
   const AddTankParameter({super.key, required this.onParameterAdded});
 
   final void Function(Parameter) onParameterAdded;
 
+  @override
+  State<AddTankParameter> createState() => _AddTankParameterState();
+}
+
+class _AddTankParameterState extends State<AddTankParameter> {
   @override
   Widget build(BuildContext context) {
     return OpenContainer(
@@ -34,24 +39,33 @@ class AddTankParameter extends StatelessWidget {
               child: const Icon(Symbols.add),
             ),
         openBuilder: (BuildContext context, action) =>
-            _OpenWidget(onParameterAdded: onParameterAdded));
+            EditParameter(onParameterAdded: widget.onParameterAdded));
   }
 }
 
-class _OpenWidget extends StatefulWidget {
-  const _OpenWidget({required this.onParameterAdded});
+class EditParameter extends StatefulWidget {
+  const EditParameter(
+      {super.key, required this.onParameterAdded, this.parameter});
 
   final void Function(Parameter) onParameterAdded;
-
+  final Parameter? parameter;
   @override
-  State<_OpenWidget> createState() => _OpenWidgetState();
+  State<EditParameter> createState() => _EditParameterState();
 }
 
-class _OpenWidgetState extends State<_OpenWidget> {
+class _EditParameterState extends State<EditParameter> {
   Parameter parameter = Parameter();
   double _startDragX = 0;
   static const int _dragDistanceToGoBack =
       60; // How far the user has to drag to go back in pixels
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.parameter != null) {
+      parameter = widget.parameter!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,145 +87,149 @@ class _OpenWidgetState extends State<_OpenWidget> {
           Navigator.of(context).pop();
         }
       },
-      child: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: const BoxDecoration(),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Gap(30),
-                const Text("Add Parameter",
-                    textAlign: TextAlign.center, style: kHeadingTextStyle),
-                const Gap(30),
-                TextInput(
-                  label: const Text("Name"),
-                  exampleText: "E.g.: Nitrate",
-                  initialValue: parameter.name ?? "",
-                  onChanged: (p0) => parameter = parameter.copyWith(name: p0),
-                ),
-                const Gap(30),
-                TextInput(
-                  label: const Text("Short Name"),
-                  characterLimit: 3,
-                  exampleText: "E.g. : NO3- (Max 3 characters)",
-                  initialValue: parameter.shortName ?? "",
-                  onChanged: (p0) =>
-                      parameter = parameter.copyWith(shortName: p0),
-                ),
-                const Gap(30),
-                TextInput(
-                  label: const Text("Measurement Unit"),
-                  characterLimit: 3,
-                  exampleText: "E.g. : ppm (Max 3 characters)",
-                  initialValue: parameter.unit ?? "",
-                  onChanged: (p0) => parameter = parameter.copyWith(unit: p0),
-                ),
-                const Gap(30),
-                const Gap(30),
-                FishTextBox(
-                    hintText: "Optional Description",
-                    initialValue: parameter.description ?? "",
+      child: Material(
+        color: Colors.transparent,
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: const BoxDecoration(),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Gap(30),
+                  const Text("Add Parameter",
+                      textAlign: TextAlign.center, style: kHeadingTextStyle),
+                  const Gap(30),
+                  TextInput(
+                    label: const Text("Name"),
+                    exampleText: "E.g.: Nitrate",
+                    initialValue: parameter.name ?? "",
+                    onChanged: (p0) => parameter = parameter.copyWith(name: p0),
+                  ),
+                  const Gap(30),
+                  TextInput(
+                    label: const Text("Short Name"),
+                    characterLimit: 3,
+                    exampleText: "E.g. : NO3- (Max 3 characters)",
+                    initialValue: parameter.shortName ?? "",
                     onChanged: (p0) =>
-                        parameter = parameter.copyWith(description: p0)),
-                const Gap(30),
-                TextInput(
-                  keyboardType: TextInputType.number,
-                  label: const Text("Maximum Value"),
-                  exampleText:
-                      "The highest value you would ever test. E.g. : 100",
-                  initialValue: parameter.max?.toString() ?? "",
-                  onChanged: (p0) => setState(
-                    () => parameter =
-                        parameter.copyWith(max: double.tryParse(p0) ?? 0),
+                        parameter = parameter.copyWith(shortName: p0),
                   ),
-                ),
-                const Gap(20),
-                TextInput(
-                  keyboardType: TextInputType.number,
-                  label: const Text("Minimum Value"),
-                  exampleText: "The lowest value you would ever test. E.g. : 0",
-                  initialValue: parameter.min?.toString() ?? "",
-                  onChanged: (p0) => setState(
-                    () => parameter =
-                        parameter.copyWith(min: double.tryParse(p0) ?? 0),
+                  const Gap(30),
+                  TextInput(
+                    label: const Text("Measurement Unit"),
+                    characterLimit: 3,
+                    exampleText: "E.g. : ppm (Max 3 characters)",
+                    initialValue: parameter.unit ?? "",
+                    onChanged: (p0) => parameter = parameter.copyWith(unit: p0),
                   ),
-                ),
-                const Gap(20),
-                TextInput(
-                    characterLimit: 5,
+                  const Gap(30),
+                  const Gap(30),
+                  FishTextBox(
+                      hintText: "Optional Description",
+                      initialValue: parameter.description ?? "",
+                      onChanged: (p0) =>
+                          parameter = parameter.copyWith(description: p0)),
+                  const Gap(30),
+                  TextInput(
                     keyboardType: TextInputType.number,
-                    label: const Text("Increments"),
+                    label: const Text("Maximum Value"),
                     exampleText:
-                        "The increments between values. E.g. : 0.1 \n (Max 5 characters)",
-                    initialValue: parameter.step?.toString() ?? "",
+                        "The highest value you would ever test. E.g. : 100",
+                    initialValue: parameter.max?.toString() ?? "",
                     onChanged: (p0) => setState(
-                          () => parameter = parameter.copyWith(
-                              step: double.tryParse(p0) ?? 0),
-                        )),
-                const Gap(30),
-                const Text(
-                  "These will be the values available based on your settings:",
-                  textAlign: TextAlign.center,
-                ),
-                if (values.length >= 500)
-                  const Text(
-                    "You have too many values to display them all. Try a smaller range.",
-                    textAlign: TextAlign.center,
-                    style: kHintTextStyle,
+                      () => parameter =
+                          parameter.copyWith(max: double.tryParse(p0) ?? 0),
+                    ),
                   ),
-                RotatedBox(
-                  quarterTurns: 3,
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.width,
-                    width: 60,
-                    child: ListWheelScrollView.useDelegate(
-                      onSelectedItemChanged: (index) {},
-                      diameterRatio: 1,
-                      physics: const FixedExtentScrollPhysics(),
-                      itemExtent: valuesItemExtent,
-                      childDelegate: ListWheelChildBuilderDelegate(
-                        childCount: values.length,
-                        builder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Transform.rotate(
-                              angle: pi / 2,
-                              child: Text(
-                                values[index] % 1 == 0
-                                    ? values[index].toStringAsFixed(0)
-                                    : values[index].toString(),
-                                style: kHeading1TextStyle,
-                                textScaler: TextScaler.noScaling,
+                  const Gap(20),
+                  TextInput(
+                    keyboardType: TextInputType.number,
+                    label: const Text("Minimum Value"),
+                    exampleText:
+                        "The lowest value you would ever test. E.g. : 0",
+                    initialValue: parameter.min?.toString() ?? "",
+                    onChanged: (p0) => setState(
+                      () => parameter =
+                          parameter.copyWith(min: double.tryParse(p0) ?? 0),
+                    ),
+                  ),
+                  const Gap(20),
+                  TextInput(
+                      characterLimit: 5,
+                      keyboardType: TextInputType.number,
+                      label: const Text("Increments"),
+                      exampleText:
+                          "The increments between values. E.g. : 0.1 \n (Max 5 characters)",
+                      initialValue: parameter.step?.toString() ?? "",
+                      onChanged: (p0) => setState(
+                            () => parameter = parameter.copyWith(
+                                step: double.tryParse(p0) ?? 0),
+                          )),
+                  const Gap(30),
+                  const Text(
+                    "These will be the values available based on your settings:",
+                    textAlign: TextAlign.center,
+                  ),
+                  if (values.length >= 500)
+                    const Text(
+                      "You have too many values to display them all. Try a smaller range.",
+                      textAlign: TextAlign.center,
+                      style: kHintTextStyle,
+                    ),
+                  RotatedBox(
+                    quarterTurns: 3,
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.width,
+                      width: 60,
+                      child: ListWheelScrollView.useDelegate(
+                        onSelectedItemChanged: (index) {},
+                        diameterRatio: 1,
+                        physics: const FixedExtentScrollPhysics(),
+                        itemExtent: valuesItemExtent,
+                        childDelegate: ListWheelChildBuilderDelegate(
+                          childCount: values.length,
+                          builder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Transform.rotate(
+                                angle: pi / 2,
+                                child: Text(
+                                  values[index] % 1 == 0
+                                      ? values[index].toStringAsFixed(0)
+                                      : values[index].toString(),
+                                  style: kHeading1TextStyle,
+                                  textScaler: TextScaler.noScaling,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Align(
-                    alignment: Alignment.center,
-                    child: Text("<- Swipe to rotate ->",
-                        style: kDateTimeTextStyle)),
-                const Gap(50),
-                CustomButton(
-                    text: "Save Parameter",
-                    onPressed: () {
-                      widget.onParameterAdded(parameter);
-                      Navigator.of(context).pop();
-                    }),
-                Gap(10),
-                CustomButton(
-                    primary: false,
-                    text: "Cancel",
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    }),
-                const Gap(50),
-              ],
+                  Align(
+                      alignment: Alignment.center,
+                      child: Text("<- Swipe to rotate ->",
+                          style: kDateTimeTextStyle)),
+                  const Gap(50),
+                  CustomButton(
+                      text: "Done",
+                      onPressed: () {
+                        widget.onParameterAdded(parameter);
+                        Navigator.of(context).pop();
+                      }),
+                  Gap(10),
+                  CustomButton(
+                      primary: false,
+                      text: "Cancel",
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }),
+                  const Gap(50),
+                ],
+              ),
             ),
           ),
         ),

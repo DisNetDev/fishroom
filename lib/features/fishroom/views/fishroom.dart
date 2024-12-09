@@ -3,6 +3,7 @@
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
+import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ import '../../../core/widgets/root_drawer.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_tile.dart';
+import '../widgets/tank_tile_compact.dart';
 
 class Fishroom extends StatefulWidget {
   const Fishroom({super.key});
@@ -56,13 +58,22 @@ class _FishroomState extends State<Fishroom> {
         context.watch<AppCubit>().state;
         final TanksState tanksState = context.watch<TanksCubit>().state;
 
+        // Sort tanks by createdAt date, oldest first
+        final sortedTanks = List<Tank>.from(tanksState.tanks)
+          ..sort((a, b) => (a.createdAt ?? '').compareTo(b.createdAt ?? ''));
+
         return Stack(
           children: [
             const CustomBackground(),
             Scaffold(
+              extendBody: true,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+              bottomNavigationBar: RootNavbar(currentIndex: 0),
               backgroundColor: Colors.transparent,
               floatingActionButton: canAddTank(context)
                   ? FloatingActionButton(
+                      shape: CircleBorder(),
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -89,11 +100,18 @@ class _FishroomState extends State<Fishroom> {
                             effect: isDarkMode(context)
                                 ? kDarkModeShimmer
                                 : kLightModeShimmer,
-                            child: TankTile(tank: Tank(id: const Uuid().v4())))
+                            child: context
+                                    .read<AppCubit>()
+                                    .state
+                                    .settings
+                                    .compactTankTile
+                                ? TankTileCompact(
+                                    tank: Tank(id: const Uuid().v4()))
+                                : TankTile(tank: Tank(id: const Uuid().v4())))
                       ],
                     );
                   }
-                  if (tanksState.tanks.isNotEmpty) {
+                  if (sortedTanks.isNotEmpty) {
                     return CustomScrollView(
                       physics: const BouncingScrollPhysics(),
                       slivers: [
@@ -104,16 +122,20 @@ class _FishroomState extends State<Fishroom> {
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              if (index == tanksState.tanks.length) {
+                              if (index == sortedTanks.length) {
                                 return const Gap(
-                                    100); //return a gap at the bottom of the screen
+                                    200); //return a gap at the bottom of the screen
                               } else {
-                                return TankTile(tank: tanksState.tanks[index]);
+                                return context
+                                        .read<AppCubit>()
+                                        .state
+                                        .settings
+                                        .compactTankTile
+                                    ? TankTileCompact(tank: sortedTanks[index])
+                                    : TankTile(tank: sortedTanks[index]);
                               }
                             },
-                            childCount: tanksState.tanks.isNotEmpty
-                                ? tanksState.tanks.length + 1
-                                : 1,
+                            childCount: sortedTanks.length + 1,
                           ),
                         ),
                       ],

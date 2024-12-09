@@ -9,7 +9,7 @@ import '../views/logon_view.dart';
 void logOut(BuildContext context) {
   supabase.auth.signOut();
   context.read<AppCubit>().clearCubit();
-  context.read<TanksCubit>().clear();
+  context.read<TanksCubit>().clearCubit();
   while (Navigator.canPop(context)) {
     Navigator.pop(context);
   }
