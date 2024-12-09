@@ -140,6 +140,7 @@ class _TankTileCompactState extends State<TankTileCompact> {
                     child: Text(
                       widget.tank.name ?? "Tank Name",
                       textAlign: TextAlign.end,
+                      textScaler: TextScaler.noScaling,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -152,6 +153,7 @@ class _TankTileCompactState extends State<TankTileCompact> {
                     child: Text(
                       "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""} ${widget.tank.measurementUnit ?? ""}",
                       textAlign: TextAlign.end,
+                      textScaler: TextScaler.noScaling,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
