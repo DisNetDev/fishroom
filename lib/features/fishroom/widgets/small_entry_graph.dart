@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import '../../tank_reading/models/parameter.dart';
+import 'tank_entry_graph.dart';
 
 class SmallEntryGraph extends StatelessWidget {
   const SmallEntryGraph({super.key, required this.tankReading});
@@ -41,6 +42,10 @@ class SmallEntryGraph extends StatelessWidget {
             );
           }),
         ),
+        // AspectRatio(
+        //   aspectRatio: 2,
+        //   child: TankEntryGraph(data: tankReading),
+        // ),
       ],
     );
   }

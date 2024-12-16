@@ -18,18 +18,18 @@ import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/date_time_text.dart';
 import 'small_entry_graph.dart';
 
-class TankEntryListItem extends StatefulWidget {
-  const TankEntryListItem(
+class TankReadingListItem extends StatefulWidget {
+  const TankReadingListItem(
       {super.key, required this.reading, required this.onDismissed});
 
   final TankReading reading;
   final void Function() onDismissed;
 
   @override
-  State<TankEntryListItem> createState() => _TankEntryListItemState();
+  State<TankReadingListItem> createState() => _TankReadingListItemState();
 }
 
-class _TankEntryListItemState extends State<TankEntryListItem> {
+class _TankReadingListItemState extends State<TankReadingListItem> {
   bool open = false;
 
   @override

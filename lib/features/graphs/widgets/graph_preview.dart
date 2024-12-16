@@ -94,7 +94,9 @@ class _ParameterChartDataState extends State<ParameterChartData> {
               TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 10,
-                  color: Colors.white),
+                  color: isDarkMode(context)
+                      ? Colors.white
+                      : const Color.fromARGB(255, 7, 18, 78)),
             );
           },
         ),

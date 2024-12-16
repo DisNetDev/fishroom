@@ -15,7 +15,7 @@ import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/graph_preview.dart';
 import '../cubit/tanks_cubit.dart';
-import '../widgets/tank_entry_list_item.dart';
+import '../widgets/tank_reading_list_item.dart';
 
 class TankDetails extends StatefulWidget {
   const TankDetails({super.key, required this.tank});
@@ -126,7 +126,7 @@ class _TankDetailsState extends State<TankDetails> {
                                   effect: isDarkMode(context)
                                       ? kDarkModeShimmer
                                       : kLightModeShimmer,
-                                  child: TankEntryListItem(
+                                  child: TankReadingListItem(
                                       onDismissed: () {},
                                       reading: TankReading(
                                           id: "aaa",
@@ -137,7 +137,7 @@ class _TankDetailsState extends State<TankDetails> {
                                           note: "Some Dummy Info"))),
                           ...List.generate(
                             readings.length,
-                            (index) => TankEntryListItem(
+                            (index) => TankReadingListItem(
                               onDismissed: () {
                                 try {
                                   final readingToRemove = readings[index];
