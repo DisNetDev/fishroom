@@ -75,17 +75,11 @@ class _TankTileCompactState extends State<TankTileCompact> {
             MaterialContainer(
               width: double.infinity,
               height: 75,
-              elevation: 5,
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: !isDarkMode(context)
                     ? const Color.fromARGB(255, 255, 255, 255)
                     : Colors.black,
-                border: const GradientBoxBorder(
-                  gradient: LinearGradient(
-                    colors: [kPrimaryColor, kSecondaryColor],
-                  ),
-                ),
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: ClipRRect(
@@ -116,7 +110,7 @@ class _TankTileCompactState extends State<TankTileCompact> {
           Skeleton.replace(
             child: Container(
               height: 75,
-              margin: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
               decoration: BoxDecoration(
                 border: widget.tank.imageUrl != null

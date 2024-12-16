@@ -75,18 +75,18 @@ class _TankTileState extends State<TankTile> {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: MaterialContainer(
-                elevation: 5,
+                // elevation: 5,
                 margin:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
                   color: !isDarkMode(context)
                       ? const Color.fromARGB(255, 255, 255, 255)
                       : Colors.black,
-                  border: const GradientBoxBorder(
-                    gradient: LinearGradient(
-                      colors: [kPrimaryColor, kSecondaryColor],
-                    ),
-                  ),
+                  // border: const GradientBoxBorder(
+                  //   gradient: LinearGradient(
+                  //     colors: [kPrimaryColor, kSecondaryColor],
+                  //   ),
+                  // ),
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
                 child: ClipRRect(
@@ -118,7 +118,7 @@ class _TankTileState extends State<TankTile> {
             ),
           Skeleton.replace(
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 11, vertical: 11),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
               decoration: BoxDecoration(
                 border: widget.tank.imageUrl != null

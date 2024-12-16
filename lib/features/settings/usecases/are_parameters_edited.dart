@@ -4,6 +4,7 @@ bool areParametersEdited(List<Parameter> parameters, List<Parameter> defaults) {
   if (parameters.length != defaults.length) return true;
 
   for (int i = 0; i < parameters.length; i++) {
+    if (parameters[i].id != defaults[i].id) return true;
     if (parameters[i].description != defaults[i].description) return true;
     if (parameters[i].max != defaults[i].max) return true;
     if (parameters[i].min != defaults[i].min) return true;

@@ -52,7 +52,10 @@ class _TankDetailsState extends State<TankDetails> {
     return RefreshIndicator(
       edgeOffset: 20,
       onRefresh: () async {
-        await context.read<TanksCubit>().getReadingsForTank(widget.tank);
+        await context
+            .read<TanksCubit>()
+            .getReadingsForTank(widget.tank)
+            .then((value) => setState(() => loading = false));
       },
       child: Stack(
         children: [

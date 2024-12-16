@@ -1,4 +1,7 @@
+import 'package:uuid/uuid.dart';
+
 class Parameter {
+  final String id;
   final String? name;
   final String? shortName;
   final String? description;
@@ -9,6 +12,7 @@ class Parameter {
   double? value;
 
   Parameter({
+    required this.id,
     this.shortName,
     this.name,
     this.description,
@@ -23,6 +27,7 @@ class Parameter {
     param = param.copyWith(value: value);
 
     return Parameter(
+      id: param.id,
       shortName: param.shortName,
       name: param.name,
       description: param.description,
@@ -35,9 +40,11 @@ class Parameter {
   }
 
   factory Parameter.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return Parameter();
+    if (json == null) return Parameter(id: Uuid().v4());
 
     return Parameter(
+      // Start of Selection
+      id: json['id'] as String? ?? Uuid().v4(),
       shortName: json['shortName'] as String?,
       name: json['name'] as String?,
       description: json['description'] as String?,
@@ -51,6 +58,7 @@ class Parameter {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'shortName': shortName,
       'name': name,
       'description': description,
@@ -73,6 +81,7 @@ class Parameter {
     double? value,
   }) {
     return Parameter(
+      id: id,
       name: name ?? this.name,
       shortName: shortName ?? this.shortName,
       description: description ?? this.description,
