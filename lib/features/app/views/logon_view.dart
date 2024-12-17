@@ -89,7 +89,12 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
                     onEditingComplete: onEditingComplete,
                     initialValue: emailAddress,
                     focusNode: focusNodeEmail,
-                    onChanged: (email) => setState(() => emailAddress = email),
+                    onChanged: (email) => setState(() {
+                      emailAddress = email;
+                      userShouldLogIn = null;
+                      showPassword1 = false;
+                      showPassword2 = false;
+                    }),
                     margin: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),
                     label: const Text("Email"),
