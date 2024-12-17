@@ -29,6 +29,9 @@ class _ParameterChartDataState extends State<ParameterChartData> {
   double highestValue = 0;
   double lowestValue = 0;
 
+  // Set your desired limit for the number of bars
+  final int maxBars = 15; // Change this value as needed
+
   @override
   void initState() {
     super.initState();
@@ -36,10 +39,25 @@ class _ParameterChartDataState extends State<ParameterChartData> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Define the width of each bar and the space between bars
+    double barWidth = 15.0;
+    double spaceBetweenBars = 10.0;
+
+    // Calculate the maximum number of bars that can fit on the screen
+    int maxBars =
+        ((screenWidth - spaceBetweenBars) / (barWidth + spaceBetweenBars))
+            .floor();
+
     highestValue = getHighestValue(widget.data, widget.parameterToFilter);
     lowestValue = getLowestValue(widget.data, widget.parameterToFilter);
 
     double lineInterval = _getInterval(highestValue, widget: widget);
+
+    // Use the calculated maxBars value
+    List<BarChartGroupData> barGroups = _generateBarGroups(maxBars);
 
     return BarChart(
       swapAnimationCurve: Curves.easeOutExpo,
@@ -155,7 +173,7 @@ class _ParameterChartDataState extends State<ParameterChartData> {
         end: Alignment.topCenter,
       );
 
-  List<BarChartGroupData> get barGroups {
+  List<BarChartGroupData> _generateBarGroups(int maxBars) {
     List<Parameter> parameters = [];
 
     for (TankReading reading in widget.data) {
@@ -169,6 +187,9 @@ class _ParameterChartDataState extends State<ParameterChartData> {
     }
 
     parameters = parameters.reversed.toList();
+
+    // Limit the number of bars displayed
+    parameters = parameters.take(maxBars).toList();
 
     return List.generate(parameters.length, (index) {
       double value = parameters[index].value!;
@@ -204,19 +225,11 @@ class ParameterChart extends StatefulWidget {
 class ParameterChartState extends State<ParameterChart> {
   List<TankReading> data = [];
   Parameter? parameterFilter;
-  int barCount = 16;
+  int barCount = 10;
   @override
   void initState() {
-    if (widget.data.length > barCount) {
-      data = widget.data.getRange(0, barCount).toList();
-    } else {
-      data = widget.data;
-    }
-
-    if (context.read<AppCubit>().state.settings.parameters.isNotEmpty) {
-      parameterFilter =
-          context.read<AppCubit>().state.settings.parameters.first;
-    }
+    parameterFilter =
+        context.read<AppCubit>().state.settings.parameters.firstOrNull;
 
     super.initState();
   }
@@ -234,7 +247,7 @@ class ParameterChartState extends State<ParameterChart> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Skeleton.shade(
                     child: ParameterChartData(
-                        data: data,
+                        data: widget.data,
                         parameterToFilter: parameterFilter ??
                             context
                                 .read<AppCubit>()
@@ -254,16 +267,14 @@ class ParameterChartState extends State<ParameterChart> {
                     _SelectedFilter(
                       parameter: parameter,
                       onSelected: (param) {
-                        setState(() {
-                          parameterFilter = param;
-                          if (data.length > barCount) {
-                            data = widget.data.getRange(0, barCount).toList();
-                          } else {
-                            data = widget.data;
-                          }
-                        });
+                        if (param.id == parameterFilter?.id) return;
+                        setState(
+                          () {
+                            parameterFilter = param;
+                          },
+                        );
                       },
-                      isSelected: parameterFilter?.name == parameter.name,
+                      isSelected: parameterFilter?.id == parameter.id,
                     )
                 ],
               ),
