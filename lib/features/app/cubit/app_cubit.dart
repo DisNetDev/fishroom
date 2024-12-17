@@ -52,6 +52,8 @@ class AppCubit extends HydratedCubit<AppState> {
     fishLog("Signing in with password...");
     UserSession? userSession;
     FishUser? user;
+    Settings? settings;
+
     try {
       userSession =
           await _supabaseRepository.signInWithPassword(email, password);
@@ -61,7 +63,9 @@ class AppCubit extends HydratedCubit<AppState> {
         final data = await _supabaseRepository.fetchUser();
         if (data != null && data.isNotEmpty) {
           user = FishUser.fromJson(data.first);
-          emit(state.copyWith(user: user));
+          settings = Settings.fromJson(data.first["settings"]);
+
+          emit(state.copyWith(user: user, settings: settings));
         }
       }
       emit(state);

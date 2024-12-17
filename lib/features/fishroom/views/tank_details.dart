@@ -107,19 +107,18 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          if (!loading &&
-                              context
+                          if (readings.isEmpty)
+                            Center(
+                                child:
+                                    Text("Add some readings to get started!")),
+                          if (context
                                   .read<AppCubit>()
                                   .state
                                   .settings
                                   .parameters
                                   .isNotEmpty &&
                               readings.isNotEmpty)
-                            ParameterChart(data: readings)
-                          else
-                            const Center(
-                                child:
-                                    Text("Add some readings to get started!")),
+                            ParameterChart(data: readings),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
