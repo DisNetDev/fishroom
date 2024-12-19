@@ -14,6 +14,7 @@ import 'features/app/usecases/my_secure_storage.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 
 void main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationDocumentsDirectory(),
