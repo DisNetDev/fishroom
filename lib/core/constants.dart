@@ -28,6 +28,15 @@ const LinearGradient kPrimaryGradient = LinearGradient(
   colors: [kPrimaryColor, kSecondaryColor],
 );
 
+const LinearGradient kDisabledGradient = LinearGradient(
+  begin: Alignment.centerLeft,
+  end: Alignment.centerRight,
+  colors: [
+    Color.fromARGB(255, 125, 125, 125),
+    Color.fromARGB(255, 125, 125, 125)
+  ],
+);
+
 const LinearGradient kErrorGradient = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,

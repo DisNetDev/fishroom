@@ -3,7 +3,8 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
-import 'package:fishroom/features/tank_reading/create_tank_reading.dart';
+import 'package:fishroom/features/tank_reading/views/create_tank_reading.dart';
+import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -68,7 +69,7 @@ class _TankDetailsState extends State<TankDetails> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateTankReading(
+                    builder: (context) => SelectReadingType(
                       tank: widget.tank,
                     ),
                   ),

@@ -40,39 +40,49 @@ class _ParameterWheelState extends State<ParameterWheel> {
       child: Row(
         children: [
           Expanded(
-              child: Row(
-            children: [
-              Checkbox(
-                  activeColor: kPrimaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20), // Make the checkbox round
-                  ),
-                  value: enabled,
-                  onChanged: (value) => setState(
-                        () {
-                          enabled = value ?? false;
-                          widget.onEnabled(value ?? false);
-                        },
-                      )),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.parameter.shortName ?? "N/A",
-                    style: kHeading1TextStyle,
-                    textScaler: TextScaler.noScaling,
-                  ),
-                  Text(
-                    "${widget.parameter.name} ${widget.parameter.unit != "" ? "(${widget.parameter.unit})" : ""}",
-                    style: kHintTextStyle.copyWith(
-                        fontStyle: FontStyle.italic, fontSize: 10),
-                    textScaler: TextScaler.noScaling,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ],
+              child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            splashColor: kPrimaryColor.withOpacity(0.2),
+            onTap: () {
+              setState(() {
+                enabled = !enabled;
+                widget.onEnabled(enabled);
+              });
+            },
+            child: Row(
+              children: [
+                Checkbox(
+                    activeColor: kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(20), // Make the checkbox round
+                    ),
+                    value: enabled,
+                    onChanged: (value) => setState(
+                          () {
+                            enabled = value ?? false;
+                            widget.onEnabled(value ?? false);
+                          },
+                        )),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.parameter.shortName ?? "N/A",
+                      style: kHeading1TextStyle,
+                      textScaler: TextScaler.noScaling,
+                    ),
+                    Text(
+                      "${widget.parameter.name} ${widget.parameter.unit != "" ? "(${widget.parameter.unit})" : ""}",
+                      style: kHintTextStyle.copyWith(
+                          fontStyle: FontStyle.italic, fontSize: 10),
+                      textScaler: TextScaler.noScaling,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           )),
           Expanded(
             child: Stack(
@@ -82,25 +92,27 @@ class _ParameterWheelState extends State<ParameterWheel> {
                   margin: const EdgeInsets.only(left: 10),
                   width: 1,
                   height: 50,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                       border: GradientBoxBorder(
                           gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                        kPrimaryColor,
+                        enabled ? kPrimaryColor : Colors.grey,
                         Colors.transparent,
                         Colors.transparent,
                         Colors.transparent,
                         Colors.transparent,
                         Colors.transparent,
-                        kPrimaryColor,
+                        enabled ? kPrimaryColor : Colors.grey,
                       ]))),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    border: const GradientBoxBorder(gradient: kPrimaryGradient),
+                    border: GradientBoxBorder(
+                        gradient:
+                            enabled ? kPrimaryGradient : kDisabledGradient),
                   ),
                   child: ShaderMask(
                     shaderCallback: (Rect bounds) {
@@ -140,7 +152,10 @@ class _ParameterWheelState extends State<ParameterWheel> {
                                     values[index] % 1 == 0
                                         ? values[index].toStringAsFixed(0)
                                         : values[index].toString(),
-                                    style: kHeading1TextStyle,
+                                    style: enabled
+                                        ? kHeading1TextStyle
+                                        : kHeading1TextStyle.copyWith(
+                                            color: Colors.grey),
                                     textScaler: TextScaler.noScaling,
                                   ),
                                 ),

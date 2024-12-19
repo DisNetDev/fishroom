@@ -18,11 +18,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../core/constants.dart';
-import '../../core/usecases/is_dark_mode.dart';
-import '../../core/widgets/fish_text_box.dart';
-import '../app/cubit/app_cubit.dart';
-import 'widgets/parameter_wheel.dart';
+import '../../../core/constants.dart';
+import '../../../core/usecases/is_dark_mode.dart';
+import '../../../core/widgets/fish_text_box.dart';
+import '../../app/cubit/app_cubit.dart';
+import '../widgets/parameter_wheel.dart';
 
 class CreateTankReading extends StatefulWidget {
   const CreateTankReading({super.key, required this.tank});
@@ -78,38 +78,6 @@ class _CreateTankReadingState extends State<CreateTankReading> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Gap(20),
-                  Center(
-                    child: ToggleButtons(
-                        borderColor: isDarkMode(context)
-                            ? Colors.blueGrey
-                            : Colors.black26,
-                        selectedBorderColor: kPrimaryColor,
-                        constraints: BoxConstraints(
-                            minHeight: 45,
-                            minWidth: MediaQuery.of(context).size.width /
-                                    selectedTypeButtons.length -
-                                horizontalPadding -
-                                2),
-                        borderRadius: BorderRadius.circular(1000),
-                        onPressed: (index) {
-                          for (int i = 0; i < selectedTypeButtons.length; i++) {
-                            selectedTypeButtons[i] = false;
-                          }
-                          setState(() {
-                            selectedTypeButtons[index] = true;
-                            if (selectedTypeButtons[0]) {
-                              tankReading = tankReading.copyWith(
-                                  type: TankReadingType.measurement);
-                            } else {
-                              tankReading = tankReading.copyWith(
-                                  type: TankReadingType.note);
-                            }
-                          });
-                        },
-                        isSelected: selectedTypeButtons,
-                        children: const [Text("Reading"), Text("Note")]),
-                  ),
                   const Gap(20),
                   if (tankReading.type == TankReadingType.measurement)
                     BlocBuilder<AppCubit, AppState>(
@@ -217,6 +185,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                 );
                             setState(() => loading = false);
                             if (context.mounted) {
+                              Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             }
                           } on Exception catch (e) {
