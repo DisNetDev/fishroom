@@ -37,7 +37,7 @@ class _CreateTankNoteState extends State<CreateTankNote> {
   late TankReading tankReading = TankReading(
     id: const Uuid().v4(),
     ownerId: context.read<AppCubit>().state.user!.uuid,
-    type: TankReadingType.waterChange,
+    type: TankReadingType.note,
     tankId: widget.tank.id,
     createdAt: DateTime.now().toString(),
   );

@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/features/tank_reading/views/create_tank_note.dart';
 import 'package:fishroom/features/tank_reading/views/create_tank_reading.dart';
+import 'package:fishroom/features/tank_reading/views/water_change_reading.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -50,7 +49,13 @@ class SelectReadingType extends StatelessWidget {
                   tank: tank,
                   title: "Water Change",
                   subtitle: "Log a water change",
-                  onTap: () {}),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                WaterChangeReading(tank: tank)));
+                  }),
             ],
           ),
         ],

@@ -120,18 +120,26 @@ class _TankReadingListItemState extends State<TankReadingListItem> {
                               vertical: 10, horizontal: 10),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
                                 widget.reading.type.label,
                                 style: kHeading1TextStyle,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              Text(
-                                widget.reading.note ?? "",
-                                style: kPlainTextStyle,
-                              ),
-                              SmallEntryGraph(tankReading: widget.reading),
+                              if (widget.reading.waterChangePercentage != null)
+                                Text(
+                                  "${widget.reading.waterChangePercentage.toString()}%",
+                                  style: kHeading2TextStyle,
+                                ),
+                              if (widget.reading.note != "" &&
+                                  widget.reading.note != null)
+                                Text(
+                                  widget.reading.note!,
+                                  style: kPlainTextStyle,
+                                ),
+                              if (widget.reading.parameters.isNotEmpty)
+                                SmallEntryGraph(tankReading: widget.reading),
                             ],
                           ),
                         ),
