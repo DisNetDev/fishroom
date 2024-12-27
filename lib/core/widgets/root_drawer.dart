@@ -21,7 +21,7 @@ class RootDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) {
-        bool pro = state.user!.premium;
+        bool pro = state.user?.premium ?? false;
 
         return SafeArea(
           child: Drawer(

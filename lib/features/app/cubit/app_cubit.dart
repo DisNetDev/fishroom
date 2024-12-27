@@ -74,6 +74,31 @@ class AppCubit extends HydratedCubit<AppState> {
     }
   }
 
+  Future<void> nativeGoogleSignIn() async {
+    fishLog("Signing in with Google...");
+    UserSession? userSession;
+    FishUser? user;
+    Settings? settings;
+
+    try {
+      userSession = await _supabaseRepository.nativeGoogleSignIn();
+
+      if (userSession.session != null) {
+        fishLog("Getting User Data...");
+        final data = await _supabaseRepository.fetchUser();
+        if (data != null && data.isNotEmpty) {
+          user = FishUser.fromJson(data.first);
+          settings = Settings.fromJson(data.first["settings"]);
+
+          emit(state.copyWith(user: user, settings: settings));
+        }
+      }
+      emit(state);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> checkIfEmailExists(String email) async {
     return _supabaseRepository.checkIfEmailExists(email);
   }

@@ -136,11 +136,11 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
               margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
             ),
             CustomButton(
-              text: "Continue with Google",
+              text: "Sign in with Google",
+              loading: loading,
               primary: false,
-              onPressed: () {
-                showToast(context,
-                    title: "Not Implemented", toastType: ToastType.error);
+              onPressed: () async {
+                login(google: true);
               },
               margin: const EdgeInsets.symmetric(horizontal: 80),
             ),
@@ -202,12 +202,16 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     }
   }
 
-  void login() async {
+  void login({bool google = false}) async {
     setState(() => loading = true);
     try {
-      await context
-          .read<AppCubit>()
-          .signInWithPassword(email: emailAddress, password: password1);
+      if (google) {
+        await context.read<AppCubit>().nativeGoogleSignIn();
+      } else {
+        await context
+            .read<AppCubit>()
+            .signInWithPassword(email: emailAddress, password: password1);
+      }
       if (context.read<AppCubit>().state.user != null) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const Fishroom()));
@@ -223,7 +227,9 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
           toastType: ToastType.error,
         );
       }
-    } on Exception catch (e) {
+    } catch (e) {
+      setState(() => loading = false);
+
       showToast(context,
           title: "Something went wrong.",
           toastType: ToastType.error,
