@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
@@ -6,8 +8,24 @@ import 'package:fishroom/core/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class UpgradeToPro extends StatelessWidget {
+import '../../IAP/iap_service.dart';
+
+class UpgradeToPro extends StatefulWidget {
   const UpgradeToPro({super.key});
+
+  @override
+  State<UpgradeToPro> createState() => _UpgradeToProState();
+}
+
+class _UpgradeToProState extends State<UpgradeToPro> {
+  bool isLoading = false;
+  final IAPService iapService = IAPService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    iapService.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +49,28 @@ class UpgradeToPro extends StatelessWidget {
                 const Text("Attach photos to your tank readings"),
                 const Expanded(flex: 2, child: SizedBox()),
                 CustomButton(
+                    loading: isLoading,
                     text: "Later",
                     primary: false,
                     onPressed: () => Navigator.of(context).pop()),
                 const Gap(10),
                 CustomButton(
+                    loading: isLoading,
                     text: "Upgrade",
-                    onPressed: () => showToast(context,
-                        title: "TO IMPLEMENT", toastType: ToastType.error)),
+                    onPressed: () async {
+                      setState(() => isLoading = true);
+                      try {
+                        await iapService.buyPro();
+                        setState(() => isLoading = false);
+                        Navigator.of(context).pop();
+                      } catch (e) {
+                        setState(() => isLoading = false);
+                        showToast(context,
+                            title: "Failed to upgrade",
+                            description: e.toString(),
+                            toastType: ToastType.error);
+                      }
+                    }),
                 const Gap(40),
               ],
             ),

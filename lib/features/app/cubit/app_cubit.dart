@@ -192,6 +192,7 @@ class AppCubit extends HydratedCubit<AppState> {
             json: {Table.users.premium: true},
             conditionalColumn: id,
             condition: state.user!.uuid);
+        emit(state.copyWith(user: state.user!.copyWith(premium: true)));
       }
     } on Exception catch (_) {
       rethrow;

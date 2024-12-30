@@ -1,5 +1,6 @@
 // ignore_for_file: prefer-match-file-name
 
+import 'package:fishroom/features/IAP/iap_service.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,6 @@ import 'features/app/usecases/my_secure_storage.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationDocumentsDirectory(),
@@ -41,7 +41,7 @@ void main() async {
         BlocProvider(
             create: (context) => AppCubit(context.read<SupabaseRepository>())),
       ],
-      child: ToastificationWrapper(child: const MainApp()),
+      child: ToastificationWrapper(child: MainApp()),
     ),
   ));
 }
