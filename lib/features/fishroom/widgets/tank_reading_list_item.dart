@@ -178,20 +178,20 @@ class _TankReadingListItemState extends State<TankReadingListItem> {
                                   ],
                                 )),
                           ),
-                        if (open && widget.reading.imageUrl != null)
-                          Container(
-                            alignment: Alignment.center,
-                            height: 50,
-                            child: GestureDetector(
-                              onTap: () => showToast(context,
-                                  title: "Nope not yet :)",
-                                  toastType: ToastType.error),
-                              child: const Text(
-                                "Download",
-                                style: kHeading2TextStyle,
-                              ),
-                            ),
-                          ),
+                        // if (open && widget.reading.imageUrl != null)
+                        //   Container(
+                        //     alignment: Alignment.center,
+                        //     height: 50,
+                        //     child: GestureDetector(
+                        //       onTap: () => showToast(context,
+                        //           title: "Nope not yet :)",
+                        //           toastType: ToastType.error),
+                        //       child: const Text(
+                        //         "Download",
+                        //         style: kHeading2TextStyle,
+                        //       ),
+                        //     ),
+                        //   ),
                         if (open && widget.reading.imageUrl != null)
                           ClipRRect(
                               borderRadius: const BorderRadius.vertical(

@@ -120,6 +120,7 @@ class _TankDetailsState extends State<TankDetails> {
                                   .isNotEmpty &&
                               readings.isNotEmpty)
                             ParameterChart(data: readings),
+                          Gap(20),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(

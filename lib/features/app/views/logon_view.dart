@@ -34,6 +34,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
   String password1 = "";
   String password2 = "";
   bool loading = false;
+  bool googleLoading = false;
   late AnimationController _emailController;
   late AnimationController _password1Controller;
   late AnimationController _password2Controller;
@@ -137,7 +138,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             ),
             CustomButton(
               text: "Sign in with Google",
-              loading: loading,
+              loading: googleLoading,
               primary: false,
               onPressed: () async {
                 login(google: true);
@@ -203,7 +204,11 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
   }
 
   void login({bool google = false}) async {
-    setState(() => loading = true);
+    if (google) {
+      setState(() => googleLoading = true);
+    } else {
+      setState(() => loading = true);
+    }
     try {
       if (google) {
         await context.read<AppCubit>().nativeGoogleSignIn();
@@ -219,7 +224,10 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         String message =
             "Something went wrong logging you in. Please try again.";
 
-        setState(() => loading = false);
+        setState(() {
+          loading = false;
+          googleLoading = false;
+        });
         showToast(
           context,
           title: "Something went wrong.",
@@ -228,14 +236,20 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         );
       }
     } catch (e) {
-      setState(() => loading = false);
+      setState(() {
+        loading = false;
+        googleLoading = false;
+      });
 
       showToast(context,
           title: "Something went wrong.",
           toastType: ToastType.error,
           description: e.toString());
     }
-    setState(() => loading = false);
+    setState(() {
+      loading = false;
+      googleLoading = false;
+    });
   }
 
   void onEditingComplete() async {
