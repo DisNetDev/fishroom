@@ -108,7 +108,7 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          if (readings.isEmpty)
+                          if (readings.isEmpty && !loading)
                             Center(
                                 child:
                                     Text("Add some readings to get started!")),
