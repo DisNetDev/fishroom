@@ -6,9 +6,11 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../IAP/iap_service.dart';
+import '../../app/cubit/app_cubit.dart';
 
 class UpgradeToPro extends StatefulWidget {
   const UpgradeToPro({super.key});
@@ -61,6 +63,7 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                       setState(() => isLoading = true);
                       try {
                         await iapService.buyPro();
+                        await context.read<AppCubit>().upgradeUserToPro();
                         setState(() => isLoading = false);
                         Navigator.of(context).pop();
                       } catch (e) {
