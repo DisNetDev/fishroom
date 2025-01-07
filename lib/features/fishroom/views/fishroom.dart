@@ -74,19 +74,25 @@ class _FishroomState extends State<Fishroom> {
                   FloatingActionButtonLocation.centerDocked,
               bottomNavigationBar: RootNavbar(currentIndex: 0),
               backgroundColor: Colors.transparent,
-              floatingActionButton: canAddTank(context)
-                  ? FloatingActionButton(
-                      shape: CircleBorder(),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const CreateTankTankName()));
-                      },
-                      child: const Icon(Icons.add),
-                    )
-                  : null,
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: canAddTank(context) ? null : Colors.grey,
+                shape: CircleBorder(),
+                onPressed: () {
+                  if (canAddTank(context)) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CreateTankTankName()));
+                  } else {
+                    showToast(context,
+                        title: "Upgrade to Pro.",
+                        toastType: ToastType.info,
+                        description:
+                            "You have reached the maximum number of tanks on the free plan. Upgrade to Pro to add more tanks.");
+                  }
+                },
+                child: const Icon(Icons.add),
+              ),
               appBar: tanksState.tanks.isEmpty || loading
                   ? const RootSliverAppBar(
                       implyLeading: false,
