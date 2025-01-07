@@ -19,6 +19,7 @@ class AppCubit extends HydratedCubit<AppState> {
       user: json['user'] != null ? FishUser.fromJson(json['user']) : null,
       settings:
           json['settings'] != null ? Settings.fromJson(json['settings']) : null,
+      appLoaded: false,
     );
   }
 
@@ -27,7 +28,12 @@ class AppCubit extends HydratedCubit<AppState> {
     return {
       'user': state.user?.toJson(),
       'settings': state.settings.toJson(),
+      'appLoaded': false,
     };
+  }
+
+  void setAppLoaded(bool set) {
+    emit(state.copyWith(appLoaded: set));
   }
 
   void debugToggleFreeAndPro() {

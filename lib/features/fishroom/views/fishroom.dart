@@ -32,15 +32,18 @@ class _FishroomState extends State<Fishroom> {
 
   init() async {
     setState(() => loading = true);
-    try {
-      await context.read<TanksCubit>().getTanks();
-    } on Exception catch (e) {
-      showToast(
-        context,
-        title: "Something went wrong.",
-        description: e.toString(),
-        toastType: ToastType.error,
-      );
+    context.read<AppCubit>().setAppLoaded(true);
+    if (!context.read<AppCubit>().state.appLoaded) {
+      try {
+        await context.read<TanksCubit>().getTanks();
+      } catch (e) {
+        showToast(
+          context,
+          title: "Something went wrong.",
+          description: e.toString(),
+          toastType: ToastType.error,
+        );
+      }
     }
     setState(() => loading = false);
   }
