@@ -130,6 +130,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                             text: "Attach a Photo",
                             onPressed: () async {
                               _image = await pickImage(context);
+                              setState(() {});
                             }),
                         const Gap(20),
                         Text(
@@ -167,6 +168,7 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                   else
                     ImageUploadWidget(
                       image: _image,
+                      unlockAspectRatio: true,
                       onImagePicked: (image) => setState(() => _image = image),
                     ),
                   const Gap(100),

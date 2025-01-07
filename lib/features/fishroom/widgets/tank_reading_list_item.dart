@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';

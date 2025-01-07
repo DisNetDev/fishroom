@@ -22,7 +22,6 @@ import '../../../core/constants.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/fish_text_box.dart';
 import '../../app/cubit/app_cubit.dart';
-import '../widgets/parameter_wheel.dart';
 
 class CreateTankNote extends StatefulWidget {
   const CreateTankNote({super.key, required this.tank});
@@ -95,6 +94,7 @@ class _CreateTankNoteState extends State<CreateTankNote> {
                             text: "Attach a Photo",
                             onPressed: () async {
                               _image = await pickImage(context);
+                              setState(() {});
                             }),
                         const Gap(20),
                         Text(
@@ -128,10 +128,11 @@ class _CreateTankNoteState extends State<CreateTankNote> {
                           ),
                         ],
                       ),
-                    )
+                  )
                   else
                     ImageUploadWidget(
                       image: _image,
+                      unlockAspectRatio: true,
                       onImagePicked: (image) => setState(() => _image = image),
                     ),
                   const Gap(100),
