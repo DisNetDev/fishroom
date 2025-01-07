@@ -5,7 +5,6 @@ import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/constants.dart';
@@ -70,6 +69,7 @@ class _WaterChangeReadingState extends State<WaterChangeReading> {
                 Slider(
                     min: 0,
                     max: 100,
+                    divisions: 20,
                     inactiveColor: Colors.grey,
                     value: (tankReading.waterChangePercentage ?? 0).toDouble(),
                     onChanged: (value) {

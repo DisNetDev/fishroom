@@ -68,13 +68,15 @@ class MainApp extends StatelessWidget {
           behavior: SnackBarBehavior.floating,
           contentTextStyle: const TextStyle(color: Colors.white),
         ),
+        sliderTheme: const SliderThemeData(
+          trackHeight: 10.0,
+        ),
       ),
       darkTheme: ThemeData.from(
         colorScheme: const ColorScheme.dark(
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-        // Snackbar theme, remember to change this here and in light theme above
         snackBarTheme: SnackBarThemeData(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(1000),
@@ -82,6 +84,9 @@ class MainApp extends StatelessWidget {
           backgroundColor: Colors.white,
           behavior: SnackBarBehavior.floating,
           contentTextStyle: const TextStyle(color: Colors.black),
+        ),
+        sliderTheme: const SliderThemeData(
+          trackHeight: 10.0,
         ),
       ),
       themeMode: ThemeMode.system,
