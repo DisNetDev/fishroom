@@ -91,10 +91,22 @@ class AppCubit extends HydratedCubit<AppState> {
 
       if (userSession.session != null) {
         fishLog("Getting User Data...");
-        final data = await _supabaseRepository.fetchUser();
+        var data = await _supabaseRepository.fetchUser();
+        if (data != null && data.isNotEmpty) {
+          if (data.first["settings"] == null) {
+            List<Parameter> parameters = await setParametersDefaults();
+            await updateSettings(
+              state.settings.copyWith(parameters: parameters),
+              uuid: data.first["id"],
+            );
+            data = await _supabaseRepository.fetchUser();
+          }
+        }
         if (data != null && data.isNotEmpty) {
           user = FishUser.fromJson(data.first);
-          settings = Settings.fromJson(data.first["settings"]);
+          settings = data.first["settings"] != null
+              ? Settings.fromJson(data.first["settings"])
+              : Settings(parameters: []);
 
           emit(state.copyWith(user: user, settings: settings));
         }
@@ -170,19 +182,19 @@ class AppCubit extends HydratedCubit<AppState> {
     }
   }
 
-  Future<void> updateSettings(Settings settings) async {
+  Future<void> updateSettings(Settings settings, {String? uuid}) async {
     fishLog("Updating settings...");
     AppState oldState = state;
 
     emit(state.copyWith(settings: settings));
 
-    if (state.user != null) {
+    if (state.user != null || uuid != null) {
       try {
         await _supabaseRepository.update(
             tableName: Table.users.tableName,
             json: {Table.users.settings: settings.toJson()},
             conditionalColumn: Table.users.id,
-            condition: state.user!.uuid);
+            condition: uuid ?? state.user!.uuid);
       } catch (e) {
         emit(oldState);
         rethrow;

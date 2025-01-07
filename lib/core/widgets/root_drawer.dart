@@ -97,7 +97,7 @@ class RootDrawer extends StatelessWidget {
                   ListTile(
                     title: const Text("(DEBUG)"),
                     subtitle: Text(
-                        "Switch to ${context.read<AppCubit>().state.user!.premium ? "FREE" : "PRO"}"),
+                        "Switch to ${context.read<AppCubit>().state.user?.premium == true ? "FREE" : "PRO"}"),
                     onTap: () {
                       context.read<AppCubit>().debugToggleFreeAndPro();
                     },

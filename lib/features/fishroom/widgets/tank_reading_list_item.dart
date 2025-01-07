@@ -100,7 +100,7 @@ class _TankReadingListItemState extends State<TankReadingListItem> {
                       minHeight:
                           widget.reading.type == TankReadingType.measurement
                               ? 120
-                              : 80,
+                              : 0,
                     ),
                     decoration: BoxDecoration(
                       border: const GradientBoxBorder(

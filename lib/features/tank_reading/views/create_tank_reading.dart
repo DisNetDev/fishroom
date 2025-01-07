@@ -179,6 +179,15 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         loading: loading,
                         text: "Save",
                         onPressed: () async {
+                          if (tankReading.parameters.isEmpty) {
+                            showToast(context,
+                                title: "Please select at least one parameter.",
+                                description:
+                                    "If you do not have any parameters measured, rather log a note on the previous page.",
+                                toastType: ToastType.error);
+
+                            return;
+                          }
                           setState(() => loading = true);
                           try {
                             await context.read<TanksCubit>().createTankReading(
