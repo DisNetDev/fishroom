@@ -66,7 +66,17 @@ class AppCubit extends HydratedCubit<AppState> {
 
       if (userSession.session != null) {
         fishLog("Getting User Data...");
-        final data = await _supabaseRepository.fetchUser();
+        var data = await _supabaseRepository.fetchUser();
+         if (data != null && data.isNotEmpty) {
+          if (data.first["settings"] == null) {
+            List<Parameter> parameters = await setParametersDefaults();
+            await updateSettings(
+              state.settings.copyWith(parameters: parameters),
+              uuid: data.first["id"],
+            );
+            data = await _supabaseRepository.fetchUser();
+          }
+        }
         if (data != null && data.isNotEmpty) {
           user = FishUser.fromJson(data.first);
           settings = Settings.fromJson(data.first["settings"]);
