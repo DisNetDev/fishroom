@@ -188,6 +188,9 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     await context
         .read<AppCubit>()
         .signUpWithPassword(email: emailAddress, password: password1);
+    await context
+        .read<AppCubit>()
+        .signInWithPassword(email: emailAddress, password: password1);
     if (context.read<AppCubit>().state.user != null) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const Fishroom()));
