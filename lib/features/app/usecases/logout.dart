@@ -7,6 +7,7 @@ import '../cubit/app_cubit.dart';
 import '../views/logon_view.dart';
 
 void logOut(BuildContext context) {
+  context.read<AppCubit>().setAppLoaded(false);
   supabase.auth.signOut();
   context.read<AppCubit>().clearCubit();
   context.read<TanksCubit>().clearCubit();

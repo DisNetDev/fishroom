@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../core/constants.dart';
 
@@ -54,7 +55,7 @@ class EditParameter extends StatefulWidget {
 }
 
 class _EditParameterState extends State<EditParameter> {
-  Parameter parameter = Parameter();
+  Parameter parameter = Parameter(id: Uuid().v4());
   double _startDragX = 0;
   static const int _dragDistanceToGoBack =
       60; // How far the user has to drag to go back in pixels

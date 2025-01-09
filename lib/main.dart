@@ -1,5 +1,7 @@
 // ignore_for_file: prefer-match-file-name
 
+import 'package:fishroom/core/theme/slider_theme.dart';
+import 'package:fishroom/features/IAP/iap_service.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +42,7 @@ void main() async {
         BlocProvider(
             create: (context) => AppCubit(context.read<SupabaseRepository>())),
       ],
-      child: ToastificationWrapper(child: const MainApp()),
+      child: ToastificationWrapper(child: MainApp()),
     ),
   ));
 }
@@ -58,30 +60,14 @@ class MainApp extends StatelessWidget {
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-        //Snackbar theme, remember to change this here and in dark theme below
-        snackBarTheme: SnackBarThemeData(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(1000),
-          ),
-          backgroundColor: Colors.black,
-          behavior: SnackBarBehavior.floating,
-          contentTextStyle: const TextStyle(color: Colors.white),
-        ),
+        sliderTheme: sliderTheme,
       ),
       darkTheme: ThemeData.from(
         colorScheme: const ColorScheme.dark(
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-        // Snackbar theme, remember to change this here and in light theme above
-        snackBarTheme: SnackBarThemeData(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(1000),
-          ),
-          backgroundColor: Colors.white,
-          behavior: SnackBarBehavior.floating,
-          contentTextStyle: const TextStyle(color: Colors.black),
-        ),
+        sliderTheme: sliderTheme,
       ),
       themeMode: ThemeMode.system,
       home: const SplashScreen(),

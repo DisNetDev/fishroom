@@ -21,7 +21,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   void checkLoginStatus() async {
-    // await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     if (supabase.auth.currentSession != null) {
       context.read<SupabaseRepository>().setSession();
       try {

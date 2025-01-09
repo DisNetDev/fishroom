@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 
 import 'loader.dart';
-import 'material_container.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -33,7 +32,13 @@ class CustomButton extends StatelessWidget {
         : const Loader();
 
     return GestureDetector(
-      onTap: onPressed,
+      onTap: () {
+        if (loading) {
+          return;
+        } else {
+          onPressed.call();
+        }
+      },
       child: Container(
         constraints:
             const BoxConstraints(minHeight: 50, maxHeight: 50, minWidth: 100),

@@ -8,10 +8,14 @@ import '../../../core/usecases/pick_image.dart';
 
 class ImageUploadWidget extends StatelessWidget {
   const ImageUploadWidget(
-      {super.key, required this.onImagePicked, required this.image});
+      {super.key,
+      required this.onImagePicked,
+      required this.image,
+      this.unlockAspectRatio = false});
 
   final Function(File) onImagePicked;
   final File? image;
+  final bool unlockAspectRatio;
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +29,38 @@ class ImageUploadWidget extends StatelessWidget {
           onImagePicked(pickedFile);
         }
       },
-      child: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 600),
-          decoration: BoxDecoration(
-            color: color,
-            border: const GradientBoxBorder(
-              gradient: LinearGradient(
-                colors: [kPrimaryColor, kSecondaryColor],
+      child: unlockAspectRatio
+          ? _buildImage(color)
+          : AspectRatio(
+              aspectRatio: 16 / 9,
+              child: _buildImage(color),
+            ),
+    );
+  }
+
+  Widget _buildImage(Color color) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 600),
+      decoration: BoxDecoration(
+        color: color,
+        border: const GradientBoxBorder(
+          gradient: LinearGradient(
+            colors: [kPrimaryColor, kSecondaryColor],
+          ),
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: image == null
+          ? const Center(
+              child: Text("Optional: Upload an Image"),
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.file(
+                image!,
+                fit: BoxFit.cover,
               ),
             ),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: image == null
-              ? const Center(
-                  child: Text("Optional: Upload an Image"),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.file(
-                    image!,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-        ),
-      ),
     );
   }
 }

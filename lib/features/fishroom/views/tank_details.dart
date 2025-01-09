@@ -3,7 +3,8 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
-import 'package:fishroom/features/tank_reading/create_tank_reading.dart';
+import 'package:fishroom/features/tank_reading/views/create_tank_reading.dart';
+import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -15,7 +16,7 @@ import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/graph_preview.dart';
 import '../cubit/tanks_cubit.dart';
-import '../widgets/tank_entry_list_item.dart';
+import '../widgets/tank_reading_list_item.dart';
 
 class TankDetails extends StatefulWidget {
   const TankDetails({super.key, required this.tank});
@@ -52,7 +53,10 @@ class _TankDetailsState extends State<TankDetails> {
     return RefreshIndicator(
       edgeOffset: 20,
       onRefresh: () async {
-        await context.read<TanksCubit>().getReadingsForTank(widget.tank);
+        await context
+            .read<TanksCubit>()
+            .getReadingsForTank(widget.tank)
+            .then((value) => setState(() => loading = false));
       },
       child: Stack(
         children: [
@@ -65,7 +69,7 @@ class _TankDetailsState extends State<TankDetails> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateTankReading(
+                    builder: (context) => SelectReadingType(
                       tank: widget.tank,
                     ),
                   ),
@@ -104,26 +108,26 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          if (!loading &&
-                              context
+                          if (readings.isEmpty && !loading)
+                            Center(
+                                child:
+                                    Text("Add some readings to get started!")),
+                          if (context
                                   .read<AppCubit>()
                                   .state
                                   .settings
                                   .parameters
                                   .isNotEmpty &&
                               readings.isNotEmpty)
-                            ParameterChart(data: readings)
-                          else
-                            const Center(
-                                child:
-                                    Text("Add some readings to get started!")),
+                            ParameterChart(data: readings),
+                          Gap(20),
                           if (loading)
                             for (var i = 0; i < 4; i++)
                               Skeletonizer(
                                   effect: isDarkMode(context)
                                       ? kDarkModeShimmer
                                       : kLightModeShimmer,
-                                  child: TankEntryListItem(
+                                  child: TankReadingListItem(
                                       onDismissed: () {},
                                       reading: TankReading(
                                           id: "aaa",
@@ -134,7 +138,7 @@ class _TankDetailsState extends State<TankDetails> {
                                           note: "Some Dummy Info"))),
                           ...List.generate(
                             readings.length,
-                            (index) => TankEntryListItem(
+                            (index) => TankReadingListItem(
                               onDismissed: () {
                                 try {
                                   final readingToRemove = readings[index];

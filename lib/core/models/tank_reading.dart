@@ -9,6 +9,7 @@ class TankReading {
   final List<Parameter> parameters;
   String? note;
   String? imageUrl;
+  int? waterChangePercentage;
 
   TankReading({
     required this.id,
@@ -19,6 +20,7 @@ class TankReading {
     List<Parameter>? parameters,
     this.note,
     this.imageUrl,
+    this.waterChangePercentage,
   }) : parameters = parameters ?? [];
 
   factory TankReading.fromJson(Map<String, dynamic> json) {
@@ -29,18 +31,18 @@ class TankReading {
     );
 
     return TankReading(
-      id: json['id'] as String,
-      type: type,
-      tankId: json['tank_id'] as String,
-      ownerId: json['owner_id'] as String,
-      createdAt: json['created_at'] as String,
-      note: json['note'] as String?,
-      imageUrl: json['image_url'] != null ? (json['image_url']) : null,
-      parameters: (json['data'] as List<dynamic>?)
-              ?.map((param) => Parameter.fromJson(param))
-              .toList() ??
-          [],
-    );
+        id: json['id'] as String,
+        type: type,
+        tankId: json['tank_id'] as String,
+        ownerId: json['owner_id'] as String,
+        createdAt: json['created_at'] as String,
+        note: json['note'] as String?,
+        imageUrl: json['image_url'] != null ? (json['image_url']) : null,
+        parameters: (json['data'] as List<dynamic>?)
+                ?.map((param) => Parameter.fromJson(param))
+                .toList() ??
+            [],
+        waterChangePercentage: json["water_change_percentage"] as int?);
   }
 
   Map<String, dynamic> toJson() {
@@ -53,6 +55,7 @@ class TankReading {
       'note': note,
       'image_url': imageUrl,
       'data': parameters.map((param) => param.toJson()).toList(),
+      'water_change_percentage': waterChangePercentage
     };
   }
 
@@ -65,17 +68,19 @@ class TankReading {
     String? note,
     String? imageUrl,
     List<Parameter>? parameters,
+    int? waterChangePercentage,
   }) {
     return TankReading(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      tankId: tankId ?? this.tankId,
-      ownerId: ownerId ?? this.ownerId,
-      createdAt: createdAt ?? this.createdAt,
-      note: note ?? this.note,
-      imageUrl: imageUrl ?? this.imageUrl,
-      parameters: parameters ?? this.parameters,
-    );
+        id: id ?? this.id,
+        type: type ?? this.type,
+        tankId: tankId ?? this.tankId,
+        ownerId: ownerId ?? this.ownerId,
+        createdAt: createdAt ?? this.createdAt,
+        note: note ?? this.note,
+        imageUrl: imageUrl ?? this.imageUrl,
+        parameters: parameters ?? this.parameters,
+        waterChangePercentage:
+            waterChangePercentage ?? this.waterChangePercentage);
   }
 }
 

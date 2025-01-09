@@ -126,6 +126,7 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
                   context.read<TanksCubit>().deleteTank(tank);
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 } catch (e) {
                   showToast(context,
                       title: "Something went wrong.",

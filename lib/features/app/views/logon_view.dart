@@ -34,6 +34,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
   String password1 = "";
   String password2 = "";
   bool loading = false;
+  bool googleLoading = false;
   late AnimationController _emailController;
   late AnimationController _password1Controller;
   late AnimationController _password2Controller;
@@ -89,7 +90,12 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
                     onEditingComplete: onEditingComplete,
                     initialValue: emailAddress,
                     focusNode: focusNodeEmail,
-                    onChanged: (email) => setState(() => emailAddress = email),
+                    onChanged: (email) => setState(() {
+                      emailAddress = email;
+                      userShouldLogIn = null;
+                      showPassword1 = false;
+                      showPassword2 = false;
+                    }),
                     margin: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),
                     label: const Text("Email"),
@@ -131,11 +137,11 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
               margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
             ),
             CustomButton(
-              text: "Continue with Google",
+              text: "Sign in with Google",
+              loading: googleLoading,
               primary: false,
-              onPressed: () {
-                showToast(context,
-                    title: "Not Implemented", toastType: ToastType.error);
+              onPressed: () async {
+                login(google: true);
               },
               margin: const EdgeInsets.symmetric(horizontal: 80),
             ),
@@ -182,6 +188,9 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     await context
         .read<AppCubit>()
         .signUpWithPassword(email: emailAddress, password: password1);
+    await context
+        .read<AppCubit>()
+        .signInWithPassword(email: emailAddress, password: password1);
     if (context.read<AppCubit>().state.user != null) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const Fishroom()));
@@ -197,12 +206,20 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
     }
   }
 
-  void login() async {
-    setState(() => loading = true);
+  void login({bool google = false}) async {
+    if (google) {
+      setState(() => googleLoading = true);
+    } else {
+      setState(() => loading = true);
+    }
     try {
-      await context
-          .read<AppCubit>()
-          .signInWithPassword(email: emailAddress, password: password1);
+      if (google) {
+        await context.read<AppCubit>().nativeGoogleSignIn();
+      } else {
+        await context
+            .read<AppCubit>()
+            .signInWithPassword(email: emailAddress, password: password1);
+      }
       if (context.read<AppCubit>().state.user != null) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const Fishroom()));
@@ -210,7 +227,10 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
         String message =
             "Something went wrong logging you in. Please try again.";
 
-        setState(() => loading = false);
+        setState(() {
+          loading = false;
+          googleLoading = false;
+        });
         showToast(
           context,
           title: "Something went wrong.",
@@ -218,13 +238,21 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
           toastType: ToastType.error,
         );
       }
-    } on Exception catch (e) {
+    } catch (e) {
+      setState(() {
+        loading = false;
+        googleLoading = false;
+      });
+
       showToast(context,
           title: "Something went wrong.",
           toastType: ToastType.error,
           description: e.toString());
     }
-    setState(() => loading = false);
+    setState(() {
+      loading = false;
+      googleLoading = false;
+    });
   }
 
   void onEditingComplete() async {

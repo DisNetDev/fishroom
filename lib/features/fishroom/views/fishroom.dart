@@ -4,6 +4,7 @@ import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_navbar.dart';
+import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,18 +32,29 @@ class _FishroomState extends State<Fishroom> {
   bool loading = false;
 
   init() async {
+    if (context.read<AppCubit>().state.user == null) {
+      logOut(context);
+    }
     setState(() => loading = true);
-    try {
-      await context.read<TanksCubit>().getTanks();
-    } on Exception catch (e) {
-      showToast(
-        context,
-        title: "Something went wrong.",
-        description: e.toString(),
-        toastType: ToastType.error,
-      );
+    if (!context.read<AppCubit>().state.appLoaded) {
+      try {
+        await context.read<TanksCubit>().getTanks();
+      } catch (e) {
+        showToast(
+          context,
+          title: "Something went wrong.",
+          description: e.toString(),
+          toastType: ToastType.error,
+        );
+      }
     }
     setState(() => loading = false);
+    if (context.read<TanksCubit>().state.tanks.isEmpty &&
+        !context.read<AppCubit>().state.appLoaded) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const CreateTankTankName()));
+    }
+    context.read<AppCubit>().setAppLoaded(true);
   }
 
   @override
@@ -71,19 +83,25 @@ class _FishroomState extends State<Fishroom> {
                   FloatingActionButtonLocation.centerDocked,
               bottomNavigationBar: RootNavbar(currentIndex: 0),
               backgroundColor: Colors.transparent,
-              floatingActionButton: canAddTank(context)
-                  ? FloatingActionButton(
-                      shape: CircleBorder(),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const CreateTankTankName()));
-                      },
-                      child: const Icon(Icons.add),
-                    )
-                  : null,
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: canAddTank(context) ? null : Colors.grey,
+                shape: CircleBorder(),
+                onPressed: () {
+                  if (canAddTank(context)) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CreateTankTankName()));
+                  } else {
+                    showToast(context,
+                        title: "Upgrade to Pro.",
+                        toastType: ToastType.info,
+                        description:
+                            "You have reached the maximum number of tanks on the free plan. Upgrade to Pro to add more tanks.");
+                  }
+                },
+                child: const Icon(Icons.add),
+              ),
               appBar: tanksState.tanks.isEmpty || loading
                   ? const RootSliverAppBar(
                       implyLeading: false,

@@ -19,6 +19,7 @@ class AppCubit extends HydratedCubit<AppState> {
       user: json['user'] != null ? FishUser.fromJson(json['user']) : null,
       settings:
           json['settings'] != null ? Settings.fromJson(json['settings']) : null,
+      appLoaded: false,
     );
   }
 
@@ -27,7 +28,12 @@ class AppCubit extends HydratedCubit<AppState> {
     return {
       'user': state.user?.toJson(),
       'settings': state.settings.toJson(),
+      'appLoaded': false,
     };
+  }
+
+  void setAppLoaded(bool set) {
+    emit(state.copyWith(appLoaded: set));
   }
 
   void debugToggleFreeAndPro() {
@@ -52,16 +58,67 @@ class AppCubit extends HydratedCubit<AppState> {
     fishLog("Signing in with password...");
     UserSession? userSession;
     FishUser? user;
+    Settings? settings;
+
     try {
       userSession =
           await _supabaseRepository.signInWithPassword(email, password);
 
       if (userSession.session != null) {
         fishLog("Getting User Data...");
-        final data = await _supabaseRepository.fetchUser();
+        var data = await _supabaseRepository.fetchUser();
+         if (data != null && data.isNotEmpty) {
+          if (data.first["settings"] == null) {
+            List<Parameter> parameters = await setParametersDefaults();
+            await updateSettings(
+              state.settings.copyWith(parameters: parameters),
+              uuid: data.first["id"],
+            );
+            data = await _supabaseRepository.fetchUser();
+          }
+        }
         if (data != null && data.isNotEmpty) {
           user = FishUser.fromJson(data.first);
-          emit(state.copyWith(user: user));
+          settings = Settings.fromJson(data.first["settings"]);
+
+          emit(state.copyWith(user: user, settings: settings));
+        }
+      }
+      emit(state);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> nativeGoogleSignIn() async {
+    fishLog("Signing in with Google...");
+    UserSession? userSession;
+    FishUser? user;
+    Settings? settings;
+
+    try {
+      userSession = await _supabaseRepository.nativeGoogleSignIn();
+
+      if (userSession.session != null) {
+        fishLog("Getting User Data...");
+        var data = await _supabaseRepository.fetchUser();
+        if (data != null && data.isNotEmpty) {
+          if (data.first["settings"] == null) {
+            List<Parameter> parameters = await setParametersDefaults();
+            await updateSettings(
+              state.settings.copyWith(parameters: parameters),
+              uuid: data.first["id"],
+            );
+            data = await _supabaseRepository.fetchUser();
+          }
+        }
+        if (data != null && data.isNotEmpty) {
+          user = FishUser.fromJson(data.first);
+          settings = data.first["settings"] != null
+              ? Settings.fromJson(data.first["settings"])
+              : Settings(parameters: []);
+
+          emit(state.copyWith(user: user, settings: settings));
         }
       }
       emit(state);
@@ -135,19 +192,19 @@ class AppCubit extends HydratedCubit<AppState> {
     }
   }
 
-  Future<void> updateSettings(Settings settings) async {
+  Future<void> updateSettings(Settings settings, {String? uuid}) async {
     fishLog("Updating settings...");
     AppState oldState = state;
 
     emit(state.copyWith(settings: settings));
 
-    if (state.user != null) {
+    if (state.user != null || uuid != null) {
       try {
         await _supabaseRepository.update(
             tableName: Table.users.tableName,
             json: {Table.users.settings: settings.toJson()},
             conditionalColumn: Table.users.id,
-            condition: state.user!.uuid);
+            condition: uuid ?? state.user!.uuid);
       } catch (e) {
         emit(oldState);
         rethrow;
@@ -163,6 +220,7 @@ class AppCubit extends HydratedCubit<AppState> {
             json: {Table.users.premium: true},
             conditionalColumn: id,
             condition: state.user!.uuid);
+        emit(state.copyWith(user: state.user!.copyWith(premium: true)));
       }
     } on Exception catch (_) {
       rethrow;

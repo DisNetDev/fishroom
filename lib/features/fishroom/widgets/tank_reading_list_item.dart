@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
@@ -18,18 +15,18 @@ import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/date_time_text.dart';
 import 'small_entry_graph.dart';
 
-class TankEntryListItem extends StatefulWidget {
-  const TankEntryListItem(
+class TankReadingListItem extends StatefulWidget {
+  const TankReadingListItem(
       {super.key, required this.reading, required this.onDismissed});
 
   final TankReading reading;
   final void Function() onDismissed;
 
   @override
-  State<TankEntryListItem> createState() => _TankEntryListItemState();
+  State<TankReadingListItem> createState() => _TankReadingListItemState();
 }
 
-class _TankEntryListItemState extends State<TankEntryListItem> {
+class _TankReadingListItemState extends State<TankReadingListItem> {
   bool open = false;
 
   @override
@@ -95,117 +92,114 @@ class _TankEntryListItemState extends State<TankEntryListItem> {
             closedBuilder: (context, action) => Stack(
               children: [
                 ClipRRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 10),
-                      constraints: BoxConstraints(
-                        minHeight:
-                            widget.reading.type == TankReadingType.measurement
-                                ? 120
-                                : 80,
-                      ),
-                      decoration: BoxDecoration(
-                        border: const GradientBoxBorder(
-                            width: 0.3, gradient: kPrimaryGradient),
-                        borderRadius: BorderRadius.circular(10),
-                        color: isDarkMode(context)
-                            ? const Color.fromARGB(0, 0, 0, 0)
-                            : const Color.fromARGB(55, 255, 255, 255),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        widget.reading.type.label,
-                                        style: kHeading1TextStyle,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        widget.reading.note ?? "",
-                                        style: kPlainTextStyle,
-                                      ),
-                                      SmallEntryGraph(
-                                          tankReading: widget.reading),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (widget.reading.imageUrl != null)
-                            GestureDetector(
-                              onTap: () => setState(() => open = !open),
-                              child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 5),
-                                  decoration: BoxDecoration(
-                                      borderRadius: open
-                                          ? null
-                                          : const BorderRadius.vertical(
-                                              bottom: Radius.circular(10)),
-                                      gradient: const LinearGradient(colors: [
-                                        Color.fromARGB(102, 0, 198, 253),
-                                        Colors.transparent
-                                      ])),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Symbols.attach_file,
-                                        size: 16,
-                                      ),
-                                      const Text(
-                                        "Photo Attached",
-                                        style: kDateTimeTextStyle,
-                                      ),
-                                      const Gap(20),
-                                      Icon(
-                                        !open
-                                            ? Symbols.keyboard_arrow_down
-                                            : Symbols.keyboard_arrow_up,
-                                        size: 16,
-                                      ),
-                                    ],
-                                  )),
-                            ),
-                          if (open && widget.reading.imageUrl != null)
-                            Container(
-                              alignment: Alignment.center,
-                              height: 50,
-                              child: GestureDetector(
-                                onTap: () => showToast(context,
-                                    title: "Nope not yet :)",
-                                    toastType: ToastType.error),
-                                child: const Text(
-                                  "Download",
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    constraints: BoxConstraints(
+                      minHeight:
+                          widget.reading.type == TankReadingType.measurement
+                              ? 120
+                              : 0,
+                    ),
+                    decoration: BoxDecoration(
+                      border: const GradientBoxBorder(
+                          width: 0.3, gradient: kPrimaryGradient),
+                      borderRadius: BorderRadius.circular(10),
+                      color: isDarkMode(context)
+                          ? const Color.fromARGB(0, 0, 0, 0)
+                          : const Color.fromARGB(55, 255, 255, 255),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                widget.reading.type.label,
+                                style: kHeading1TextStyle,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              if (widget.reading.waterChangePercentage != null)
+                                Text(
+                                  "${widget.reading.waterChangePercentage.toString()}%",
                                   style: kHeading2TextStyle,
                                 ),
-                              ),
-                            ),
-                          if (open && widget.reading.imageUrl != null)
-                            ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                    bottom: Radius.circular(10)),
-                                child: CachedNetworkImage(
-                                    placeholder: (context, url) =>
-                                        const AspectRatio(
-                                            aspectRatio: 16 / 9,
-                                            child: SizedBox(child: Loader())),
-                                    imageUrl: widget.reading.imageUrl!))
-                        ],
-                      ),
+                              if (widget.reading.note != "" &&
+                                  widget.reading.note != null)
+                                Text(
+                                  widget.reading.note!,
+                                  style: kPlainTextStyle,
+                                ),
+                              if (widget.reading.parameters.isNotEmpty)
+                                SmallEntryGraph(tankReading: widget.reading),
+                            ],
+                          ),
+                        ),
+                        if (widget.reading.imageUrl != null)
+                          GestureDetector(
+                            onTap: () => setState(() => open = !open),
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 5),
+                                decoration: BoxDecoration(
+                                    borderRadius: open
+                                        ? null
+                                        : const BorderRadius.vertical(
+                                            bottom: Radius.circular(10)),
+                                    gradient: const LinearGradient(colors: [
+                                      Color.fromARGB(102, 0, 198, 253),
+                                      Colors.transparent
+                                    ])),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Symbols.attach_file,
+                                      size: 16,
+                                    ),
+                                    const Text(
+                                      "Photo Attached",
+                                      style: kDateTimeTextStyle,
+                                    ),
+                                    const Gap(20),
+                                    Icon(
+                                      !open
+                                          ? Symbols.keyboard_arrow_down
+                                          : Symbols.keyboard_arrow_up,
+                                      size: 16,
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        // if (open && widget.reading.imageUrl != null)
+                        //   Container(
+                        //     alignment: Alignment.center,
+                        //     height: 50,
+                        //     child: GestureDetector(
+                        //       onTap: () => showToast(context,
+                        //           title: "Nope not yet :)",
+                        //           toastType: ToastType.error),
+                        //       child: const Text(
+                        //         "Download",
+                        //         style: kHeading2TextStyle,
+                        //       ),
+                        //     ),
+                        //   ),
+                        if (open && widget.reading.imageUrl != null)
+                          ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                  bottom: Radius.circular(10)),
+                              child: CachedNetworkImage(
+                                  placeholder: (context, url) =>
+                                      const AspectRatio(
+                                          aspectRatio: 16 / 9,
+                                          child: SizedBox(child: Loader())),
+                                  imageUrl: widget.reading.imageUrl!))
+                      ],
                     ),
                   ),
                 ),

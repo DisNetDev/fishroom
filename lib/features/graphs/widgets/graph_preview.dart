@@ -11,6 +11,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../usecases/highest_lowest.dart';
 
 // ignore: prefer-match-file-name
 class ParameterChartData extends StatefulWidget {
@@ -26,6 +27,10 @@ class ParameterChartData extends StatefulWidget {
 
 class _ParameterChartDataState extends State<ParameterChartData> {
   double highestValue = 0;
+  double lowestValue = 0;
+
+  // Set your desired limit for the number of bars
+  final int maxBars = 15; // Change this value as needed
 
   @override
   void initState() {
@@ -34,41 +39,45 @@ class _ParameterChartDataState extends State<ParameterChartData> {
 
   @override
   Widget build(BuildContext context) {
-    highestValue = widget.data
-        .map((reading) => reading.parameters
-            .firstWhere(
-              (param) => param.name == widget.parameterToFilter.name,
-              orElse: () => Parameter(value: 1),
-            )
-            .value)
-        .reduce((value, element) => value! > element! ? value : element)!;
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Define the width of each bar and the space between bars
+    double barWidth = 15.0;
+    double spaceBetweenBars = 10.0;
+
+    // Calculate the maximum number of bars that can fit on the screen
+    int maxBars =
+        ((screenWidth - spaceBetweenBars) / (barWidth + spaceBetweenBars))
+            .floor();
+
+    highestValue = getHighestValue(widget.data, widget.parameterToFilter);
+    lowestValue = getLowestValue(widget.data, widget.parameterToFilter);
 
     double lineInterval = _getInterval(highestValue, widget: widget);
+
+    // Use the calculated maxBars value
+    List<BarChartGroupData> barGroups = _generateBarGroups(maxBars);
 
     return BarChart(
       swapAnimationCurve: Curves.easeOutExpo,
       swapAnimationDuration: const Duration(milliseconds: 500),
       BarChartData(
         extraLinesData: ExtraLinesData(horizontalLines: [
-          HorizontalLine(
-              y: 0,
-              color: isDarkMode(context) ? Colors.grey : Colors.black,
-              strokeWidth: 0.5,
-              dashArray: [5]),
-          HorizontalLine(
-              y: highestValue,
-              color: isDarkMode(context) ? Colors.grey : Colors.black,
-              strokeWidth: 0.5,
-              dashArray: [5])
+          // HorizontalLine(
+          //     y: 0,
+          //     color: isDarkMode(context) ? Colors.grey : Colors.black,
+          //     strokeWidth: 0.5,
+          //     dashArray: [5]),
         ]),
         barTouchData: barTouchData,
         titlesData: titlesData,
         borderData: borderData,
         barGroups: barGroups,
-        groupsSpace: 2,
+        groupsSpace: 10,
         gridData: FlGridData(
           horizontalInterval: lineInterval,
-          show: true,
+          show: false,
           getDrawingHorizontalLine: (value) {
             return FlLine(
                 color: isDarkMode(context) ? Colors.white24 : Colors.grey,
@@ -79,6 +88,7 @@ class _ParameterChartDataState extends State<ParameterChartData> {
         ),
         alignment: BarChartAlignment.start,
         maxY: highestValue,
+        minY: lowestValue,
       ),
     );
   }
@@ -87,10 +97,10 @@ class _ParameterChartDataState extends State<ParameterChartData> {
         enabled: true,
         touchTooltipData: BarTouchTooltipData(
           tooltipRoundedRadius: 200,
-          getTooltipColor: (_) => kSecondaryColor,
+          getTooltipColor: (_) => Colors.transparent,
           direction: TooltipDirection.auto,
-          tooltipPadding: EdgeInsets.all(8),
-          tooltipMargin: 10,
+          tooltipPadding: EdgeInsets.all(0),
+          tooltipMargin: 5,
           getTooltipItem: (
             BarChartGroupData group,
             int groupIndex,
@@ -101,8 +111,10 @@ class _ParameterChartDataState extends State<ParameterChartData> {
               rod.toY.toString(),
               TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                  color: Colors.white),
+                  fontSize: 10,
+                  color: isDarkMode(context)
+                      ? Colors.white
+                      : const Color.fromARGB(255, 7, 18, 78)),
             );
           },
         ),
@@ -129,7 +141,7 @@ class _ParameterChartDataState extends State<ParameterChartData> {
   }
 
   FlTitlesData get titlesData => FlTitlesData(
-        show: true,
+        show: false,
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: false,
@@ -156,12 +168,12 @@ class _ParameterChartDataState extends State<ParameterChartData> {
       );
 
   LinearGradient get _barsGradient => const LinearGradient(
-        colors: [kPrimaryColor, kSecondaryColor],
+        colors: [kSecondaryColor, kPrimaryColor],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
       );
 
-  List<BarChartGroupData> get barGroups {
+  List<BarChartGroupData> _generateBarGroups(int maxBars) {
     List<Parameter> parameters = [];
 
     for (TankReading reading in widget.data) {
@@ -176,6 +188,9 @@ class _ParameterChartDataState extends State<ParameterChartData> {
 
     parameters = parameters.reversed.toList();
 
+    // Limit the number of bars displayed
+    parameters = parameters.take(maxBars).toList();
+
     return List.generate(parameters.length, (index) {
       double value = parameters[index].value!;
 
@@ -183,12 +198,13 @@ class _ParameterChartDataState extends State<ParameterChartData> {
         x: index,
         barRods: [
           BarChartRodData(
-            toY: value == 0 ? 0.0000000001 : value,
+            toY: value == 0 ? 0 : value,
             gradient: _barsGradient,
-            width: 10,
+            width: 15,
+            borderRadius: BorderRadius.circular(2),
           )
         ],
-        showingTooltipIndicators: [1],
+        showingTooltipIndicators: [0],
       );
     });
   }
@@ -209,75 +225,63 @@ class ParameterChart extends StatefulWidget {
 class ParameterChartState extends State<ParameterChart> {
   List<TankReading> data = [];
   Parameter? parameterFilter;
-
+  int barCount = 10;
   @override
   void initState() {
-    if (widget.data.length > 29) {
-      data = widget.data.getRange(0, 30).toList();
-    } else {
-      data = widget.data;
-    }
-
-    if (context.read<AppCubit>().state.settings.parameters.isNotEmpty) {
-      parameterFilter =
-          context.read<AppCubit>().state.settings.parameters.first;
-    }
+    parameterFilter =
+        context.read<AppCubit>().state.settings.parameters.firstOrNull;
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        Gap(50),
-        AspectRatio(
-          aspectRatio: 2,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: Skeleton.shade(
-                child: ParameterChartData(
-                    data: data,
-                    parameterToFilter: parameterFilter ??
-                        context
-                            .read<AppCubit>()
-                            .state
-                            .settings
-                            .parameters
-                            .first)),
-          ),
+        Column(
+          children: [
+            Gap(40),
+            AspectRatio(
+              aspectRatio: 2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Skeleton.shade(
+                    child: ParameterChartData(
+                        data: widget.data,
+                        parameterToFilter: parameterFilter ??
+                            context
+                                .read<AppCubit>()
+                                .state
+                                .settings
+                                .parameters
+                                .first)),
+              ),
+            ),
+            Gap(20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Wrap(
+                children: [
+                  for (Parameter parameter
+                      in context.read<AppCubit>().state.settings.parameters)
+                    _SelectedFilter(
+                      parameter: parameter,
+                      onSelected: (param) {
+                        if (param.id == parameterFilter?.id) return;
+                        setState(
+                          () {
+                            parameterFilter = param;
+                          },
+                        );
+                      },
+                      isSelected: parameterFilter?.id == parameter.id,
+                    )
+                ],
+              ),
+            ),
+            Gap(20),
+          ],
         ),
-        Gap(20),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: GridView.count(
-            shrinkWrap: true,
-            crossAxisCount:
-                context.read<AppCubit>().state.settings.parameters.length > 7
-                    ? 6
-                    : context.read<AppCubit>().state.settings.parameters.length,
-            childAspectRatio: 2,
-            children: [
-              for (Parameter parameter
-                  in context.read<AppCubit>().state.settings.parameters)
-                _SelectedFilter(
-                  parameter: parameter,
-                  onSelected: (param) {
-                    setState(() {
-                      parameterFilter = param;
-                      if (data.length > 29) {
-                        data = widget.data.getRange(0, 30).toList();
-                      } else {
-                        data = widget.data;
-                      }
-                    });
-                  },
-                  isSelected: parameterFilter?.name == parameter.name,
-                )
-            ],
-          ),
-        ),
-        Gap(20),
       ],
     );
   }
@@ -296,6 +300,7 @@ class _SelectedFilter extends StatelessWidget {
     return GestureDetector(
       onTap: () => onSelected!(parameter),
       child: Container(
+        width: 50,
         alignment: Alignment.center,
         margin: const EdgeInsets.all(5),
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -319,8 +324,8 @@ double _getInterval(double highestValue, {required ParameterChartData widget}) {
   highestValue = widget.data
       .map((reading) => reading.parameters
           .firstWhere(
-            (param) => param.name == widget.parameterToFilter.name,
-            orElse: () => Parameter(value: 1),
+            (param) => param.id == widget.parameterToFilter.id,
+            orElse: () => Parameter(value: 0, id: ''),
           )
           .value)
       .reduce((value, element) => value! > element! ? value : element)!;
