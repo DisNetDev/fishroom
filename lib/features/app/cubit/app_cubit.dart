@@ -47,7 +47,6 @@ class AppCubit extends HydratedCubit<AppState> {
       {required String email, required String password}) async {
     try {
       await _supabaseRepository.signUpWithPassword(email, password);
-      emit(state);
     } catch (e) {
       rethrow;
     }
@@ -67,7 +66,7 @@ class AppCubit extends HydratedCubit<AppState> {
       if (userSession.session != null) {
         fishLog("Getting User Data...");
         var data = await _supabaseRepository.fetchUser();
-         if (data != null && data.isNotEmpty) {
+        if (data != null && data.isNotEmpty) {
           if (data.first["settings"] == null) {
             List<Parameter> parameters = await setParametersDefaults();
             await updateSettings(
@@ -84,7 +83,6 @@ class AppCubit extends HydratedCubit<AppState> {
           emit(state.copyWith(user: user, settings: settings));
         }
       }
-      emit(state);
     } catch (e) {
       rethrow;
     }

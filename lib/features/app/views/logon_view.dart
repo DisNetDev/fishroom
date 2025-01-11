@@ -136,15 +136,15 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
               onPressed: onEditingComplete,
               margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
             ),
-            CustomButton(
-              text: "Sign in with Google",
-              loading: googleLoading,
-              primary: false,
-              onPressed: () async {
-                login(google: true);
-              },
-              margin: const EdgeInsets.symmetric(horizontal: 80),
-            ),
+            // CustomButton(
+            //   text: "Sign in with Google",
+            //   loading: googleLoading,
+            //   primary: false,
+            //   onPressed: () async {
+            //     login(google: true);
+            //   },
+            //   margin: const EdgeInsets.symmetric(horizontal: 80),
+            // ),
             const Gap(30),
           ],
         ),
