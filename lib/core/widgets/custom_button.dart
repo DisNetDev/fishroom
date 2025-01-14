@@ -15,6 +15,7 @@ class CustomButton extends StatelessWidget {
     this.loading = false,
     this.gradient,
     this.textColor,
+    this.autoPad = true,
   });
 
   final String text;
@@ -24,6 +25,7 @@ class CustomButton extends StatelessWidget {
   final bool loading;
   final Gradient? gradient;
   final Color? textColor;
+  final bool autoPad;
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +42,12 @@ class CustomButton extends StatelessWidget {
         }
       },
       child: Container(
-        constraints:
-            const BoxConstraints(minHeight: 50, maxHeight: 50, minWidth: 100),
+        constraints: autoPad
+            ? const BoxConstraints(minHeight: 50, maxHeight: 50, minWidth: 100)
+            : BoxConstraints(
+                minHeight: 50,
+                maxHeight: 50,
+              ),
         margin: margin,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
         decoration: BoxDecoration(

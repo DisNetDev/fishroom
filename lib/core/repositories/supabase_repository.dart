@@ -182,7 +182,7 @@ class SupabaseRepository {
   Future<UserSession> nativeGoogleSignIn() async {
     try {
       final GoogleSignIn googleSignIn =
-          GoogleSignIn(clientId: dotenv.env['GOOGLE_CLIENT_ID']);
+          GoogleSignIn(serverClientId: dotenv.env['GOOGLE_SERVER_ID']);
       final googleUser = await googleSignIn.signIn();
       final googleAuth = await googleUser!.authentication;
       final accessToken = googleAuth.accessToken;

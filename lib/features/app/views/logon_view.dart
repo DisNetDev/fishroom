@@ -9,6 +9,7 @@ import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 import '../../../core/usecases/email_validator.dart';
 import '../../../core/usecases/password_validator_object.dart';
@@ -134,17 +135,26 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
                       ? "Login"
                       : "Sign Up",
               onPressed: onEditingComplete,
-              margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
+              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 80),
             ),
-            // CustomButton(
-            //   text: "Sign in with Google",
-            //   loading: googleLoading,
-            //   primary: false,
-            //   onPressed: () async {
-            //     login(google: true);
-            //   },
-            //   margin: const EdgeInsets.symmetric(horizontal: 80),
+            // Container(
+            //   padding: const EdgeInsets.symmetric(horizontal: 50),
+            //   child: SupaSocialsAuth(
+            //     socialProviders: [OAuthProvider.google],
+            //     onSuccess: (user) {
+            //       print(user);
+            //     },
+            //   ),
             // ),
+            CustomButton(
+              text: "Sign in with Google",
+              loading: googleLoading,
+              primary: false,
+              onPressed: () async {
+                login(google: true);
+              },
+              margin: const EdgeInsets.symmetric(horizontal: 80),
+            ),
             const Gap(30),
           ],
         ),
