@@ -223,7 +223,6 @@ class ParameterChart extends StatefulWidget {
 }
 
 class ParameterChartState extends State<ParameterChart> {
-  List<TankReading> data = [];
   Parameter? parameterFilter;
   int barCount = 10;
   @override
@@ -236,6 +235,14 @@ class ParameterChartState extends State<ParameterChart> {
 
   @override
   Widget build(BuildContext context) {
+    bool hasData = widget.data.isNotEmpty;
+    if (widget.data.any((reading) =>
+        reading.parameters.any((param) => param.id == parameterFilter?.id))) {
+      hasData = true;
+    } else {
+      hasData = false;
+    }
+
     return Stack(
       children: [
         Column(
@@ -243,19 +250,21 @@ class ParameterChartState extends State<ParameterChart> {
             Gap(40),
             AspectRatio(
               aspectRatio: 2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Skeleton.shade(
-                    child: ParameterChartData(
-                        data: widget.data,
-                        parameterToFilter: parameterFilter ??
-                            context
-                                .read<AppCubit>()
-                                .state
-                                .settings
-                                .parameters
-                                .first)),
-              ),
+              child: hasData
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Skeleton.shade(
+                          child: ParameterChartData(
+                              data: widget.data,
+                              parameterToFilter: parameterFilter ??
+                                  context
+                                      .read<AppCubit>()
+                                      .state
+                                      .settings
+                                      .parameters
+                                      .first)),
+                    )
+                  : Center(child: Text("No Data")),
             ),
             Gap(20),
             Padding(
