@@ -88,10 +88,28 @@ class AppDefaults extends DatabaseTables {
   static const DBColumn _value = DBColumn('value');
 }
 
+class BugReports extends DatabaseTables {
+  BugReports() : super('bug_reports');
+
+  String get id => _id.columnName;
+  String get createdAt => _createdAt.columnName;
+  String get reporter => _reporter.columnName;
+  String get description => _description.columnName;
+  String get appVersion => _appVersion.columnName;
+  String get screenshotUrl => _screenshotUrl.columnName;
+  static const DBColumn _id = DBColumn('id');
+  static const DBColumn _createdAt = DBColumn('created_at');
+  static const DBColumn _reporter = DBColumn('reporter');
+  static const DBColumn _description = DBColumn('description');
+  static const DBColumn _appVersion = DBColumn('app_version');
+  static const DBColumn _screenshotUrl = DBColumn('screenshot_url');
+}
+
 class Table {
   static final users = Users();
   static final usersCheck = UsersCheck();
   static final tanks = Tanks();
   static final tankReadings = TankReadings();
   static final appDefaults = AppDefaults();
+  static final bugReports = BugReports();
 }
