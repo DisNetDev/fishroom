@@ -12,7 +12,9 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../features/app/cubit/app_cubit.dart';
+import '../../features/bug_report/views/bug_report_view.dart';
 import '../constants.dart';
+import '../usecases/nav_push.dart';
 
 class RootDrawer extends StatelessWidget {
   const RootDrawer({super.key});
@@ -145,6 +147,15 @@ class RootDrawer extends StatelessWidget {
                     fontStyle: FontStyle.italic,
                     color: Colors.grey,
                   ),
+                ),
+
+                ListTile(
+                  leading: const Icon(Symbols.bug_report_rounded),
+                  title: const Text("Bug Report"),
+                  onTap: () {
+                    navPop(context);
+                    navPush(context, const BugReportView());
+                  },
                 ),
 
                 //Bottom

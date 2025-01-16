@@ -3,6 +3,7 @@ import 'package:fishroom/core/usecases/log.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
+import '../../bug_report/models/bug_report.dart';
 import '../../tank_reading/models/parameter.dart';
 import '../models/fish_user.dart';
 
@@ -221,6 +222,17 @@ class AppCubit extends HydratedCubit<AppState> {
         emit(state.copyWith(user: state.user!.copyWith(premium: true)));
       }
     } on Exception catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> submitBugReport(BugReport bugReport) async {
+    fishLog("Submitting bug report...");
+    fishLog(bugReport.toJson().toString());
+    try {
+      await _supabaseRepository.insert(
+          tableName: Table.bugReports.tableName, json: bugReport.toJson());
+    } catch (e) {
       rethrow;
     }
   }
