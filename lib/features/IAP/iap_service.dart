@@ -89,7 +89,7 @@ class IAPService {
 
       final PurchaseParam purchaseParam = PurchaseParam(
           productDetails: productDetailsResponse.productDetails.first);
-      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+      await _iap.buyConsumable(purchaseParam: purchaseParam);
     } catch (_) {
       rethrow;
     }
