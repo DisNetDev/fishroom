@@ -15,6 +15,7 @@ import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/graph_preview.dart';
+import '../../graphs/widgets/line_graph_main.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_reading_list_item.dart';
 
@@ -119,7 +120,7 @@ class _TankDetailsState extends State<TankDetails> {
                                   .parameters
                                   .isNotEmpty &&
                               readings.isNotEmpty)
-                            ParameterChart(data: readings),
+                            LineGraphMain(data: readings),
                           Gap(20),
                           if (loading)
                             for (var i = 0; i < 4; i++)
