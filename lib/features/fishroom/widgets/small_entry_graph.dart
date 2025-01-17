@@ -15,7 +15,6 @@ class SmallEntryGraph extends StatelessWidget {
       children: [
         Container(
           alignment: Alignment.bottomCenter,
-          height: 100,
           child: TankEntryGraph(tankReading: tankReading),
         ),
       ],

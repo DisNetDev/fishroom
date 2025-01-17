@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 import '../../../core/models/tank_reading.dart';
+import 'border_bar.dart';
 
 class TankEntryGraph extends StatelessWidget {
   const TankEntryGraph({super.key, required this.tankReading});
@@ -13,9 +15,12 @@ class TankEntryGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Gap(16),
         ...tankReading.parameters.map((e) => _BottomBar(parameter: e)),
+        BorderBar(),
       ],
     );
   }
@@ -28,43 +33,55 @@ class _BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = (parameter.value ?? 0) / (parameter.max ?? 0) * 75;
+    double height = (parameter.value ?? 0) /
+        (parameter.max ?? 0) *
+        (MediaQuery.of(context).size.width - 120);
     if (height == 0) {
       height = 1;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text(
-            parameter.value.toString(),
-            style: kDateTimeTextStyle.copyWith(
-              fontSize: 11,
-            ),
-          ),
-          Container(
-            height: height,
-            width: 15,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [kPrimaryColor, kSecondaryColor],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(3),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        BorderBar(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                constraints: BoxConstraints(minWidth: 40),
+                child: Text(
+                  parameter.shortName ?? "",
+                  style: kDateTimeTextStyle.copyWith(
+                    fontSize: 11,
+                  ),
+                ),
               ),
-            ),
+              Container(
+                height: 15,
+                width: height,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [kPrimaryColor, kSecondaryColor],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight),
+                  borderRadius: BorderRadius.horizontal(
+                    right: Radius.circular(3),
+                  ),
+                ),
+              ),
+              Gap(5),
+              Text(
+                parameter.value.toString(),
+                style: kDateTimeTextStyle.copyWith(
+                  fontSize: 11,
+                ),
+              ),
+            ],
           ),
-          Text(
-            parameter.shortName ?? "",
-            style: kDateTimeTextStyle.copyWith(
-              fontSize: 11,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

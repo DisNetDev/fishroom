@@ -3,7 +3,6 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
-import 'package:fishroom/features/tank_reading/views/create_tank_reading.dart';
 import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +13,6 @@ import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
-import '../../graphs/widgets/graph_preview.dart';
 import '../../graphs/widgets/line_graph_main.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_reading_list_item.dart';
@@ -120,7 +118,7 @@ class _TankDetailsState extends State<TankDetails> {
                                   .parameters
                                   .isNotEmpty &&
                               readings.isNotEmpty)
-                            LineGraphMain(data: readings),
+                            LineGraphMain(data: readings.reversed.toList()),
                           Gap(20),
                           if (loading)
                             for (var i = 0; i < 4; i++)

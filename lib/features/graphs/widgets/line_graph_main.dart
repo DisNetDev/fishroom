@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/datetime_format.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
@@ -64,7 +66,16 @@ class _LineGraphMainState extends State<LineGraphMain> {
                     ? LineChart(
                         mainData(),
                       )
-                    : Center(child: Text("No Data")),
+                    : Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Text("No Data"),
+                          Opacity(
+                            opacity: 0.2,
+                            child: LineChart(placeholderData()),
+                          ),
+                        ],
+                      ),
               ),
             ),
             Padding(
@@ -221,6 +232,135 @@ class _LineGraphMainState extends State<LineGraphMain> {
             show: true,
             gradient: LinearGradient(
               colors: gradientColors
+                  .map((color) => color.withValues(alpha: 0.3))
+                  .toList(),
+            ),
+          ),
+        ),
+      ],
+      lineTouchData: LineTouchData(
+        touchTooltipData: LineTouchTooltipData(
+          fitInsideVertically: true,
+          fitInsideHorizontally: true,
+          tooltipBorder: BorderSide(color: kSecondaryColor),
+          getTooltipColor: (touchedSpot) =>
+              isDarkMode(context) ? Colors.black : Colors.white,
+          getTooltipItems: (List<LineBarSpot> touchedSpots) {
+            return touchedSpots.map((LineBarSpot touchedSpot) {
+              final textStyle = kDateTimeTextStyle;
+
+              return LineTooltipItem(
+                '${formatDateTime(filteredData[touchedSpot.x.toInt()].createdAt)}\n${touchedSpot.y.toStringAsFixed(2)} ${parameterFilter?.shortName}',
+                textStyle,
+              );
+            }).toList();
+          },
+        ),
+      ),
+    );
+  }
+
+  LineChartData placeholderData() {
+    List<TankReading> filteredData = [
+      for (int i = 0; i < 10; i++)
+        TankReading(
+          id: '1',
+          ownerId: '1',
+          tankId: '1',
+          type: TankReadingType.measurement,
+          createdAt: DateTime.now().toString(),
+          parameters: [
+            Parameter(
+              shortName: 'pH',
+              value: Random().nextInt(14).toDouble(),
+              max: 14,
+              id: '1',
+            ),
+          ],
+        ),
+    ];
+
+    double lineInterval = 1;
+
+    return LineChartData(
+      gridData: FlGridData(
+        show: true,
+        drawVerticalLine: true,
+        horizontalInterval: lineInterval,
+        verticalInterval: 1,
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.grey,
+            strokeWidth: 0.3,
+          );
+        },
+        getDrawingVerticalLine: (value) {
+          return FlLine(
+            color: Colors.grey,
+            strokeWidth: 0.3,
+          );
+        },
+      ),
+      titlesData: FlTitlesData(
+        show: true,
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 0,
+            interval: lineInterval,
+            getTitlesWidget: bottomTitleWidgets,
+          ),
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: lineInterval,
+            getTitlesWidget: leftTitleWidgets,
+            reservedSize: 30, //Side Title Widgets Width
+          ),
+        ),
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: Colors.grey,
+          width: 0.5,
+        ),
+      ),
+
+      //CHART SIZE
+      minX: 0,
+      maxX: 9,
+      minY: 0,
+      maxY: 10,
+
+      //CHART DATA
+      lineBarsData: [
+        LineChartBarData(
+          spots: List.generate(
+            10,
+            (index) =>
+                FlSpot(index.toDouble(), Random().nextInt(10).toDouble()),
+          ),
+          isCurved: true,
+          gradient: LinearGradient(
+            colors: [Colors.grey.shade800, Colors.grey],
+          ),
+          barWidth: 2,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(
+            show: true,
+          ),
+          belowBarData: BarAreaData(
+            show: true,
+            gradient: LinearGradient(
+              colors: [Colors.grey.shade800.withValues(alpha: 0.3), Colors.grey]
                   .map((color) => color.withValues(alpha: 0.3))
                   .toList(),
             ),
