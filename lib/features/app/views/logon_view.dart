@@ -9,9 +9,9 @@ import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 import '../../../core/usecases/email_validator.dart';
+import '../../../core/usecases/nav_push.dart';
 import '../../../core/usecases/password_validator_object.dart';
 
 class LogonView extends StatefulWidget {
@@ -231,8 +231,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             .signInWithPassword(email: emailAddress, password: password1);
       }
       if (context.read<AppCubit>().state.user != null) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Fishroom()));
+        navReplace(context, const Fishroom());
       } else {
         String message =
             "Something went wrong logging you in. Please try again.";
