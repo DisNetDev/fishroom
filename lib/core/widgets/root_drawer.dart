@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/app/cubit/app_cubit.dart';
 import '../../features/bug_report/views/bug_report_view.dart';
@@ -151,7 +152,7 @@ class RootDrawer extends StatelessWidget {
 
                 ListTile(
                   leading: const Icon(Symbols.bug_report_rounded),
-                  title: const Text("Bug Report"),
+                  title: const Text("Bug Report / Contact Support"),
                   onTap: () {
                     navPop(context);
                     navPush(context, const BugReportView());

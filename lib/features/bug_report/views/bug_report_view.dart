@@ -72,7 +72,7 @@ class _BugReportViewState extends State<BugReportView> {
                   Text("Found a bug? Tell us about it!",
                       textAlign: TextAlign.center, style: kHeadingTextStyle),
                   Text(
-                      "Describe the bug in detail.\nThe more details, the better!\n\nAn example of a good bug report includes:\n- Steps to Reproduce\n- Expected Result\n- Actual Result\n- Screenshot of the bug if possible.",
+                      "Describe the bug in detail.\nThe more details, the better!\n\nAn example of a good bug report includes:\n- Steps to Reproduce\n- Expected Result\n- Actual Result\n- Screenshot of the bug if possible. \nAlternatively, you can type a message below and we will get back to you as soon as possible.",
                       textAlign: TextAlign.center,
                       style: kPlainTextStyle),
                   FishTextBox(
