@@ -57,23 +57,28 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                     onPressed: () => Navigator.of(context).pop()),
                 const Gap(10),
                 CustomButton(
-                    loading: isLoading,
-                    text: "Upgrade",
-                    onPressed: () async {
-                      setState(() => isLoading = true);
-                      try {
-                        await iapService.buyPro();
-                        await context.read<AppCubit>().upgradeUserToPro();
-                        setState(() => isLoading = false);
-                        Navigator.of(context).pop();
-                      } catch (e) {
-                        setState(() => isLoading = false);
-                        showToast(context,
-                            title: "Failed to upgrade",
-                            description: e.toString(),
-                            toastType: ToastType.error);
-                      }
-                    }),
+                  loading: isLoading,
+                  text: "Upgrade",
+                  onPressed: () async {
+                    setState(() => isLoading = true);
+                    try {
+                      await iapService.buyPro(
+                        onSuccess: () async {
+                          await context.read<AppCubit>().upgradeUserToPro();
+                        },
+                      );
+                      setState(() => isLoading = false);
+                      Navigator.of(context).pop();
+                    } catch (e) {
+                      setState(() => isLoading = false);
+                      showToast(context,
+                          title: "Failed to upgrade",
+                          description:
+                              "${e.toString()} Please contact support.",
+                          toastType: ToastType.error);
+                    }
+                  },
+                ),
                 const Gap(40),
               ],
             ),

@@ -73,7 +73,7 @@ class IAPService {
     }
   }
 
-  Future<void> buyPro() async {
+  Future<void> buyPro({required Future<void> Function() onSuccess}) async {
     try {
       if (!(await _iap.isAvailable())) {
         fishLog("IAP not available");
@@ -90,6 +90,7 @@ class IAPService {
       final PurchaseParam purchaseParam = PurchaseParam(
           productDetails: productDetailsResponse.productDetails.first);
       await _iap.buyConsumable(purchaseParam: purchaseParam);
+      onSuccess();
     } catch (_) {
       rethrow;
     }
