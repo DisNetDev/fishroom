@@ -1,10 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_pro_user.dart';
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
+import 'package:fishroom/features/bug_report/views/thank_you.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -63,12 +66,32 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                     setState(() => isLoading = true);
                     try {
                       await iapService.buyPro(
-                        onSuccess: () async {
-                          await context.read<AppCubit>().upgradeUserToPro();
+                        onPurchaseSuccess: () async {
+                          try {
+                            setState(() => isLoading = true);
+                            await context.read<AppCubit>().upgradeUserToPro();
+                            setState(() => isLoading = false);
+                          } catch (e) {
+                            setState(() => isLoading = false);
+                            showToast(context,
+                                title: "Failed to upgrade",
+                                description: e.toString(),
+                                toastType: ToastType.error);
+                            navPop(context);
+                          }
+                          if (isProUser(context)) {
+                            navReplace(context, ThankYou(boughtPro: true));
+                          } else {
+                            showToast(context,
+                                title: "Failed to upgrade",
+                                description:
+                                    "If your payment was successful, please contact support.",
+                                toastType: ToastType.error);
+                            navPop(context);
+                          }
                         },
                       );
                       setState(() => isLoading = false);
-                      Navigator.of(context).pop();
                     } catch (e) {
                       setState(() => isLoading = false);
                       showToast(context,

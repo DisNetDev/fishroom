@@ -7,7 +7,9 @@ import '../../../core/widgets/custom_background.dart';
 import '../../../core/widgets/custom_button.dart';
 
 class ThankYou extends StatelessWidget {
-  const ThankYou({super.key});
+  const ThankYou({super.key, this.boughtPro = false});
+
+  final bool boughtPro;
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +26,17 @@ class ThankYou extends StatelessWidget {
               children: [
                 Expanded(child: SizedBox()),
                 Text(
-                  "Thank you for your report!",
+                  !boughtPro
+                      ? "Thank you for your report!"
+                      : "Thank you for your purchase!",
                   style: kHeadingTextStyle,
                   textAlign: TextAlign.center,
                 ),
                 Gap(20),
                 Text(
-                  "The developer will be notified and will contact you if needed.",
+                  !boughtPro
+                      ? "The developer will be notified and will contact you if needed."
+                      : "You now have access to the Pro version of Fishroom.\nThis includes adding unlimited tanks, and attaching photos to you tank readings!",
                   style: kPlainTextStyle,
                   textAlign: TextAlign.center,
                 ),

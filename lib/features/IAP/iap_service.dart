@@ -15,6 +15,8 @@ class IAPService {
 
   late StreamSubscription<List<PurchaseDetails>> _purchasesSubscription;
 
+  Future<void> Function()? _onPurchaseSuccess;
+
   Future<void> initialize() async {
     fishLog("Initializing IAP");
     if (!(await _iap.isAvailable())) {
@@ -66,6 +68,7 @@ class IAPService {
           (value) {
             if (purchaseStatus == PurchaseStatus.purchased) {
               fishLog("Woah! Purchase Success!");
+              _onPurchaseSuccess?.call();
             }
           },
         );
@@ -73,8 +76,10 @@ class IAPService {
     }
   }
 
-  Future<void> buyPro({required Future<void> Function() onSuccess}) async {
+  Future<void> buyPro({Future<void> Function()? onPurchaseSuccess}) async {
     try {
+      _onPurchaseSuccess = onPurchaseSuccess;
+
       if (!(await _iap.isAvailable())) {
         fishLog("IAP not available");
         throw Exception("Store not available");
@@ -90,7 +95,6 @@ class IAPService {
       final PurchaseParam purchaseParam = PurchaseParam(
           productDetails: productDetailsResponse.productDetails.first);
       await _iap.buyConsumable(purchaseParam: purchaseParam);
-      onSuccess();
     } catch (_) {
       rethrow;
     }
