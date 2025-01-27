@@ -2,14 +2,16 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
-import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:fishroom/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:gap/gap.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import 'dart:async';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
+import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/usecases/nav_push.dart';
 import '../../../core/widgets/custom_button.dart';
 
@@ -71,6 +73,9 @@ class _PasswordResetState extends State<PasswordReset> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isKeyboardVisible =
+        KeyboardVisibilityProvider.isKeyboardVisible(context);
+
     return Stack(
       children: [
         CustomBackground(),
@@ -98,10 +103,41 @@ class _PasswordResetState extends State<PasswordReset> {
                 Expanded(
                   child: SizedBox(),
                 ),
-                TextInput(
-                  initialValue: code,
-                  label: Text("Code"),
-                  onChanged: (value) => setState(() => code = value),
+                Text(
+                  "Enter the code below",
+                  textAlign: TextAlign.center,
+                ),
+                Gap(10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: PinCodeTextField(
+                      appContext: context,
+                      length: 6,
+                      autoDismissKeyboard: true,
+                      onChanged: (value) => setState(() => code = value),
+                      keyboardType: TextInputType.number,
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(8),
+                        activeFillColor: isDarkMode(context)
+                            ? Colors.black
+                            : const Color.fromARGB(255, 31, 21, 21),
+                        inactiveFillColor:
+                            isDarkMode(context) ? Colors.black : Colors.white,
+                        selectedFillColor:
+                            isDarkMode(context) ? Colors.black : Colors.white,
+                        activeColor:
+                            isDarkMode(context) ? Colors.white : Colors.black,
+                        inactiveColor:
+                            isDarkMode(context) ? Colors.white : Colors.black,
+                        selectedColor:
+                            isDarkMode(context) ? Colors.white : Colors.black,
+                      ),
+                      cursorColor:
+                          isDarkMode(context) ? kPrimaryColor : kSecondaryColor,
+                      animationDuration: const Duration(milliseconds: 300),
+                      enableActiveFill: true,
+                      textStyle: kHeadingTextStyle.copyWith(fontSize: 30)),
                 ),
                 Gap(60),
                 TextInput(
@@ -117,65 +153,68 @@ class _PasswordResetState extends State<PasswordReset> {
                   obscureText: true,
                   onChanged: (value) => setState(() => confirmPassword = value),
                 ),
-                Gap(100),
-                CustomButton(
-                    loading: isLoading,
-                    text: "Reset Password",
-                    onPressed: () async {
-                      if (password != confirmPassword) {
-                        showToast(context,
-                            title: "Passwords do not match",
-                            toastType: ToastType.info);
+                if (!isKeyboardVisible) Gap(100),
+                if (!isKeyboardVisible)
+                  CustomButton(
+                      loading: isLoading,
+                      text: "Reset Password",
+                      onPressed: () async {
+                        if (password != confirmPassword) {
+                          showToast(context,
+                              title: "Passwords do not match",
+                              toastType: ToastType.info);
 
-                        return;
+                          return;
+                        }
+
+                        setState(() => isLoading = true);
+
+                        try {
+                          await supabase.auth.verifyOTP(
+                            type: OtpType.recovery,
+                            token: code,
+                            email: widget.emailAddress,
+                          );
+
+                          await supabase.auth
+                              .updateUser(UserAttributes(password: password));
+
+                          setState(() => isLoading = false);
+
+                          showToast(context,
+                              title: "Password updated",
+                              toastType: ToastType.success);
+
+                          navPop(context);
+                          navReplace(context, SplashScreen());
+                        } catch (e) {
+                          setState(() => isLoading = false);
+
+                          showToast(context,
+                              title: "Something went wrong.",
+                              description: e.toString(),
+                              toastType: ToastType.error);
+                        }
+                      }),
+                if (!isKeyboardVisible) Gap(20),
+                if (!isKeyboardVisible)
+                  CustomButton(
+                    onDisabledTap: () => showToast(context,
+                        title: "You can resend the email in $timerText",
+                        toastType: ToastType.info),
+                    disabled: !_canResendEmail,
+                    text: _canResendEmail
+                        ? "Send another email"
+                        : "Send another email ($timerText)",
+                    primary: false,
+                    onPressed: () {
+                      if (_canResendEmail) {
+                        supabase.auth
+                            .resetPasswordForEmail(widget.emailAddress);
+                        startTimer();
                       }
-
-                      setState(() => isLoading = true);
-
-                      try {
-                        await supabase.auth.verifyOTP(
-                          type: OtpType.recovery,
-                          token: code,
-                          email: widget.emailAddress,
-                        );
-
-                        await supabase.auth
-                            .updateUser(UserAttributes(password: password));
-
-                        setState(() => isLoading = false);
-
-                        showToast(context,
-                            title: "Password updated",
-                            toastType: ToastType.success);
-
-                        navPop(context);
-                        navReplace(context, SplashScreen());
-                      } catch (e) {
-                        setState(() => isLoading = false);
-
-                        showToast(context,
-                            title: "Something went wrong.",
-                            description: e.toString(),
-                            toastType: ToastType.error);
-                      }
-                    }),
-                Gap(20),
-                CustomButton(
-                  onDisabledTap: () => showToast(context,
-                      title: "You can resend the email in $timerText",
-                      toastType: ToastType.info),
-                  disabled: !_canResendEmail,
-                  text: _canResendEmail
-                      ? "Send another email"
-                      : "Send another email ($timerText)",
-                  primary: false,
-                  onPressed: () {
-                    if (_canResendEmail) {
-                      supabase.auth.resetPasswordForEmail(widget.emailAddress);
-                      startTimer();
-                    }
-                  },
-                ),
+                    },
+                  ),
               ],
             ),
           ),
