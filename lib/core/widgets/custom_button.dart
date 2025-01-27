@@ -16,6 +16,8 @@ class CustomButton extends StatelessWidget {
     this.gradient,
     this.textColor,
     this.autoPad = true,
+    this.disabled = false,
+    this.onDisabledTap,
   });
 
   final String text;
@@ -26,6 +28,8 @@ class CustomButton extends StatelessWidget {
   final Gradient? gradient;
   final Color? textColor;
   final bool autoPad;
+  final bool? disabled;
+  final VoidCallback? onDisabledTap;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,11 @@ class CustomButton extends StatelessWidget {
         if (loading) {
           return;
         } else {
-          onPressed.call();
+          if (disabled == true) {
+            onDisabledTap?.call();
+          } else {
+            onPressed.call();
+          }
         }
       },
       child: Container(

@@ -13,6 +13,8 @@ import 'package:gap/gap.dart';
 import '../../../core/usecases/email_validator.dart';
 import '../../../core/usecases/nav_push.dart';
 import '../../../core/usecases/password_validator_object.dart';
+import '../../../main.dart';
+import 'password_reset.dart';
 
 class LogonView extends StatefulWidget {
   const LogonView({super.key});
@@ -156,6 +158,19 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
               margin: const EdgeInsets.symmetric(horizontal: 80),
             ),
             const Gap(30),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              child: showPassword1 && !showPassword2
+                  ? TextButton(
+                      onPressed: () {
+                        supabase.auth.resetPasswordForEmail(emailAddress);
+                        navPush(
+                            context, PasswordReset(emailAddress: emailAddress));
+                      },
+                      child: const Text("Forgot Password"),
+                    )
+                  : const SizedBox(),
+            ),
           ],
         ),
       ),
