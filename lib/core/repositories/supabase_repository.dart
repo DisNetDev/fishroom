@@ -39,51 +39,76 @@ class SupabaseRepository {
 
   Future<UserSession> signUpWithPassword(String email, String password) async {
     return _retryOperation(() async {
-      AuthResponse authResponse =
-          await supabase.auth.signUp(email: email, password: password);
-      if (authResponse.session == null) {
-        throw Exception("Something went wrong signing up");
-      }
-      user = authResponse.user;
-      session = authResponse.session;
+      try {
+        AuthResponse authResponse = await supabase.auth.signUp(
+          email: email,
+          password: password,
+        );
 
-      return UserSession(user: user, session: session);
+        if (authResponse.session == null) {
+          fishLog(authResponse);
+          throw Exception("Something went wrong signing up");
+        }
+        user = authResponse.user;
+        session = authResponse.session;
+
+        return UserSession(user: user, session: session);
+      } catch (e) {
+        rethrow;
+      }
     });
   }
 
   Future<UserSession> signInWithPassword(String email, String password) async {
     return _retryOperation(() async {
-      AuthResponse authResponse = await supabase.auth
-          .signInWithPassword(email: email, password: password);
-      if (authResponse.session == null) {
-        throw Exception("Something went wrong signing in");
-      }
-      user = authResponse.user;
-      session = authResponse.session;
+      try {
+        AuthResponse authResponse = await supabase.auth
+            .signInWithPassword(email: email, password: password);
+        if (authResponse.session == null) {
+          throw Exception("Something went wrong signing in");
+        }
+        user = authResponse.user;
+        session = authResponse.session;
 
-      return UserSession(user: user, session: session);
+        return UserSession(user: user, session: session);
+      } catch (e) {
+        rethrow;
+      }
     });
   }
 
   Future<bool> checkIfEmailExists(String email) async {
     return _retryOperation(() async {
-      final data =
-          await supabase.from("users_check").select("email").eq("email", email);
-      final List<Map<String, dynamic>> decodedData = data;
+      try {
+        final data = await supabase
+            .from("users_check")
+            .select("email")
+            .eq("email", email);
+        final List<Map<String, dynamic>> decodedData = data;
 
-      return decodedData.isNotEmpty;
+        return decodedData.isNotEmpty;
+      } catch (e) {
+        rethrow;
+      }
     });
   }
 
   Future<PostgrestList?> fetchUser() async {
     return _retryOperation(() async {
-      if (user != null) {
-        fishLog(user!.id, prefix: "UserID");
+      try {
+        if (user != null) {
+          fishLog(user!.id, prefix: "UserID");
 
-        return await supabase.from("users").select().eq("email", user!.email!);
+          return await supabase
+              .from("users")
+              .select()
+              .eq("email", user!.email!);
+        }
+
+        return null;
+      } catch (e) {
+        rethrow;
       }
-
-      return null;
     });
   }
 
