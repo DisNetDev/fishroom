@@ -27,13 +27,17 @@ class Inhabitant {
   }
 
   factory Inhabitant.fromJson(Map<String, dynamic> json) {
-    return Inhabitant(
-      id: json['id'],
-      petName: json['pet_name'],
-      commonName: json['common_name'],
-      scientificName: json['scientific_name'],
-      imageUrl: json['image_url'],
-      count: json['count'],
-    );
+    try {
+      return Inhabitant(
+        id: json['id'],
+        petName: json['pet_name'] ?? "",
+        commonName: json['common_name'] ?? "",
+        scientificName: json['scientific_name'] ?? "No scientific name",
+        imageUrl: json['image_url'] ?? "",
+        count: json['count'] ?? 0,
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 }

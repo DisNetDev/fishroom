@@ -1,4 +1,4 @@
-import '../../features/tank_inhabitants/inhabitant.dart';
+import '../../features/tank_inhabitants/models/inhabitant.dart';
 
 class Tank {
   String id;

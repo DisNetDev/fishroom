@@ -14,6 +14,7 @@ import 'core/repositories/supabase_repository.dart';
 import 'features/app/cubit/app_cubit.dart';
 import 'features/app/usecases/my_secure_storage.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
+import 'features/tank_inhabitants/cubit/inhabitants_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +42,9 @@ void main() async {
                 supabaseRepository: context.read<SupabaseRepository>())),
         BlocProvider(
             create: (context) => AppCubit(context.read<SupabaseRepository>())),
+        BlocProvider(
+            create: (context) =>
+                InhabitantsCubit(context.read<SupabaseRepository>())),
       ],
       child: ToastificationWrapper(child: MainApp()),
     ),
