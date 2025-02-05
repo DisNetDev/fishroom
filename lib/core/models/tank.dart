@@ -1,3 +1,5 @@
+import '../../features/tank_inhabitants/inhabitant.dart';
+
 class Tank {
   String id;
   String? name;
@@ -8,6 +10,7 @@ class Tank {
   String? measurementUnit;
   String? imageLocalPath;
   String? imageUrl;
+  List<Inhabitant> inhabitants;
 
   Tank(
       {required this.id,
@@ -18,7 +21,8 @@ class Tank {
       this.size,
       this.measurementUnit,
       this.imageLocalPath,
-      this.imageUrl});
+      this.imageUrl,
+      this.inhabitants = const []});
 
   Map<String, dynamic> toJson() {
     return {
@@ -31,20 +35,25 @@ class Tank {
       'tank_measurement': measurementUnit,
       'image_url': imageUrl,
       'image_local_path': imageLocalPath,
+      'inhabitants': inhabitants.map((e) => e.toJson()).toList(),
     };
   }
 
   factory Tank.fromJson(Map<String, dynamic> json) {
     return Tank(
-        id: json['id'],
-        name: json['name'],
-        createdAt: json['created_at'],
-        ownerId: json['owner_id'],
-        type: json['tank_type'],
-        size: json['tank_size'],
-        measurementUnit: json['tank_measurement'],
-        imageUrl: json['image_url'],
-        imageLocalPath: json['image_local_path']);
+      id: json['id'],
+      name: json['name'],
+      createdAt: json['created_at'],
+      ownerId: json['owner_id'],
+      type: json['tank_type'],
+      size: json['tank_size'],
+      measurementUnit: json['tank_measurement'],
+      imageUrl: json['image_url'],
+      imageLocalPath: json['image_local_path'],
+      inhabitants: (json['inhabitants'] as List<dynamic>)
+          .map((e) => Inhabitant.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
   }
 
   Tank copyWith({
@@ -57,6 +66,7 @@ class Tank {
     String? measurementUnit,
     String? imageLocalPath,
     String? imageUrl,
+    List<Inhabitant>? inhabitants,
   }) {
     return Tank(
         id: id ?? this.id,
@@ -67,6 +77,7 @@ class Tank {
         size: size ?? this.size,
         measurementUnit: measurementUnit ?? this.measurementUnit,
         imageLocalPath: imageLocalPath ?? this.imageLocalPath,
-        imageUrl: imageUrl ?? this.imageUrl);
+        imageUrl: imageUrl ?? this.imageUrl,
+        inhabitants: inhabitants ?? this.inhabitants);
   }
 }

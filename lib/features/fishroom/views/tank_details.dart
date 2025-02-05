@@ -1,3 +1,4 @@
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
@@ -14,6 +15,7 @@ import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/line_graph_main.dart';
+import '../../tank_inhabitants/widgets/add_inhabitants.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_reading_list_item.dart';
 
@@ -28,6 +30,8 @@ class TankDetails extends StatefulWidget {
 
 class _TankDetailsState extends State<TankDetails> {
   bool loading = false;
+
+  Tank get tank => widget.tank;
 
   Future<void> getTankReadings() async {
     if (!context
@@ -65,12 +69,10 @@ class _TankDetailsState extends State<TankDetails> {
             floatingActionButton: FloatingActionButton(
               shape: CircleBorder(),
               onPressed: () {
-                Navigator.push(
+                navPush(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectReadingType(
-                      tank: widget.tank,
-                    ),
+                  SelectReadingType(
+                    tank: widget.tank,
                   ),
                 );
               },
@@ -81,11 +83,7 @@ class _TankDetailsState extends State<TankDetails> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CreateTankTankName(tank: widget.tank)));
+                    navPush(context, CreateTankTankName(tank: widget.tank));
                   },
                   icon: const Icon(
                     Icons.edit,
@@ -107,6 +105,7 @@ class _TankDetailsState extends State<TankDetails> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
+                          AddInhabitants(tank: tank),
                           if (readings.isEmpty && !loading)
                             Center(
                                 child:
