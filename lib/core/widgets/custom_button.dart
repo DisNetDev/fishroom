@@ -66,7 +66,14 @@ class CustomButton extends StatelessWidget {
                   : Border.all(
                       color: isDarkMode(context) ? Colors.white : Colors.black,
                     ),
-          gradient: primary ? kPrimaryGradient : null,
+          gradient: primary
+              ? LinearGradient(
+                  colors: [
+                    kPrimaryColor,
+                    kSecondaryColor,
+                  ],
+                )
+              : null,
           borderRadius: BorderRadius.circular(2000),
         ),
         child: Center(
