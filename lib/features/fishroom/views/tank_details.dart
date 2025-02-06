@@ -81,101 +81,96 @@ class _TankDetailsState extends State<TankDetails> {
               },
               child: const Icon(Icons.add),
             ),
-            appBar: RootSliverAppBar(
-              title: _tank.name ?? "Tank Details",
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    navPush(context, CreateTankTankName(tank: _tank));
+            body: CustomScrollView(
+              slivers: [
+                RootSliverAppBar(
+                  title: _tank.name ?? "Tank Details",
+                  sliver: true,
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        navPush(context, CreateTankTankName(tank: _tank));
+                      },
+                      icon: const Icon(
+                        Icons.edit,
+                      ),
+                    )
+                  ],
+                ),
+                BlocConsumer<TanksCubit, TanksState>(
+                  listener: (context, state) {
+                    setState(() {
+                      _tank =
+                          state.tanks.firstWhere((tank) => tank.id == _tank.id);
+                    });
+                    fishLog("rebuild");
                   },
-                  icon: const Icon(
-                    Icons.edit,
-                  ),
-                )
-              ],
-            ),
-            body: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Stack(
-                children: [
-                  BlocConsumer<TanksCubit, TanksState>(
-                    listener: (context, state) {
-                      setState(() {
-                        _tank = state.tanks
-                            .firstWhere((tank) => tank.id == _tank.id);
-                      });
-                      fishLog("rebuild");
-                    },
-                    builder: (context, state) {
-                      List<TankReading> readings = state.readings
-                          .where((reading) => reading.tankId == _tank.id)
-                          .toList();
+                  builder: (context, state) {
+                    List<TankReading> readings = state.readings
+                        .where((reading) => reading.tankId == _tank.id)
+                        .toList();
 
-                      return ListView(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        children: [
-                          ...List.generate(
-                            _tank.inhabitants.length,
-                            (index) => InhabitantWidget(
-                              inhabitant: _tank.inhabitants[index],
-                              onAdd: _addInhabitant,
-                            ),
+                    return SliverList(
+                      delegate: SliverChildListDelegate([
+                        ...List.generate(
+                          _tank.inhabitants.length,
+                          (index) => InhabitantWidget(
+                            inhabitant: _tank.inhabitants[index],
+                            onAdd: _addInhabitant,
                           ),
-                          AddInhabitants(
-                            tank: _tank,
-                            chosenInhabitant: _addInhabitant,
-                          ),
-                          if (readings.isEmpty && !loading)
-                            Center(
-                                child:
-                                    Text("Add some readings to get started!")),
-                          if (appCubit.state.settings.parameters.isNotEmpty &&
-                              readings.isNotEmpty)
-                            LineGraphMain(data: readings.reversed.toList()),
-                          Gap(20),
-                          if (loading)
-                            for (var i = 0; i < 4; i++)
-                              Skeletonizer(
-                                  effect: isDarkMode(context)
-                                      ? kDarkModeShimmer
-                                      : kLightModeShimmer,
-                                  child: TankReadingListItem(
-                                      onDismissed: () {},
-                                      reading: TankReading(
-                                          id: "aaa",
-                                          ownerId: "bleh",
-                                          type: TankReadingType.measurement,
-                                          tankId: _tank.id,
-                                          createdAt: DateTime.now().toString(),
-                                          note: "Some Dummy Info"))),
-                          ...List.generate(
-                            readings.length,
-                            (index) => TankReadingListItem(
-                              onDismissed: () {
-                                try {
-                                  final readingToRemove = readings[index];
-                                  readings.removeAt(index); // Remove by index
-                                  tanksCubit.deleteTankReading(readingToRemove);
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    showToast(context,
-                                        title: "Something went wrong.",
-                                        toastType: ToastType.error,
-                                        description: e.toString());
-                                  }
+                        ),
+                        AddInhabitants(
+                          tank: _tank,
+                          chosenInhabitant: _addInhabitant,
+                        ),
+                        if (readings.isEmpty && !loading)
+                          Center(
+                              child: Text("Add some readings to get started!")),
+                        if (appCubit.state.settings.parameters.isNotEmpty &&
+                            readings.isNotEmpty)
+                          LineGraphMain(data: readings.reversed.toList()),
+                        Gap(20),
+                        if (loading)
+                          for (var i = 0; i < 4; i++)
+                            Skeletonizer(
+                                effect: isDarkMode(context)
+                                    ? kDarkModeShimmer
+                                    : kLightModeShimmer,
+                                child: TankReadingListItem(
+                                    onDismissed: () {},
+                                    reading: TankReading(
+                                        id: "aaa",
+                                        ownerId: "bleh",
+                                        type: TankReadingType.measurement,
+                                        tankId: _tank.id,
+                                        createdAt: DateTime.now().toString(),
+                                        note: "Some Dummy Info"))),
+                        ...List.generate(
+                          readings.length,
+                          (index) => TankReadingListItem(
+                            onDismissed: () {
+                              try {
+                                final readingToRemove = readings[index];
+                                readings.removeAt(index);
+                                tanksCubit.deleteTankReading(readingToRemove);
+                              } catch (e) {
+                                if (context.mounted) {
+                                  showToast(context,
+                                      title: "Something went wrong.",
+                                      toastType: ToastType.error,
+                                      description: e.toString());
                                 }
-                              },
-                              reading: readings[index],
-                            ),
+                              }
+                            },
+                            reading: readings[index],
                           ),
-                          const Gap(300),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
+                        ),
+                        const Gap(300),
+                      ]),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],

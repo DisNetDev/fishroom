@@ -62,10 +62,10 @@ class _BottomBar extends StatelessWidget {
                 height: 15,
                 width: height,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [kPrimaryColor, kSecondaryColor],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight),
+                  gradient: LinearGradient(colors: [
+                    kPrimaryColor.withValues(alpha: 0.0),
+                    kSecondaryColor
+                  ], begin: Alignment.centerLeft, end: Alignment.centerRight),
                   borderRadius: BorderRadius.horizontal(
                     right: Radius.circular(3),
                   ),
