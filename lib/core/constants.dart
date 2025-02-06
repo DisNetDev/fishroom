@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 const TextStyle kHintTextStyle =
@@ -25,7 +26,7 @@ const Color kSecondaryColor = Color.fromARGB(255, 32, 61, 224);
 const LinearGradient kPrimaryGradient = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,
-  colors: [kPrimaryColor, kSecondaryColor],
+  colors: [kSecondaryColor, Colors.grey],
 );
 
 const LinearGradient kDisabledGradient = LinearGradient(

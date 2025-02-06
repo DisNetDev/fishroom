@@ -79,6 +79,8 @@ class _InhabitantDetailsState extends State<InhabitantDetails> {
                   valueSelected: (value) {
                     setState(() => numberOfInhabitants = value.toInt());
                   })),
+          Gap(10),
+          Text("Set to 0 to remove", style: kDateTimeTextStyle),
           Expanded(child: Container()),
           CustomButton(
               text: widget.inhabitant.count == 0 ? "Add" : "Update",
