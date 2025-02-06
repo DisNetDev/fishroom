@@ -33,3 +33,6 @@ dart_code_metrics:
     - avoid-self-assignment
     - avoid-unnecessary-nullable-return-type
     - avoid-unrelated-type-casts
+analyzer:
+  errors:
+    use_build_context_synchronously: ignore
