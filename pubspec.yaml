@@ -28,6 +28,7 @@ dependencies:
   hydrated_bloc: ^9.1.5
   image_picker: ^1.1.2
   in_app_purchase: ^3.2.0
+  intl: ^0.20.2
   list_wheel_scroll_view_nls: ^0.0.3
   lottie: ^3.1.2
   material_symbols_icons: ^4.2789.0

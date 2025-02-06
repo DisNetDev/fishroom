@@ -105,6 +105,12 @@ class BugReports extends DatabaseTables {
   static const DBColumn _screenshotUrl = DBColumn('screenshot_url');
 }
 
+class Fish extends DatabaseTables {
+  Fish() : super('fish');
+
+  // No columns defined yet
+}
+
 class Table {
   static final users = Users();
   static final usersCheck = UsersCheck();
@@ -112,4 +118,5 @@ class Table {
   static final tankReadings = TankReadings();
   static final appDefaults = AppDefaults();
   static final bugReports = BugReports();
+  static final fish = Fish();
 }

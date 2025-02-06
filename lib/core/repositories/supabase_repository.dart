@@ -143,6 +143,24 @@ class SupabaseRepository {
     }
   }
 
+  Future<PostgrestList?> fetchAll({
+    required String tableName,
+  }) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+
+    try {
+      final data =
+          await _retryOperation(() => supabase.from(tableName).select());
+      stopwatch.stop();
+      fishLog("Fetch took ${stopwatch.elapsedMilliseconds}ms");
+
+      return data;
+    } catch (e) {
+      stopwatch.stop();
+      rethrow;
+    }
+  }
+
   Future<void> update(
       {required String tableName,
       required Map<String, dynamic> json,

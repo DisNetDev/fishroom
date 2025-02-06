@@ -115,8 +115,7 @@ class _ClosedReadingState extends State<ClosedReading> {
         Container(
           margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           decoration: BoxDecoration(
-            border:
-                const GradientBoxBorder(width: 0.3, gradient: kPrimaryGradient),
+            border: const GradientBoxBorder(gradient: kPrimaryGradient),
             borderRadius: BorderRadius.circular(10),
             color: isDarkMode(context)
                 ? const Color.fromARGB(0, 0, 0, 0)
@@ -165,7 +164,7 @@ class _ClosedReadingState extends State<ClosedReading> {
                               : const BorderRadius.vertical(
                                   bottom: Radius.circular(10)),
                           gradient: const LinearGradient(colors: [
-                            Color.fromARGB(102, 0, 198, 253),
+                            Color.fromARGB(56, 32, 61, 224),
                             Colors.transparent
                           ])),
                       child: Row(
