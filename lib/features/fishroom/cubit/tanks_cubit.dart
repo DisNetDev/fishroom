@@ -164,7 +164,7 @@ class TanksCubit extends HydratedCubit<TanksState> {
           imageUrl = await supabaseRepository.uploadImage(image);
           tank.imageUrl = imageUrl;
           tank.imageLocalPath = localPath;
-        } on Exception catch (_) {}
+        } catch (_) {}
       }
 
       await supabaseRepository.update(

@@ -1,3 +1,4 @@
+import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
@@ -15,7 +16,9 @@ import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/line_graph_main.dart';
+import '../../tank_inhabitants/models/inhabitant.dart';
 import '../../tank_inhabitants/widgets/add_inhabitants.dart';
+import '../../tank_inhabitants/widgets/inhabitant_widget.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_reading_list_item.dart';
 
@@ -31,24 +34,25 @@ class TankDetails extends StatefulWidget {
 class _TankDetailsState extends State<TankDetails> {
   bool loading = false;
 
-  Tank get tank => widget.tank;
+  AppCubit get appCubit => context.read<AppCubit>();
+  TanksCubit get tanksCubit => context.read<TanksCubit>();
+
+  late Tank _tank;
 
   Future<void> getTankReadings() async {
-    if (!context
-        .read<TanksCubit>()
-        .state
-        .readings
-        .any((reading) => reading.tankId == widget.tank.id)) {
+    if (!tanksCubit.state.readings
+        .any((reading) => reading.tankId == _tank.id)) {
       setState(() => loading = true);
-      await context.read<TanksCubit>().getReadingsForTank(widget.tank);
+      await tanksCubit.getReadingsForTank(_tank);
       setState(() => loading = false);
     }
   }
 
   @override
   void initState() {
-    super.initState();
+    _tank = widget.tank;
     getTankReadings();
+    super.initState();
   }
 
   @override
@@ -56,9 +60,8 @@ class _TankDetailsState extends State<TankDetails> {
     return RefreshIndicator(
       edgeOffset: 20,
       onRefresh: () async {
-        await context
-            .read<TanksCubit>()
-            .getReadingsForTank(widget.tank)
+        await tanksCubit
+            .getReadingsForTank(_tank)
             .then((value) => setState(() => loading = false));
       },
       child: Stack(
@@ -72,18 +75,18 @@ class _TankDetailsState extends State<TankDetails> {
                 navPush(
                   context,
                   SelectReadingType(
-                    tank: widget.tank,
+                    tank: _tank,
                   ),
                 );
               },
               child: const Icon(Icons.add),
             ),
             appBar: RootSliverAppBar(
-              title: widget.tank.name ?? "Tank Details",
+              title: _tank.name ?? "Tank Details",
               actions: [
                 IconButton(
                   onPressed: () {
-                    navPush(context, CreateTankTankName(tank: widget.tank));
+                    navPush(context, CreateTankTankName(tank: _tank));
                   },
                   icon: const Icon(
                     Icons.edit,
@@ -95,27 +98,39 @@ class _TankDetailsState extends State<TankDetails> {
               height: MediaQuery.of(context).size.height,
               child: Stack(
                 children: [
-                  BlocBuilder<TanksCubit, TanksState>(
+                  BlocConsumer<TanksCubit, TanksState>(
+                    listener: (context, state) {
+                      setState(() {
+                        _tank = state.tanks
+                            .firstWhere((tank) => tank.id == _tank.id);
+                      });
+                      fishLog("rebuild");
+                    },
                     builder: (context, state) {
                       List<TankReading> readings = state.readings
-                          .where((reading) => reading.tankId == widget.tank.id)
+                          .where((reading) => reading.tankId == _tank.id)
                           .toList();
 
                       return ListView(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: [
-                          AddInhabitants(tank: tank),
+                          ...List.generate(
+                            _tank.inhabitants.length,
+                            (index) => InhabitantWidget(
+                              inhabitant: _tank.inhabitants[index],
+                              onAdd: _addInhabitant,
+                            ),
+                          ),
+                          AddInhabitants(
+                            tank: _tank,
+                            chosenInhabitant: _addInhabitant,
+                          ),
                           if (readings.isEmpty && !loading)
                             Center(
                                 child:
                                     Text("Add some readings to get started!")),
-                          if (context
-                                  .read<AppCubit>()
-                                  .state
-                                  .settings
-                                  .parameters
-                                  .isNotEmpty &&
+                          if (appCubit.state.settings.parameters.isNotEmpty &&
                               readings.isNotEmpty)
                             LineGraphMain(data: readings.reversed.toList()),
                           Gap(20),
@@ -131,7 +146,7 @@ class _TankDetailsState extends State<TankDetails> {
                                           id: "aaa",
                                           ownerId: "bleh",
                                           type: TankReadingType.measurement,
-                                          tankId: widget.tank.id,
+                                          tankId: _tank.id,
                                           createdAt: DateTime.now().toString(),
                                           note: "Some Dummy Info"))),
                           ...List.generate(
@@ -141,9 +156,7 @@ class _TankDetailsState extends State<TankDetails> {
                                 try {
                                   final readingToRemove = readings[index];
                                   readings.removeAt(index); // Remove by index
-                                  context
-                                      .read<TanksCubit>()
-                                      .deleteTankReading(readingToRemove);
+                                  tanksCubit.deleteTankReading(readingToRemove);
                                 } catch (e) {
                                   if (context.mounted) {
                                     showToast(context,
@@ -168,5 +181,25 @@ class _TankDetailsState extends State<TankDetails> {
         ],
       ),
     );
+  }
+
+  void _addInhabitant(Inhabitant inhabitant) {
+    Tank tank = _tank.copyWith(
+      inhabitants: [
+        inhabitant,
+        ..._tank.inhabitants.where(
+            (existingInhabitant) => existingInhabitant.id != inhabitant.id),
+      ],
+    );
+    tank.inhabitants.removeWhere((inhabitant) => inhabitant.count == 0);
+
+    try {
+      tanksCubit.updateTank(tank, null);
+    } catch (e) {
+      showToast(context,
+          title: "Error adding inhabitant...",
+          description: e.toString(),
+          toastType: ToastType.error);
+    }
   }
 }
