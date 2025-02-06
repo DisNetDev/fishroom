@@ -1,7 +1,6 @@
 // ignore_for_file: prefer-match-file-name
 
 import 'package:fishroom/core/theme/slider_theme.dart';
-import 'package:fishroom/features/IAP/iap_service.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
