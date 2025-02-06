@@ -8,17 +8,20 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
       required this.title,
       this.implyLeading = false,
       this.sliver = false,
-      this.actions = const []});
+      this.actions = const [],
+      this.flexibleSpace});
 
   final String title;
   final bool implyLeading;
   final bool sliver;
   final List<Widget> actions;
+  final Widget? flexibleSpace;
+
   @override
   Widget build(BuildContext context) {
     return sliver
         ? SliverAppBar(
-            elevation: 20,
+            elevation: 5,
             systemOverlayStyle: isDarkMode(context)
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
@@ -28,7 +31,8 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             actions: actions,
             floating: true,
             surfaceTintColor: Colors.transparent,
-            title: Text(title))
+            title: Text(title),
+            flexibleSpace: flexibleSpace)
         : AppBar(
             systemOverlayStyle: isDarkMode(context)
                 ? SystemUiOverlayStyle.light
@@ -39,7 +43,8 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             title: Text(title),
             surfaceTintColor: Colors.transparent,
             actions: actions,
-            elevation: 20,
+            elevation: 5,
+            flexibleSpace: flexibleSpace,
           );
   }
 

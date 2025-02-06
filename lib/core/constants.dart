@@ -26,7 +26,7 @@ const Color kSecondaryColor = Color.fromARGB(255, 32, 61, 224);
 const LinearGradient kPrimaryGradient = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,
-  colors: [kSecondaryColor, Colors.grey],
+  colors: [kSecondaryColor, Color.fromARGB(78, 155, 154, 154)],
 );
 
 const LinearGradient kDisabledGradient = LinearGradient(

@@ -13,7 +13,6 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/date_time_text.dart';
-import 'border_bar.dart';
 import 'small_entry_graph.dart';
 
 class TankReadingListItem extends StatefulWidget {
@@ -117,9 +116,8 @@ class _ClosedReadingState extends State<ClosedReading> {
           decoration: BoxDecoration(
             border: const GradientBoxBorder(gradient: kPrimaryGradient),
             borderRadius: BorderRadius.circular(10),
-            color: isDarkMode(context)
-                ? const Color.fromARGB(0, 0, 0, 0)
-                : const Color.fromARGB(55, 255, 255, 255),
+            color:
+                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.09 : 0.1),
           ),
           child: Column(
             children: [
@@ -159,14 +157,11 @@ class _ClosedReadingState extends State<ClosedReading> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 5, vertical: 5),
                       decoration: BoxDecoration(
-                          borderRadius: open
-                              ? null
-                              : const BorderRadius.vertical(
-                                  bottom: Radius.circular(10)),
-                          gradient: const LinearGradient(colors: [
-                            Color.fromARGB(56, 32, 61, 224),
-                            Colors.transparent
-                          ])),
+                        borderRadius: open
+                            ? null
+                            : const BorderRadius.vertical(
+                                bottom: Radius.circular(10)),
+                      ),
                       child: Row(
                         children: [
                           const Icon(

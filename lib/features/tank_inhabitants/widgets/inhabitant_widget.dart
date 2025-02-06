@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../core/usecases/is_dark_mode.dart';
 import '../models/inhabitant.dart';
 
 class InhabitantWidget extends StatelessWidget {
@@ -33,7 +34,8 @@ class InhabitantWidget extends StatelessWidget {
           margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
           padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
           decoration: BoxDecoration(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color:
+                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.09 : 0.1),
             borderRadius: BorderRadius.circular(8),
             border: GradientBoxBorder(gradient: kPrimaryGradient),
           ),

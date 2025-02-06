@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
@@ -30,11 +31,36 @@ class _AddInhabitantsViewState extends State<AddInhabitantsView> {
   List<Inhabitant> _inhabitants = [];
   List<Inhabitant> _filteredInhabitants = [];
   bool _isLoading = false;
+  final ScrollController _scrollController = ScrollController();
+  bool _showScrollToTopButton = false;
 
   @override
   void initState() {
     _fetchInhabitants();
+    _scrollController.addListener(_scrollListener);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >= 200) {
+      if (!_showScrollToTopButton) {
+        setState(() {
+          _showScrollToTopButton = true;
+        });
+      }
+    } else {
+      if (_showScrollToTopButton) {
+        setState(() {
+          _showScrollToTopButton = false;
+        });
+      }
+    }
   }
 
   @override
@@ -43,45 +69,84 @@ class _AddInhabitantsViewState extends State<AddInhabitantsView> {
       children: [
         const CustomBackground(),
         Scaffold(
-          appBar: RootSliverAppBar(
-            title: 'Add Inhabitants to ${widget.tank.name}',
-          ),
           backgroundColor: Colors.transparent,
-          body: ListView(
-            children: [
-              TextInput(
-                hintText: 'Search',
-                onChanged: (value) {
-                  _searchInhabitants(value);
-                },
+          body: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              RootSliverAppBar(
+                title: 'Add Inhabitants to ${widget.tank.name}',
+                sliver: true,
               ),
-              const Gap(20),
-              if (_isLoading)
-                ...List.generate(
-                  10,
-                  (index) => InhabitantWidget(
-                    inhabitant: Inhabitant.getPlaceholder(),
-                    loading: true,
-                    onAdd: (_) {},
-                  ),
-                )
-              else if (_filteredInhabitants.isNotEmpty)
-                ...List.generate(
-                  _filteredInhabitants.length,
-                  (index) => InhabitantWidget(
-                    inhabitant: _filteredInhabitants[index],
-                    onAdd: (inhabitant) {
-                      navPop(context);
-                      widget.chosenInhabitant(inhabitant);
-                    },
-                  ),
-                )
-              else
-                const Center(
-                  child: Text("No inhabitants found"),
+              SliverToBoxAdapter(
+                child: TextInput(
+                  hintText: 'Search',
+                  onChanged: (value) {
+                    _searchInhabitants(value);
+                  },
                 ),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, int index) {
+                    if (_isLoading) {
+                      return Column(
+                        children: [
+                          Gap(20),
+                          ...List.generate(
+                            10,
+                            (index) => InhabitantWidget(
+                              inhabitant: Inhabitant.getPlaceholder(),
+                              loading: true,
+                              onAdd: (_) {},
+                            ),
+                          )
+                        ],
+                      );
+                    } else if (_filteredInhabitants.isNotEmpty) {
+                      return Column(
+                        children: [
+                          Gap(20),
+                          ...List.generate(
+                            _filteredInhabitants.length,
+                            (index) => InhabitantWidget(
+                              inhabitant: _filteredInhabitants[index],
+                              onAdd: (inhabitant) {
+                                navPop(context);
+                                widget.chosenInhabitant(inhabitant);
+                              },
+                            ),
+                          ),
+                          Gap(200),
+                        ],
+                      );
+                    } else {
+                      return const Center(
+                        child: Text("No inhabitants found"),
+                      );
+                    }
+                  },
+                  childCount: 1,
+                ),
+              )
             ],
           ),
+          floatingActionButton: _showScrollToTopButton
+              ? FloatingActionButton.small(
+                  foregroundColor:
+                      isDarkMode(context) ? Colors.white : Colors.black,
+                  backgroundColor: isDarkMode(context)
+                      ? const Color.fromARGB(255, 19, 19, 19)
+                      : Colors.white,
+                  onPressed: () {
+                    _scrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: Icon(Icons.arrow_upward),
+                )
+              : null,
         ),
       ],
     );

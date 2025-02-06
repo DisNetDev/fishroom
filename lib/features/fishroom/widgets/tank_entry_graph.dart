@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -63,7 +64,7 @@ class _BottomBar extends StatelessWidget {
                 width: height,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-                    kPrimaryColor.withValues(alpha: 0.0),
+                    isDarkMode(context) ? Colors.black : Colors.white,
                     kSecondaryColor
                   ], begin: Alignment.centerLeft, end: Alignment.centerRight),
                   borderRadius: BorderRadius.horizontal(

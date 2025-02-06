@@ -6,6 +6,7 @@ import 'package:gradient_borders/gradient_borders.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../../../core/constants.dart';
+import '../../../core/usecases/capitalize_each_word.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/usecases/nav_push.dart';
 import '../../../core/widgets/counter_wheel.dart';
@@ -38,7 +39,8 @@ class _InhabitantDetailsState extends State<InhabitantDetails> {
       child: Column(
         children: [
           Text(
-            widget.inhabitant.commonName ?? widget.inhabitant.scientificName,
+            capitalizeEachWord(widget.inhabitant.commonName ??
+                widget.inhabitant.scientificName),
             style: kHeadingTextStyle,
             textAlign: TextAlign.center,
           ),
@@ -46,25 +48,29 @@ class _InhabitantDetailsState extends State<InhabitantDetails> {
           if (widget.inhabitant.commonName != null &&
               widget.inhabitant.commonName!.isNotEmpty)
             Text(
-              widget.inhabitant.scientificName,
+              capitalizeEachWord(widget.inhabitant.scientificName),
               style: kHeading1TextStyle.copyWith(fontStyle: FontStyle.italic),
               textAlign: TextAlign.center,
             ),
           Gap(20),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: AspectRatio(
-              aspectRatio: 4 / 3,
-              child: Image.network(
-                widget.inhabitant.imageUrl ?? "",
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  widget.inhabitant.imageUrl ?? "",
+                  fit: BoxFit.fitWidth,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
 
-                  return Loader();
-                },
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Symbols.image_not_supported_sharp, size: 30),
+                    return Loader();
+                  },
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    Symbols.image_not_supported_sharp,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
             ),
           ),
