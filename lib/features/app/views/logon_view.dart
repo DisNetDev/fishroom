@@ -90,6 +90,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
                   child: TextInput(
+                    keyboardType: TextInputType.emailAddress,
                     onEditingComplete: onEditingComplete,
                     initialValue: emailAddress,
                     focusNode: focusNodeEmail,
