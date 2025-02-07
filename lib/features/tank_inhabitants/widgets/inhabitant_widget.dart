@@ -41,24 +41,29 @@ class InhabitantWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (inhabitant.commonName != null &&
-                      inhabitant.commonName!.isNotEmpty)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (inhabitant.commonName != null &&
+                        inhabitant.commonName!.isNotEmpty)
+                      Text(
+                        capitalizeEachWord(inhabitant.commonName ?? ""),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     Text(
-                      capitalizeEachWord(inhabitant.commonName ?? ""),
+                      capitalizeEachWord(inhabitant.scientificName),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: (inhabitant.commonName != null &&
+                              inhabitant.commonName!.isNotEmpty)
+                          ? kDateTimeTextStyle
+                          : null,
                     ),
-                  Text(
-                    capitalizeEachWord(inhabitant.scientificName),
-                    style: (inhabitant.commonName != null &&
-                            inhabitant.commonName!.isNotEmpty)
-                        ? kDateTimeTextStyle
-                        : null,
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Expanded(child: Container()),
               if (inhabitant.count != null && inhabitant.count! > 0)
                 Text(
                   "x${inhabitant.count}",
