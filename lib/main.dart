@@ -60,6 +60,19 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) {
+        final mediaQueryData = MediaQuery.of(context);
+        // Constrain the text scaling between 0.8 and 1.4
+        final constrainedTextScale =
+            mediaQueryData.textScaler.scale(1.0).clamp(0.8, 1.2);
+
+        return MediaQuery(
+          data: mediaQueryData.copyWith(
+            textScaler: TextScaler.linear(constrainedTextScale),
+          ),
+          child: child!,
+        );
+      },
       theme: ThemeData.from(
         colorScheme: const ColorScheme.light(
           primary: Color.fromARGB(255, 33, 138, 243),
