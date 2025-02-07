@@ -8,7 +8,10 @@ import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:simple_shadow/simple_shadow.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'dart:io'; // Import the dart:io library
 
@@ -130,7 +133,7 @@ class _TankTileState extends State<TankTile> {
                         end: Alignment.centerRight,
                         colors: [Colors.transparent, Colors.black],
                       )
-                    : kPrimaryGradient,
+                    : null,
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(borderRadius),
                     bottomLeft: Radius.circular(borderRadius),
@@ -148,6 +151,8 @@ class _TankTileState extends State<TankTile> {
                     child: Text(
                       widget.tank.name ?? "Tank Name",
                       textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -160,6 +165,8 @@ class _TankTileState extends State<TankTile> {
                     child: Text(
                       "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""} ${widget.tank.measurementUnit ?? ""}",
                       textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -171,6 +178,44 @@ class _TankTileState extends State<TankTile> {
               ),
             ),
           ),
+          Builder(
+            builder: (context) {
+              int totalFishCount = 0;
+              for (var inhabitant in widget.tank.inhabitants) {
+                totalFishCount += inhabitant.count ?? 0;
+              }
+
+              if (totalFishCount == 0) {
+                return const SizedBox();
+              }
+
+              return Positioned(
+                right: widget.tank.imageUrl != null ? 22 : null,
+                top: widget.tank.imageUrl != null ? 16 : null,
+                bottom: widget.tank.imageUrl == null ? 16 : null,
+                left: widget.tank.imageUrl == null ? 22 : null,
+                child: SimpleShadow(
+                  opacity: 0.5,
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/icons/fish.svg",
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                        height: 14,
+                      ),
+                      Gap(8),
+                      Text(
+                        "x${totalFishCount.toString()}",
+                        style: kHeading1TextStyle.copyWith(
+                            color: Colors.white, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          )
         ],
       ),
     );

@@ -36,6 +36,7 @@ dependencies:
   path_provider: ^2.1.4
   pin_code_fields: ^8.0.1
   rive: ^0.13.15
+  simple_shadow: ^0.3.1
   skeletonizer: ^1.4.2
   supabase_auth_ui: ^0.5.4
   supabase_flutter: ^2.6.0
@@ -54,6 +55,7 @@ flutter:
 
   assets:
     - assets/
+    - assets/icons/
     - assets/fonts/
     - .env
 
@@ -61,3 +63,6 @@ flutter:
     - family: CheesyCats
       fonts:
         - asset: assets/fonts/CheesyCats.otf
+    - family: FishIcon
+      fonts:
+        - asset: assets/fonts/FishIcon.ttf

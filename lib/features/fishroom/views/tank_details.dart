@@ -103,7 +103,6 @@ class _TankDetailsState extends State<TankDetails> {
                       _tank =
                           state.tanks.firstWhere((tank) => tank.id == _tank.id);
                     });
-                    fishLog("rebuild");
                   },
                   builder: (context, state) {
                     List<TankReading> readings = state.readings
@@ -123,11 +122,7 @@ class _TankDetailsState extends State<TankDetails> {
                           tank: _tank,
                           chosenInhabitant: _addInhabitant,
                         ),
-                        if (readings.isEmpty && !loading)
-                          Center(
-                              child: Text("Add some readings to get started!")),
-                        if (appCubit.state.settings.parameters.isNotEmpty &&
-                            readings.isNotEmpty)
+                        if (appCubit.state.settings.parameters.isNotEmpty)
                           LineGraphMain(data: readings.reversed.toList()),
                         Gap(20),
                         if (loading)

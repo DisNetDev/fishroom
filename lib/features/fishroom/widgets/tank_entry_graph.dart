@@ -64,7 +64,7 @@ class _BottomBar extends StatelessWidget {
                 width: height,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-                    isDarkMode(context) ? Colors.black : Colors.white,
+                    isDarkMode(context) ? Colors.transparent : Colors.white,
                     kSecondaryColor
                   ], begin: Alignment.centerLeft, end: Alignment.centerRight),
                   borderRadius: BorderRadius.horizontal(
