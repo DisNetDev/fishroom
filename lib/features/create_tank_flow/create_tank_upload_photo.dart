@@ -99,9 +99,9 @@ class CreateTankUploadPhotoState extends State<CreateTankUploadPhoto> {
       Navigator.of(context).pop();
       Navigator.of(context).pop();
       Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } catch (e) {
       setState(() => loading = false);
-      // ignore: use_build_context_synchronously
       showToast(context,
           title: "Whoops!",
           toastType: ToastType.error,

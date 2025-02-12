@@ -8,6 +8,7 @@ import '../../core/constants.dart';
 import '../../core/usecases/show_toast.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/text_input.dart';
+import 'create_tank_targets.dart';
 
 class CreateTankTankType extends StatefulWidget {
   const CreateTankTankType(
@@ -69,8 +70,8 @@ class _CreateTankTankTypeState extends State<CreateTankTankType> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CreateTankUploadPhoto(
-                  tank: tank, editTank: widget.editTank)));
+              builder: (context) =>
+                  CreateTankTargets(tank: tank, editTank: widget.editTank)));
     }
   }
 }

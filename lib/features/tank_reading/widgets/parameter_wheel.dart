@@ -12,18 +12,22 @@ class ParameterWheel extends StatefulWidget {
       {super.key,
       required this.valueSelected,
       required this.parameter,
-      required this.onEnabled});
+      required this.onTap,
+      this.initialValue,
+      required this.enabled});
 
   final Parameter parameter;
+  final double? initialValue;
+  final bool enabled;
+
   final void Function(double) valueSelected;
-  final void Function(bool) onEnabled;
+  final VoidCallback onTap;
 
   @override
   State<ParameterWheel> createState() => _ParameterWheelState();
 }
 
 class _ParameterWheelState extends State<ParameterWheel> {
-  bool enabled = false;
   List<double> values = [];
 
   @override
@@ -45,25 +49,20 @@ class _ParameterWheelState extends State<ParameterWheel> {
             splashColor: kPrimaryColor.withOpacity(0.2),
             onTap: () {
               setState(() {
-                enabled = !enabled;
-                widget.onEnabled(enabled);
+                widget.onTap();
               });
             },
             child: Row(
               children: [
                 Checkbox(
-                    activeColor: kPrimaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(20), // Make the checkbox round
-                    ),
-                    value: enabled,
-                    onChanged: (value) => setState(
-                          () {
-                            enabled = value ?? false;
-                            widget.onEnabled(value ?? false);
-                          },
-                        )),
+                  activeColor: kPrimaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20), // Make the checkbox round
+                  ),
+                  value: widget.enabled,
+                  onChanged: (value) {},
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -98,21 +97,22 @@ class _ParameterWheelState extends State<ParameterWheel> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                        enabled ? kPrimaryColor : Colors.grey,
+                        widget.enabled ? kPrimaryColor : Colors.grey,
                         Colors.transparent,
                         Colors.transparent,
                         Colors.transparent,
                         Colors.transparent,
                         Colors.transparent,
-                        enabled ? kPrimaryColor : Colors.grey,
+                        widget.enabled ? kPrimaryColor : Colors.grey,
                       ]))),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: GradientBoxBorder(
-                        gradient:
-                            enabled ? kPrimaryGradient : kDisabledGradient),
+                        gradient: widget.enabled
+                            ? kPrimaryGradient
+                            : kDisabledGradient),
                   ),
                   child: ShaderMask(
                     shaderCallback: (Rect bounds) {
@@ -133,11 +133,17 @@ class _ParameterWheelState extends State<ParameterWheel> {
                         height: MediaQuery.of(context).size.width / 1.5,
                         width: 50,
                         child: ListWheelScrollView.useDelegate(
+                          controller: FixedExtentScrollController(
+                            initialItem: widget.initialValue != null &&
+                                    values.contains(widget.initialValue)
+                                ? values.indexOf(widget.initialValue!)
+                                : 0,
+                          ),
                           onSelectedItemChanged: (index) {
                             widget.valueSelected(values[index]);
                           },
                           diameterRatio: 0.9,
-                          physics: enabled
+                          physics: widget.enabled
                               ? const FixedExtentScrollPhysics()
                               : const NeverScrollableScrollPhysics(),
                           itemExtent: 30,
@@ -152,7 +158,7 @@ class _ParameterWheelState extends State<ParameterWheel> {
                                     values[index] % 1 == 0
                                         ? values[index].toStringAsFixed(0)
                                         : values[index].toString(),
-                                    style: enabled
+                                    style: widget.enabled
                                         ? kHeading1TextStyle
                                         : kHeading1TextStyle.copyWith(
                                             color: Colors.grey),

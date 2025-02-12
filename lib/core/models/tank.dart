@@ -11,6 +11,7 @@ class Tank {
   String? imageLocalPath;
   String? imageUrl;
   List<Inhabitant> inhabitants;
+  List<Target> targets;
 
   Tank(
       {required this.id,
@@ -22,6 +23,7 @@ class Tank {
       this.measurementUnit,
       this.imageLocalPath,
       this.imageUrl,
+      this.targets = const [],
       this.inhabitants = const []});
 
   Map<String, dynamic> toJson() {
@@ -35,6 +37,7 @@ class Tank {
       'tank_measurement': measurementUnit,
       'image_url': imageUrl,
       'image_local_path': imageLocalPath,
+      'targets': targets.map((e) => e.toJson()).toList(),
       'inhabitants': inhabitants.map((e) => e.toJson()).toList(),
     };
   }
@@ -50,6 +53,9 @@ class Tank {
       measurementUnit: json['tank_measurement'],
       imageUrl: json['image_url'],
       imageLocalPath: json['image_local_path'],
+      targets: (json['targets'] as List<dynamic>)
+          .map((e) => Target.fromJson(e as Map<String, dynamic>))
+          .toList(),
       inhabitants: (json['inhabitants'] as List<dynamic>)
           .map((e) => Inhabitant.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -79,5 +85,23 @@ class Tank {
         imageLocalPath: imageLocalPath ?? this.imageLocalPath,
         imageUrl: imageUrl ?? this.imageUrl,
         inhabitants: inhabitants ?? this.inhabitants);
+  }
+}
+
+class Target {
+  String paramID;
+  double value;
+
+  Target({required this.paramID, required this.value});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'param_id': paramID,
+      'value': value,
+    };
+  }
+
+  factory Target.fromJson(Map<String, dynamic> json) {
+    return Target(paramID: json['param_id'], value: json['value']);
   }
 }

@@ -87,17 +87,24 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                             children: List.generate(
                                 parameters.length,
                                 (index) => ParameterWheel(
-                                    onEnabled: (value) {
+                                    enabled: tankReading.parameters.any(
+                                        (element) =>
+                                            element.name ==
+                                            parameters[index].name),
+                                    onTap: () {
                                       setState(() {
-                                        if (value) {
-                                          tankReading.parameters.add(
-                                              Parameter.from(parameters[index],
-                                                  parameters[index].min));
-                                        } else {
+                                        if (tankReading.parameters.any(
+                                            (element) =>
+                                                element.name ==
+                                                parameters[index].name)) {
                                           tankReading.parameters.removeWhere(
                                               (test) =>
                                                   test.name ==
                                                   parameters[index].name);
+                                        } else {
+                                          tankReading.parameters.add(
+                                              Parameter.from(parameters[index],
+                                                  parameters[index].min));
                                         }
                                       });
                                     },

@@ -44,6 +44,7 @@ class Tanks extends DatabaseTables {
   String get measurementUnit => _measurementUnit.columnName;
   String get imageLocalPath => _imageLocalPath.columnName;
   String get imageUrl => _imageUrl.columnName;
+  String get targets => _targets.columnName;
 
   static const DBColumn _id = DBColumn('id');
   static const DBColumn _name = DBColumn('name');
@@ -54,6 +55,7 @@ class Tanks extends DatabaseTables {
   static const DBColumn _measurementUnit = DBColumn('tank_measurement');
   static const DBColumn _imageLocalPath = DBColumn('image_local_path');
   static const DBColumn _imageUrl = DBColumn('image_url');
+  static const DBColumn _targets = DBColumn('targets');
 }
 
 class TankReadings extends DatabaseTables {
