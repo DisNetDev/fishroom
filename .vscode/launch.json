@@ -14,6 +14,7 @@
                 "staging",
                 "--target",
                 "lib/main.dart",
+                "--no-enable-impeller"
             ]
         },
         {
@@ -25,7 +26,8 @@
                 "--flavor",
                 "staging",
                 "--target",
-                "lib/main.dart"
+                "lib/main.dart",
+                "--no-enable-impeller"
             ],
             "flutterMode": "release"
         },
@@ -38,7 +40,8 @@
                 "--flavor",
                 "production",
                 "--target",
-                "lib/main.dart"
+                "lib/main.dart",
+                "--no-enable-impeller"
             ]
 
         },
@@ -51,7 +54,8 @@
                 "--flavor",
                 "production",
                 "--target",
-                "lib/main.dart"
+                "lib/main.dart",
+                "--no-enable-impeller"
             ],
             "flutterMode": "release"
         }
