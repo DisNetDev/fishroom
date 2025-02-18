@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
-import 'package:fishroom/core/usecases/snackbar.dart';
 import 'package:fishroom/core/usecases/upload_image.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/fish_text_box.dart';

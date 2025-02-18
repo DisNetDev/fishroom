@@ -117,7 +117,7 @@ class _ClosedReadingState extends State<ClosedReading> {
             border: const GradientBoxBorder(gradient: kPrimaryGradient),
             borderRadius: BorderRadius.circular(10),
             color:
-                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.05 : 0.1),
+                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.00 : 0.1),
           ),
           child: Column(
             children: [

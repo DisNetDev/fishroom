@@ -2,13 +2,15 @@ import 'package:collection/collection.dart';
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
-import 'package:fishroom/features/tank_reading/widgets/parameter_wheel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../core/constants.dart';
+import '../../core/usecases/is_dark_mode.dart';
 import '../../core/widgets/custom_button.dart';
+import '../fishroom/widgets/target_selector.dart';
 import '../tank_reading/models/parameter.dart';
 import 'create_tank_upload_photo.dart';
 
@@ -25,14 +27,20 @@ class CreateTankTargets extends StatefulWidget {
 
 class _CreateTankTargetsState extends State<CreateTankTargets> {
   Tank get tank => widget.tank;
+
   List<Parameter> get parameters =>
       context.read<AppCubit>().state.settings.parameters;
+
+  List<Parameter> get unselectedParameters => parameters
+      .where((parameter) =>
+          !targets.any((target) => target.paramID == parameter.id))
+      .toList();
 
   List<Target> targets = [];
 
   @override
   void initState() {
-    targets = tank.targets;
+    targets.addAll(tank.targets);
     super.initState();
   }
 
@@ -58,36 +66,42 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                   ),
                   Gap(50),
                   Text(
-                    "You can set targets for your tank parameters here.\nThis will help you keep track of your tank's health, by letting you know when parameters are off.\nThis is not required, you can just click continue to skip this step.\n\nIf you would like to add more parameters, you can do so in the settings page and come back here to edit them.\n Select your middle ground for each parameter.\n\nTolerance is one value to the left and right of your chosen value.",
+                    "You can set targets for your tank parameters here.\nThis will help you keep track of your tank's health, by letting you know when parameters are off.\n\nThis is not required, you can just click the skip button to skip this step.\n\nIf you would like to add more parameters, you can do so in the settings page and come back here to edit them.\n\nSelect your middle ground and tolerance for each parameter.",
                     style: kHeading2TextStyle,
                     textAlign: TextAlign.center,
                   ),
                   Gap(50),
-                  ...parameters.map(
-                    (e) => ParameterWheel(
-                      initialValue: targets
-                          .firstWhereOrNull(
-                              (element) => element.paramID == e.id)
-                          ?.value,
-                      enabled:
-                          targets.any((element) => element.paramID == e.id),
-                      valueSelected: (valueSelected) {
-                        targets
-                            .firstWhere((element) => element.paramID == e.id)
-                            .value = valueSelected;
+                  Wrap(
+                    children: List.generate(
+                      unselectedParameters.length,
+                      (index) => _ParamChip(
+                        parameter: unselectedParameters[index],
+                        onTap: () {
+                          setState(
+                            () => targets.add(Target(
+                                paramID: unselectedParameters[index].id,
+                                value: 0,
+                                tolerance: 0)),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  if (unselectedParameters.isNotEmpty) Gap(30),
+                  ...List.generate(
+                    targets.length,
+                    (index) => TargetSelector(
+                      onDelete: () {
+                        setState(() => targets.removeAt(index));
                       },
-                      parameter: e,
-                      onTap: () {
-                        setState(() {
-                          if (targets
-                              .any((element) => element.paramID == e.id)) {
-                            targets.removeWhere(
-                                (element) => element.paramID == e.id);
-                          } else {
-                            targets
-                                .add(Target(paramID: e.id, value: e.min ?? 0));
-                          }
-                        });
+                      parameter: parameters.firstWhere((parameter) =>
+                          parameter.id == targets[index].paramID),
+                      initialTarget: targets.firstWhereOrNull(
+                          (target) => target.paramID == targets[index].paramID),
+                      onTargetSelected: (target) {
+                        int targetIndex = targets.indexWhere((target) =>
+                            target.paramID == targets[index].paramID);
+                        targets[targetIndex] = target;
                       },
                     ),
                   ),
@@ -112,5 +126,44 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
         MaterialPageRoute(
             builder: (context) =>
                 CreateTankUploadPhoto(tank: tank, editTank: widget.editTank)));
+  }
+}
+
+class _ParamChip extends StatelessWidget {
+  const _ParamChip({required this.parameter, required this.onTap});
+
+  final Parameter parameter;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: double.infinity,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        margin: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: isDarkMode(context) ? Colors.black : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isDarkMode(context) ? Colors.white : Colors.grey.shade400,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("${parameter.name ?? ""} (${parameter.shortName ?? ""})"),
+            Gap(10),
+            Icon(
+              Symbols.add,
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

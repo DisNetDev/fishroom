@@ -46,7 +46,7 @@ class _ParameterWheelState extends State<ParameterWheel> {
           Expanded(
               child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            splashColor: kPrimaryColor.withOpacity(0.2),
+            splashColor: kPrimaryColor.withValues(alpha: 0.2),
             onTap: () {
               setState(() {
                 widget.onTap();
@@ -61,7 +61,9 @@ class _ParameterWheelState extends State<ParameterWheel> {
                         BorderRadius.circular(20), // Make the checkbox round
                   ),
                   value: widget.enabled,
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    widget.onTap();
+                  },
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,12 +142,12 @@ class _ParameterWheelState extends State<ParameterWheel> {
                                 : 0,
                           ),
                           onSelectedItemChanged: (index) {
+                            if (!widget.enabled) widget.onTap();
+
                             widget.valueSelected(values[index]);
                           },
                           diameterRatio: 0.9,
-                          physics: widget.enabled
-                              ? const FixedExtentScrollPhysics()
-                              : const NeverScrollableScrollPhysics(),
+                          physics: const FixedExtentScrollPhysics(),
                           itemExtent: 30,
                           childDelegate: ListWheelChildBuilderDelegate(
                             childCount: values.length,

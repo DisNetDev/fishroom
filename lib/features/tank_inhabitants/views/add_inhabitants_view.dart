@@ -103,21 +103,19 @@ class _AddInhabitantsViewState extends State<AddInhabitantsView> {
                         ],
                       );
                     } else if (_filteredInhabitants.isNotEmpty) {
-                      return Column(
-                        children: [
-                          Gap(20),
-                          ...List.generate(
-                            _filteredInhabitants.length,
-                            (index) => InhabitantWidget(
-                              inhabitant: _filteredInhabitants[index],
-                              onAdd: (inhabitant) {
-                                navPop(context);
-                                widget.chosenInhabitant(inhabitant);
-                              },
-                            ),
-                          ),
-                          Gap(200),
-                        ],
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: _filteredInhabitants.length,
+                        itemBuilder: (context, index) {
+                          return InhabitantWidget(
+                            inhabitant: _filteredInhabitants[index],
+                            onAdd: (inhabitant) {
+                              navPop(context);
+                              widget.chosenInhabitant(inhabitant);
+                            },
+                          );
+                        },
                       );
                     } else {
                       return const Center(

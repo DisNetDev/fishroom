@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
-
-const sliderTheme = SliderThemeData(
-  trackHeight: 10.0,
-  thumbColor: kSecondaryColor,
-);
+SliderThemeData sliderTheme = SliderThemeData(
+    trackHeight: 10.0,
+    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8.0),
+    thumbColor: Colors.white,
+    showValueIndicator: ShowValueIndicator.always,
+    overlayShape: SliderComponentShape.noOverlay);

@@ -30,7 +30,9 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
 
   @override
   void initState() {
-    nameFocusNode.requestFocus();
+    if (widget.tank == null) {
+      nameFocusNode.requestFocus();
+    }
     if (widget.tank != null) {
       tank = widget.tank!;
       editTank = true;
