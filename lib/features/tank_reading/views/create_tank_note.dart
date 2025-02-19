@@ -53,7 +53,7 @@ class _CreateTankNoteState extends State<CreateTankNote> {
     tankReading = TankReading(
       id: const Uuid().v4(),
       ownerId: context.read<AppCubit>().state.user!.uuid,
-      type: TankReadingType.measurement,
+      type: TankReadingType.note,
       tankId: widget.tank.id,
       createdAt: DateTime.now().toString(),
     );
@@ -128,7 +128,7 @@ class _CreateTankNoteState extends State<CreateTankNote> {
                           ),
                         ],
                       ),
-                  )
+                    )
                   else
                     ImageUploadWidget(
                       image: _image,
@@ -154,7 +154,7 @@ class _CreateTankNoteState extends State<CreateTankNote> {
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             }
-                          } on Exception catch (e) {
+                          } catch (e) {
                             if (context.mounted) {
                               showToast(context,
                                   title: "Something went wrong.",
