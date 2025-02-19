@@ -20,7 +20,8 @@ class TextInput extends StatefulWidget {
       this.height,
       this.keyboardType,
       this.label,
-      this.prefixIcon});
+      this.prefixIcon,
+      this.controller});
 
   final String? hintText;
   final int? characterLimit;
@@ -37,13 +38,15 @@ class TextInput extends StatefulWidget {
   final Widget? prefixIcon;
   final TextInputType? keyboardType;
   final Widget? label;
+  final TextEditingController? controller;
 
   @override
   State<TextInput> createState() => _TextInputState();
 }
 
 class _TextInputState extends State<TextInput> {
-  @override
+  FocusNode focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
@@ -59,16 +62,20 @@ class _TextInputState extends State<TextInput> {
         child: Column(
           children: [
             TextFormField(
+              controller: widget.controller,
               buildCounter: (context,
                       {required currentLength,
                       required isFocused,
                       required maxLength}) =>
                   null,
               maxLength: widget.characterLimit,
-              focusNode: widget.focusNode,
+              focusNode: widget.focusNode ?? focusNode,
               initialValue: widget.initialValue,
               onChanged: widget.onChanged,
-              onEditingComplete: widget.onEditingComplete,
+              onEditingComplete: () {
+                focusNode.unfocus();
+                widget.onEditingComplete?.call();
+              },
               keyboardType: widget.keyboardType,
               obscureText: widget.obscureText,
               decoration: widget.height == 0

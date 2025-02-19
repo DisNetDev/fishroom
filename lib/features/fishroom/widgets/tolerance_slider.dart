@@ -1,25 +1,89 @@
+import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 import '../../../core/constants.dart';
+import '../../tank_reading/models/parameter.dart';
+import '../../tank_reading/usecases/calculate_values_for_parameter.dart';
 
-class ToleranceSlider extends StatelessWidget {
+class ToleranceSlider extends StatefulWidget {
   const ToleranceSlider(
       {super.key,
+      required this.parameter,
       required this.minValue,
       required this.maxValue,
       required this.toleranceMin,
-      required this.toleranceMax});
+      required this.toleranceMax,
+      required this.onChanged});
 
+  final Parameter parameter;
   final double minValue;
   final double maxValue;
   final double toleranceMin;
   final double toleranceMax;
+  final Function(double, double) onChanged;
+
+  @override
+  State<ToleranceSlider> createState() => _ToleranceSliderState();
+}
+
+class _ToleranceSliderState extends State<ToleranceSlider> {
+  TextEditingController toleranceMinController = TextEditingController();
+  TextEditingController toleranceMaxController = TextEditingController();
+
+  double toleranceMin = 0;
+  double toleranceMax = 0;
+
+  @override
+  void initState() {
+    toleranceMinController.text =
+        toleranceMinInSteps(widget.toleranceMin).toString();
+    toleranceMaxController.text =
+        toleranceMaxInSteps(widget.toleranceMax).toString();
+
+    super.initState();
+  }
+
+  void runOnChangeEnd() {
+    if (isValidToleranceMin(toleranceMinController.text) &&
+        isValidToleranceMax(toleranceMaxController.text)) {
+      widget.onChanged(double.parse(toleranceMinController.text),
+          double.parse(toleranceMaxController.text));
+    }
+  }
+
+  bool isValidToleranceMin(String value) {
+    return double.tryParse(value) != null &&
+        double.tryParse(value)! <= widget.maxValue &&
+        double.tryParse(value)! >= widget.minValue &&
+        double.tryParse(value)! <= widget.toleranceMax;
+  }
+
+  bool isValidToleranceMax(String value) {
+    return double.tryParse(value) != null &&
+        double.tryParse(value)! <= widget.maxValue &&
+        double.tryParse(value)! >= widget.minValue &&
+        double.tryParse(value)! >= widget.toleranceMin;
+  }
+
+  double toleranceMinInSteps(double value) {
+    return calculateValuesForParameter(widget.parameter).reduce((closest,
+            current) =>
+        (current - value).abs() < (closest - value).abs() ? current : closest);
+  }
+
+  double toleranceMaxInSteps(double value) {
+    return calculateValuesForParameter(widget.parameter).reduce((closest,
+            current) =>
+        (current - value).abs() < (closest - value).abs() ? current : closest);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Clamp the tolerance values within the min and max range
-    final double clampedToleranceMin = toleranceMin.clamp(minValue, maxValue);
-    final double clampedToleranceMax = toleranceMax.clamp(minValue, maxValue);
+    final double clampedToleranceMin =
+        widget.toleranceMin.clamp(widget.minValue, widget.maxValue);
+    final double clampedToleranceMax =
+        widget.toleranceMax.clamp(widget.minValue, widget.maxValue);
 
     return Column(
       children: [
@@ -28,15 +92,16 @@ class ToleranceSlider extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(minValue.toString(), style: kDateTimeTextStyle),
+              Text(widget.minValue.toString(), style: kDateTimeTextStyle),
               Text(
-                '${clampedToleranceMin == clampedToleranceMax ? "Target" : "Tolerance"}: ${clampedToleranceMin.toStringAsFixed(2)}${clampedToleranceMin != clampedToleranceMax ? " - ${clampedToleranceMax.toStringAsFixed(2)}" : ""}',
+                '${clampedToleranceMin == clampedToleranceMax ? "Target" : "Tolerance"}: ${clampedToleranceMin.toStringAsFixed(2)}${clampedToleranceMin != clampedToleranceMax ? " - ${clampedToleranceMax.toStringAsFixed(2)}" : ""}${widget.parameter.unit}',
                 style: kHeading2TextStyle,
               ),
-              Text(maxValue.toString(), style: kDateTimeTextStyle),
+              Text(widget.maxValue.toString(), style: kDateTimeTextStyle),
             ],
           ),
         ),
+        Gap(10),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             trackHeight: 10,
@@ -47,23 +112,51 @@ class ToleranceSlider extends StatelessWidget {
             showValueIndicator: ShowValueIndicator.always,
             overlayShape: SliderComponentShape.noOverlay,
             rangeTrackShape: _GradientRangeSliderTrackShape(
-              minValue: minValue,
-              maxValue: maxValue,
-              toleranceMin: toleranceMin,
-              toleranceMax: toleranceMax,
+              minValue: widget.minValue,
+              maxValue: widget.maxValue,
+              toleranceMin: widget.toleranceMin,
+              toleranceMax: widget.toleranceMax,
             ),
             rangeThumbShape: _SquareThumbShape(),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: RangeSlider(
-              min: minValue,
-              max: maxValue,
+              min: widget.minValue,
+              max: widget.maxValue,
               values: RangeValues(clampedToleranceMin, clampedToleranceMax),
-              onChanged: (values) => {},
+              onChanged: (values) => setState(() {
+                toleranceMinController.text =
+                    toleranceMinInSteps(values.start).toString();
+                toleranceMaxController.text =
+                    toleranceMaxInSteps(values.end).toString();
+                widget.onChanged(double.parse(toleranceMinController.text),
+                    double.parse(toleranceMaxController.text));
+              }),
             ),
           ),
         ),
+        Gap(20),
+        Row(
+          children: [
+            Expanded(
+              child: TextInput(
+                keyboardType: TextInputType.number,
+                controller: toleranceMinController,
+                label: Text("Min"),
+                onEditingComplete: runOnChangeEnd,
+              ),
+            ),
+            Expanded(
+              child: TextInput(
+                keyboardType: TextInputType.number,
+                controller: toleranceMaxController,
+                onEditingComplete: runOnChangeEnd,
+                label: Text("Max"),
+              ),
+            ),
+          ],
+        )
       ],
     );
   }
@@ -182,7 +275,7 @@ class _SquareThumbShape extends RangeSliderThumbShape {
 
     final Rect thumbRect = Rect.fromCenter(
       center: center,
-      width: 2,
+      width: _thumbSize,
       height: _thumbSize,
     );
 

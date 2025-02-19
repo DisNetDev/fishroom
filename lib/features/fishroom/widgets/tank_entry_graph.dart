@@ -11,6 +11,8 @@ import 'package:gap/gap.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../cubit/tanks_cubit.dart';
+import '../usecases/get_gradient_from_target.dart';
+import '../usecases/get_tolerance_wording.dart';
 import 'border_bar.dart';
 
 class TankEntryGraph extends StatelessWidget {
@@ -50,7 +52,7 @@ class _BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = (parameter.value ?? 0) /
         (parameter.max ?? 0) *
-        (MediaQuery.of(context).size.width - 200);
+        (MediaQuery.of(context).size.width - 250);
     if (width == 0) {
       width = 1;
     }
@@ -59,34 +61,6 @@ class _BottomBar extends StatelessWidget {
       isDarkMode(context) ? Colors.transparent : Colors.grey.shade100,
       isDarkMode(context) ? kSecondaryColor : kPrimaryColor.withAlpha(120)
     ], begin: Alignment.centerLeft, end: Alignment.centerRight);
-
-    Gradient generateGradient(Target target, Parameter parameter) {
-      Color firstColor =
-          isDarkMode(context) ? Colors.transparent : Colors.grey.shade100;
-      Color secondColor = isDarkMode(context) ? kPrimaryColor : kSecondaryColor;
-
-      // Calculate the difference between target and parameter values
-      double difference = (target.value - (parameter.value ?? 0)).abs();
-      double step = parameter.step ?? 0;
-
-      // Within 1 step (including exact match) -> green
-      if (difference <= step) {
-        secondColor = Colors.green;
-      }
-      // Within 2 steps -> orange
-      else if (difference <= step * 2) {
-        secondColor = Colors.orange;
-      }
-      // More than 2 steps away -> red
-      else {
-        secondColor = Colors.red;
-      }
-
-      return LinearGradient(
-          colors: [firstColor, secondColor],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight);
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +86,7 @@ class _BottomBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: target == null
                       ? gradient
-                      : generateGradient(target!, parameter),
+                      : generateGradient(context, target!, parameter),
                   borderRadius: BorderRadius.horizontal(
                     right: Radius.circular(3),
                   ),
@@ -128,9 +102,10 @@ class _BottomBar extends StatelessWidget {
               Gap(20),
               if (target != null)
                 Text(
-                  "Target: ${target?.value.toString() ?? ""}",
+                  getToleranceWording(target!, parameter),
                   style: kDateTimeTextStyle.copyWith(
                       fontSize: 11, color: Colors.grey),
+                  textScaler: TextScaler.noScaling,
                 ),
             ],
           ),

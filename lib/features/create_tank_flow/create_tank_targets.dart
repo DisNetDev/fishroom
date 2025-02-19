@@ -79,9 +79,13 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                         onTap: () {
                           setState(
                             () => targets.add(Target(
-                                paramID: unselectedParameters[index].id,
-                                value: 0,
-                                tolerance: 0)),
+                                paramID: parameters
+                                    .firstWhere((parameter) =>
+                                        parameter.id ==
+                                        unselectedParameters[index].id)
+                                    .id,
+                                minValue: 0,
+                                maxValue: 0)),
                           );
                         },
                       ),
@@ -109,7 +113,8 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 50),
                       child: CustomButton(
-                          text: "Continue", onPressed: () => onComplete())),
+                          text: targets.isEmpty ? "Skip" : "Continue",
+                          onPressed: () => onComplete())),
                 ],
               ),
             ),

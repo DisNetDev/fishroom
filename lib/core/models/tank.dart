@@ -90,41 +90,42 @@ class Tank {
 
 class Target {
   String paramID;
-  double value;
-  double tolerance;
+  double minValue;
+  double maxValue;
 
-  Target({required this.paramID, required this.value, required this.tolerance});
+  Target(
+      {required this.paramID, required this.minValue, required this.maxValue});
 
   Map<String, dynamic> toJson() {
     return {
       'param_id': paramID,
-      'value': value,
-      'tolerance': tolerance,
+      'min_value': minValue,
+      'max_value': maxValue,
     };
   }
 
   factory Target.fromJson(Map<String, dynamic> json) {
     return Target(
         paramID: json['param_id'] ?? "",
-        value: json['value'] ?? 0,
-        tolerance: json['tolerance'] ?? 0);
+        minValue: json['min_value'] ?? 0,
+        maxValue: json['max_value'] ?? 0);
   }
 
   factory Target.fromTarget(Target target) {
     return Target(
         paramID: target.paramID,
-        value: target.value,
-        tolerance: target.tolerance);
+        minValue: target.minValue,
+        maxValue: target.maxValue);
   }
 
   Target copyWith({
     String? paramID,
-    double? value,
-    double? tolerance,
+    double? minValue,
+    double? maxValue,
   }) {
     return Target(
         paramID: paramID ?? this.paramID,
-        value: value ?? this.value,
-        tolerance: tolerance ?? this.tolerance);
+        minValue: minValue ?? this.minValue,
+        maxValue: maxValue ?? this.maxValue);
   }
 }

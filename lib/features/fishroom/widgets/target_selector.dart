@@ -36,42 +36,24 @@ class _TargetSelectorState extends State<TargetSelector> {
   double tolerance = 0;
 
   late Target target;
-  late double maxValue;
-  late double minValue;
 
   @override
   void initState() {
     super.initState();
-
     target = Target.fromTarget(widget.initialTarget ??
-        Target(paramID: widget.parameter.id, value: 0, tolerance: 0));
-
-    if (target.value > (widget.parameter.max ?? 20)) {
-      target = target.copyWith(value: widget.parameter.max ?? 20);
-    }
-    if (target.value < (widget.parameter.min ?? 0)) {
-      target = target.copyWith(value: widget.parameter.min ?? 0);
-    }
-
-    maxValue = widget.parameter.max ?? 20;
-    minValue = widget.parameter.min ?? 0;
-    value = widget.initialTarget?.value ?? widget.parameter.min ?? 0;
-    tolerance = widget.initialTarget?.tolerance ?? 0;
+        Target(paramID: widget.parameter.id, minValue: 0, maxValue: 0));
   }
 
-  List<double> get steps => calculateValuesForParameter(widget.parameter);
-
-  double get valueClosestToStep =>
-      steps.reduce((a, b) => (a - value).abs() < (b - value).abs() ? a : b);
-
-  double get toleranceClosestToStep {
-    final stepSize = widget.parameter.step ?? 1.0;
-
-    return (tolerance / stepSize).round() * stepSize;
-  }
-
-  double get toleranceMin => valueClosestToStep - toleranceClosestToStep;
-  double get toleranceMax => valueClosestToStep + toleranceClosestToStep;
+  double get toleranceMinInSteps =>
+      calculateValuesForParameter(widget.parameter).reduce((closest, current) =>
+          (current - target.minValue).abs() < (closest - target.minValue).abs()
+              ? current
+              : closest);
+  double get toleranceMaxInSteps =>
+      calculateValuesForParameter(widget.parameter).reduce((closest, current) =>
+          (current - target.maxValue).abs() < (closest - target.maxValue).abs()
+              ? current
+              : closest);
 
   @override
   Widget build(BuildContext context) {
@@ -81,47 +63,26 @@ class _TargetSelectorState extends State<TargetSelector> {
           children: [
             Text(
               "${widget.parameter.name ?? ""} (${widget.parameter.shortName ?? ""})",
-              style: kHeading1TextStyle,
+              style: kHeadingTextStyle,
             ),
-            Gap(20),
-            if (steps.isNotEmpty)
-              ToleranceSlider(
-                minValue: minValue,
-                maxValue: maxValue,
-                toleranceMin: toleranceMin,
-                toleranceMax: toleranceMax,
-              ),
-            const Gap(25),
-            Text(
-              "Target",
-              style: kDateTimeTextStyle,
-            ),
-            Slider(
-              label: valueClosestToStep.toStringAsFixed(2),
-              min: minValue,
-              max: maxValue,
-              value: target.value,
-              onChanged: (returnedValue) => setState(() {
-                value = returnedValue;
-                target = target.copyWith(value: valueClosestToStep);
-              }),
-              onChangeEnd: (value) => widget.onTargetSelected(target),
-            ),
-            const Gap(10),
-            Text(
-              "Tolerance",
-              style: kDateTimeTextStyle,
-            ),
-            Slider(
-              min: 0,
-              max: maxValue / 2,
-              value: tolerance,
-              label: toleranceClosestToStep.toStringAsFixed(2),
-              onChanged: (value) => setState(() {
-                tolerance = value;
-                target = target.copyWith(tolerance: toleranceClosestToStep);
-              }),
-              onChangeEnd: (value) => widget.onTargetSelected(target),
+            Gap(10),
+            ToleranceSlider(
+              parameter: widget.parameter,
+              minValue: widget.parameter.min ?? 0,
+              maxValue: widget.parameter.max ?? 0,
+              toleranceMin: toleranceMinInSteps,
+              toleranceMax: toleranceMaxInSteps,
+              onChanged: (toleranceMin, toleranceMax) => {
+                setState(
+                  () {
+                    target = Target(
+                        paramID: widget.parameter.id,
+                        minValue: toleranceMin,
+                        maxValue: toleranceMax);
+                  },
+                ),
+                widget.onTargetSelected(target),
+              },
             ),
             const Gap(30),
             Container(
