@@ -35,7 +35,7 @@ class InhabitantWidget extends StatelessWidget {
           padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
           decoration: BoxDecoration(
             color:
-                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.05 : 0.1),
+                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.00 : 0.1),
             borderRadius: BorderRadius.circular(8),
             border: GradientBoxBorder(gradient: kPrimaryGradient),
           ),
