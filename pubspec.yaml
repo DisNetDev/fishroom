@@ -2,7 +2,7 @@ name: fishroom
 description: "Fishroom is an app for aquarium hobbyists to keep track of their
   fish and tanks."
 publish_to: "none"
-version: 1.3.0+24
+version: 1.3.1+25
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -36,6 +36,7 @@ dependencies:
   path_provider: ^2.1.4
   pin_code_fields: ^8.0.1
   rive: ^0.13.15
+  sentry_flutter: ^8.13.0
   simple_shadow: ^0.3.1
   skeletonizer: ^1.4.2
   supabase_auth_ui: ^0.5.4
