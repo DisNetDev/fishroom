@@ -14,6 +14,7 @@ import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/date_time_text.dart';
 import 'small_entry_graph.dart';
+import 'tank_entry_graph.dart';
 
 class TankReadingListItem extends StatefulWidget {
   const TankReadingListItem(
@@ -282,7 +283,7 @@ class _OpenedReadingState extends State<_OpenedReading> {
                           style: kHeading1TextStyle,
                         ),
                       if (widget.reading.type == TankReadingType.measurement)
-                        SmallEntryGraph(tankReading: widget.reading)
+                        TankEntryGraph(tankReading: widget.reading),
                     ],
                   ),
                 ),

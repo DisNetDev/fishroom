@@ -1,4 +1,3 @@
-import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -117,6 +116,7 @@ class _ToleranceSliderState extends State<ToleranceSlider> {
               maxValue: widget.maxValue,
               toleranceMin: widget.toleranceMin,
               toleranceMax: widget.toleranceMax,
+              context: context,
             ),
           ),
           child: Padding(
@@ -167,12 +167,14 @@ class _GradientRangeSliderTrackShape extends RangeSliderTrackShape {
   final double maxValue;
   final double toleranceMin;
   final double toleranceMax;
+  final BuildContext context;
 
   _GradientRangeSliderTrackShape({
     required this.minValue,
     required this.maxValue,
     required this.toleranceMin,
     required this.toleranceMax,
+    required this.context,
   });
 
   @override
@@ -203,17 +205,23 @@ class _GradientRangeSliderTrackShape extends RangeSliderTrackShape {
     final Rect trackRect =
         Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
 
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     final Paint paint = Paint()
       ..shader = LinearGradient(
         colors: [
-          const Color.fromARGB(0, 255, 255, 255),
+          isDarkMode
+              ? Colors.transparent
+              : const Color.fromARGB(0, 255, 255, 255),
           Colors.red,
           Colors.amber,
           Colors.green,
           Colors.green,
           Colors.amber,
           Colors.red,
-          const Color.fromARGB(0, 255, 255, 255),
+          isDarkMode
+              ? Colors.transparent
+              : const Color.fromARGB(0, 255, 255, 255),
         ],
         stops: [
           0.0,

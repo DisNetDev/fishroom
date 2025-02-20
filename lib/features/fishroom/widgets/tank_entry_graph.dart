@@ -72,45 +72,56 @@ class _BottomBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
-                parameter.shortName ?? "",
-                style: kDateTimeTextStyle.copyWith(
-                  fontSize: 11,
-                ),
-              ),
               Container(
-                height: 15,
-                width: width,
-                decoration: BoxDecoration(
-                  gradient: target == null
-                      ? gradient
-                      : generateGradient(context, target!, parameter),
-                  borderRadius: BorderRadius.horizontal(
-                    right: Radius.circular(3),
-                  ),
-                ),
-              ),
-              Gap(3),
-              Text(
-                parameter.value.toString(),
-                style: kDateTimeTextStyle.copyWith(
-                  fontSize: 11,
-                ),
-              ),
-              Gap(10),
+                  constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width / 2),
+                  child: Row(
+                    children: [
+                      Text(
+                        parameter.shortName ?? "",
+                        style: kDateTimeTextStyle.copyWith(
+                          fontSize: 11,
+                        ),
+                      ),
+                      Gap(10),
+                      Container(
+                        height: 15,
+                        width: width,
+                        decoration: BoxDecoration(
+                          gradient: target == null
+                              ? gradient
+                              : generateGradient(context, target!, parameter),
+                          borderRadius: BorderRadius.horizontal(
+                            right: Radius.circular(3),
+                          ),
+                        ),
+                      ),
+                      Gap(3),
+                      Text(
+                        parameter.value.toString(),
+                        style: kDateTimeTextStyle.copyWith(
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  )),
               if (target != null)
                 Row(
                   children: [
                     Icon(
                       Symbols.target_rounded,
                       size: 14,
-                      color: Colors.grey,
+                      color:
+                          !isDarkMode(context) ? Colors.grey : Colors.white30,
                     ),
                     Gap(2),
                     Text(
                       getToleranceWording(target!, parameter),
                       style: kDateTimeTextStyle.copyWith(
-                          fontSize: 11, color: Colors.grey),
+                        fontSize: 11,
+                        color:
+                            !isDarkMode(context) ? Colors.grey : Colors.white30,
+                      ),
                     ),
                   ],
                 ),
