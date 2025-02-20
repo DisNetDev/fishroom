@@ -235,6 +235,8 @@ class _LineGraphMainState extends State<LineGraphMain> {
                       0)),
           isCurved: true,
           gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: gradientColors.reversed.toList(),
           ),
           barWidth: 2,
@@ -245,6 +247,8 @@ class _LineGraphMainState extends State<LineGraphMain> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
               colors: gradientColors
                   .map((color) => color.withValues(alpha: 0.3))
                   .toList(),
