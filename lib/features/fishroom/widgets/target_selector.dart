@@ -66,23 +66,36 @@ class _TargetSelectorState extends State<TargetSelector> {
               style: kHeadingTextStyle,
             ),
             Gap(10),
-            ToleranceSlider(
-              parameter: widget.parameter,
-              minValue: widget.parameter.min ?? 0,
-              maxValue: widget.parameter.max ?? 0,
-              toleranceMin: toleranceMinInSteps,
-              toleranceMax: toleranceMaxInSteps,
-              onChanged: (toleranceMin, toleranceMax) => {
-                setState(
-                  () {
-                    target = Target(
-                        paramID: widget.parameter.id,
-                        minValue: toleranceMin,
-                        maxValue: toleranceMax);
+            Stack(
+              children: [
+                ToleranceSlider(
+                  parameter: widget.parameter,
+                  minValue: widget.parameter.min ?? 0,
+                  maxValue: widget.parameter.max ?? 0,
+                  toleranceMin: toleranceMinInSteps,
+                  toleranceMax: toleranceMaxInSteps,
+                  onChanged: (toleranceMin, toleranceMax) => {
+                    setState(
+                      () {
+                        target = Target(
+                            paramID: widget.parameter.id,
+                            minValue: toleranceMin,
+                            maxValue: toleranceMax);
+                      },
+                    ),
+                    widget.onTargetSelected(target),
                   },
                 ),
-                widget.onTargetSelected(target),
-              },
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: YAxisLinePainter(
+                      minValue: toleranceMinInSteps,
+                      minRange: widget.parameter.min ?? 0,
+                      maxRange: widget.parameter.max ?? 0,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const Gap(30),
             Container(
@@ -113,5 +126,38 @@ class _TargetSelectorState extends State<TargetSelector> {
         )
       ],
     );
+  }
+}
+
+class YAxisLinePainter extends CustomPainter {
+  final double minValue;
+  final double minRange;
+  final double maxRange;
+
+  YAxisLinePainter({
+    required this.minValue,
+    required this.minRange,
+    required this.maxRange,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    final x = size.width * ((minValue - minRange) / (maxRange - minRange));
+    
+    canvas.drawLine(
+      Offset(x, 0),
+      Offset(x, size.height),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(YAxisLinePainter oldDelegate) {
+    return minValue != oldDelegate.minValue;
   }
 }

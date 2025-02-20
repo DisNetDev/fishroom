@@ -1,3 +1,4 @@
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -117,7 +118,6 @@ class _ToleranceSliderState extends State<ToleranceSlider> {
               toleranceMin: widget.toleranceMin,
               toleranceMax: widget.toleranceMax,
             ),
-            rangeThumbShape: _SquareThumbShape(),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -177,7 +177,7 @@ class _GradientRangeSliderTrackShape extends RangeSliderTrackShape {
 
   @override
   void paint(
-    PaintingContext context,
+    PaintingContext paddingContext,
     Offset offset, {
     required RenderBox parentBox,
     required SliderThemeData sliderTheme,
@@ -206,14 +206,14 @@ class _GradientRangeSliderTrackShape extends RangeSliderTrackShape {
     final Paint paint = Paint()
       ..shader = LinearGradient(
         colors: [
-          Colors.transparent,
+          const Color.fromARGB(0, 255, 255, 255),
           Colors.red,
           Colors.amber,
           Colors.green,
           Colors.green,
           Colors.amber,
           Colors.red,
-          Colors.transparent,
+          const Color.fromARGB(0, 255, 255, 255),
         ],
         stops: [
           0.0,
@@ -227,7 +227,7 @@ class _GradientRangeSliderTrackShape extends RangeSliderTrackShape {
         ],
       ).createShader(trackRect);
 
-    context.canvas.drawRect(trackRect, paint);
+    paddingContext.canvas.drawRect(trackRect, paint);
   }
 
   @override
@@ -250,6 +250,7 @@ class _GradientRangeSliderTrackShape extends RangeSliderTrackShape {
 
 class _SquareThumbShape extends RangeSliderThumbShape {
   static const double _thumbSize = 12.0;
+  static const double _elevation = 4.0;
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) =>
@@ -269,15 +270,22 @@ class _SquareThumbShape extends RangeSliderThumbShape {
     TextDirection textDirection = TextDirection.ltr,
     Thumb thumb = Thumb.start,
   }) {
-    final Paint paint = Paint()
-      ..color = sliderTheme.thumbColor!
-      ..style = PaintingStyle.fill;
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.2)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, _elevation);
 
     final Rect thumbRect = Rect.fromCenter(
       center: center,
       width: _thumbSize,
       height: _thumbSize,
     );
+
+    context.canvas
+        .drawRect(thumbRect.shift(Offset(0, _elevation)), shadowPaint);
+
+    final Paint paint = Paint()
+      ..color = sliderTheme.thumbColor!
+      ..style = PaintingStyle.fill;
 
     context.canvas.drawRect(thumbRect, paint);
   }

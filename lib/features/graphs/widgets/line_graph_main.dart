@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/datetime_format.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
@@ -8,8 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 
+import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../app/cubit/app_cubit.dart';
+import '../../fishroom/cubit/tanks_cubit.dart';
 import '../../tank_reading/models/parameter.dart';
 import '../usecases/highest_lowest.dart';
 
@@ -23,6 +26,14 @@ class LineGraphMain extends StatefulWidget {
 
 class _LineGraphMainState extends State<LineGraphMain> {
   Parameter? parameterFilter;
+  Tank? get tank => context
+      .read<TanksCubit>()
+      .state
+      .tanks
+      .firstWhereOrNull((test) => test.id == widget.data.firstOrNull?.tankId);
+
+  Target? get target => tank?.targets
+      .firstWhereOrNull((test) => test.paramID == parameterFilter?.id);
 
   List<Color> gradientColors = [kPrimaryColor, kSecondaryColor];
 
@@ -144,6 +155,9 @@ class _LineGraphMainState extends State<LineGraphMain> {
             reading.parameters.any((param) => param.id == parameterFilter?.id))
         .toList();
 
+    double targetMinValue = target?.minValue ?? 0;
+    double targetMaxValue = target?.maxValue ?? 0;
+
     double highestValue = getHighestValue(filteredData, parameterFilter!);
     double lineInterval = _getInterval(highestValue,
         data: filteredData, parameter: parameterFilter!);
@@ -257,7 +271,41 @@ class _LineGraphMainState extends State<LineGraphMain> {
           },
         ),
       ),
-    );
+    )
+      ..lineBarsData.add(
+        LineChartBarData(
+          dotData: const FlDotData(show: false),
+          show: !(targetMinValue <
+              getLowestValue(
+                  filteredData, parameterFilter ?? Parameter(id: ''))),
+          spots: [
+            FlSpot(0, targetMinValue), // Start point
+            FlSpot(getGraphWidth(filteredData, parameterFilter!),
+                targetMinValue), // End point
+          ],
+          isCurved: false,
+          color: Colors.red.withAlpha(100), // Color for the target line
+          barWidth: 1,
+          belowBarData: BarAreaData(show: false),
+        ),
+      )
+      ..lineBarsData.add(
+        LineChartBarData(
+          dotData: const FlDotData(show: false),
+          show: !(targetMaxValue >
+              getHighestValue(
+                  filteredData, parameterFilter ?? Parameter(id: ''))),
+          spots: [
+            FlSpot(0, targetMaxValue), // Start point
+            FlSpot(getGraphWidth(filteredData, parameterFilter!),
+                targetMaxValue), // End point
+          ],
+          isCurved: false,
+          color: Colors.red.withAlpha(100), // Color for the target line
+          barWidth: 1,
+          belowBarData: BarAreaData(show: false),
+        ),
+      );
   }
 
   LineChartData placeholderData() {

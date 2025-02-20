@@ -7,6 +7,7 @@ import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
@@ -71,13 +72,10 @@ class _BottomBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
-                constraints: BoxConstraints(minWidth: 40),
-                child: Text(
-                  parameter.shortName ?? "",
-                  style: kDateTimeTextStyle.copyWith(
-                    fontSize: 11,
-                  ),
+              Text(
+                parameter.shortName ?? "",
+                style: kDateTimeTextStyle.copyWith(
+                  fontSize: 11,
                 ),
               ),
               Container(
@@ -92,20 +90,29 @@ class _BottomBar extends StatelessWidget {
                   ),
                 ),
               ),
-              Gap(5),
+              Gap(3),
               Text(
                 parameter.value.toString(),
                 style: kDateTimeTextStyle.copyWith(
                   fontSize: 11,
                 ),
               ),
-              Gap(20),
+              Gap(10),
               if (target != null)
-                Text(
-                  getToleranceWording(target!, parameter),
-                  style: kDateTimeTextStyle.copyWith(
-                      fontSize: 11, color: Colors.grey),
-                  textScaler: TextScaler.noScaling,
+                Row(
+                  children: [
+                    Icon(
+                      Symbols.target_rounded,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                    Gap(2),
+                    Text(
+                      getToleranceWording(target!, parameter),
+                      style: kDateTimeTextStyle.copyWith(
+                          fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
                 ),
             ],
           ),
