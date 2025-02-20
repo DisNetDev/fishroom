@@ -78,14 +78,26 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                         parameter: unselectedParameters[index],
                         onTap: () {
                           setState(
-                            () => targets.add(Target(
-                                paramID: parameters
-                                    .firstWhere((parameter) =>
-                                        parameter.id ==
-                                        unselectedParameters[index].id)
-                                    .id,
-                                minValue: 0,
-                                maxValue: 0)),
+                            () => targets.add(
+                              Target(
+                                  paramID: parameters
+                                      .firstWhere((parameter) =>
+                                          parameter.id ==
+                                          unselectedParameters[index].id)
+                                      .id,
+                                  minValue: parameters
+                                          .firstWhere((parameter) =>
+                                              parameter.id ==
+                                              unselectedParameters[index].id)
+                                          .min ??
+                                      0,
+                                  maxValue: parameters
+                                          .firstWhere((parameter) =>
+                                              parameter.id ==
+                                              unselectedParameters[index].id)
+                                          .max ??
+                                      0),
+                            ),
                           );
                         },
                       ),
