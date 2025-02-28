@@ -1,13 +1,16 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
+import 'package:fishroom/features/fertilizers/widgets/fertilizer_settings_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../app/cubit/app_cubit.dart';
 import '../models/fertilizer.dart';
+import '../usecases/show_fertilizer_modal.dart';
 import '../widgets/fertilizer_modal.dart';
 
 class FertilizerSettings extends StatefulWidget {
@@ -48,24 +51,23 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
                     style: kHeadingTextStyle, textAlign: TextAlign.center),
                 Gap(40),
                 for (Fertilizer fertilizer in fertilizers)
-                  ListTile(
-                    leading: Icon(Icons.water_drop),
-                    trailing: Icon(Icons.edit),
-                    title: Text(fertilizer.name),
-                    subtitle: Text(
-                        "${fertilizer.dosage} per ${fertilizer.perVolume}"),
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => FertilizerModal(
-                          onAdd: (fertilizer) {},
-                        ),
-                      );
-                    },
+                  FertilizerSettingsWidget(
+                    fertilizer: fertilizer,
+                    onTap: () => showFertilizerModal(
+                      context,
+                      fertilizer: fertilizer,
+                      onAdd: _onAddFertilizer,
+                    ),
+                    onDismissed: () => _onRemovedFertilizer(fertilizer),
                   ),
                 Gap(40),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    showFertilizerModal(
+                      context,
+                      onAdd: _onAddFertilizer,
+                    );
+                  },
                   child: Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(8),
@@ -84,17 +86,21 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
     );
   }
 
-  _showFertilizerModal(Fertilizer fertilizer) {
-    showModalBottomSheet(
-      isDismissible: true,
-      enableDrag: true,
-      scrollControlDisabledMaxHeightRatio: 0.8,
-      context: context,
-      builder: (context) => FertilizerModal(
-        onAdd: (fertilizer) {
-          setState(() => fertilizers.add(fertilizer));
-        },
-      ),
-    );
+  _onRemovedFertilizer(Fertilizer fertilizer) {
+    setState(() {
+      fertilizers.removeWhere((element) => element.id == fertilizer.id);
+    });
+  }
+
+  _onAddFertilizer(fertilizer) {
+    setState(() {
+      int indexOf =
+          fertilizers.indexWhere((element) => element.id == fertilizer.id);
+      if (indexOf != -1) {
+        fertilizers[indexOf] = fertilizer;
+      } else {
+        fertilizers.add(fertilizer);
+      }
+    });
   }
 }

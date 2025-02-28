@@ -8,17 +8,24 @@ import '../../../core/widgets/custom_button.dart';
 import '../models/fertilizer.dart';
 
 class FertilizerModal extends StatefulWidget {
-  const FertilizerModal({super.key, required this.onAdd});
+  const FertilizerModal({super.key, required this.onAdd, this.fertilizer});
 
   final Function(Fertilizer fertilizer) onAdd;
+  final Fertilizer? fertilizer;
 
   @override
   State<FertilizerModal> createState() => _FertilizerModalState();
 }
 
 class _FertilizerModalState extends State<FertilizerModal> {
-  Fertilizer fertilizer =
-      Fertilizer(name: "", dosage: "", perVolume: "", id: Uuid().v4());
+  late Fertilizer fertilizer;
+
+  @override
+  void initState() {
+    fertilizer = widget.fertilizer ??
+        Fertilizer(name: "", dosage: "", perVolume: "", id: Uuid().v4());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +37,7 @@ class _FertilizerModalState extends State<FertilizerModal> {
         children: [
           Gap(10),
           TextInput(
+            initialValue: fertilizer.name,
             label: Text("Fertilizer Name"),
             exampleText: "eg: Potassium",
             onChanged: (value) => setState(
@@ -41,6 +49,7 @@ class _FertilizerModalState extends State<FertilizerModal> {
             children: [
               Expanded(
                 child: TextInput(
+                  initialValue: fertilizer.dosage,
                   exampleText: "eg: 5ml",
                   label: Text("Dosage"),
                   onChanged: (value) => setState(
@@ -51,6 +60,7 @@ class _FertilizerModalState extends State<FertilizerModal> {
               Text("per"),
               Expanded(
                 child: TextInput(
+                  initialValue: fertilizer.perVolume,
                   exampleText: "eg: 200L",
                   label: Text("Per Volume"),
                   onChanged: (value) => setState(
@@ -66,7 +76,9 @@ class _FertilizerModalState extends State<FertilizerModal> {
               widget.onAdd(fertilizer);
               navPop(context);
             },
-            text: "Add Fertilizer",
+            text: widget.fertilizer != null
+                ? "Edit Fertilizer"
+                : "Add Fertilizer",
           ),
           Gap(40),
         ],
