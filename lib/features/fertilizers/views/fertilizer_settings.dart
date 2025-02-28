@@ -46,23 +46,26 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
                 Gap(40),
                 Text("Set your fertilizers and dosages.",
                     style: kHeadingTextStyle, textAlign: TextAlign.center),
+                Gap(40),
                 for (Fertilizer fertilizer in fertilizers)
                   ListTile(
+                    leading: Icon(Icons.water_drop),
+                    trailing: Icon(Icons.edit),
                     title: Text(fertilizer.name),
-                    subtitle: Text(fertilizer.dosage),
+                    subtitle: Text(
+                        "${fertilizer.dosage} per ${fertilizer.perVolume}"),
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => FertilizerModal(
+                          onAdd: (fertilizer) {},
+                        ),
+                      );
+                    },
                   ),
                 Gap(40),
                 GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => FertilizerModal(
-                        onAdd: (fertilizer) {
-                          setState(() => fertilizers.add(fertilizer));
-                        },
-                      ),
-                    );
-                  },
+                  onTap: () {},
                   child: Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(8),
@@ -78,6 +81,20 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
           ),
         ),
       ],
+    );
+  }
+
+  _showFertilizerModal(Fertilizer fertilizer) {
+    showModalBottomSheet(
+      isDismissible: true,
+      enableDrag: true,
+      scrollControlDisabledMaxHeightRatio: 0.8,
+      context: context,
+      builder: (context) => FertilizerModal(
+        onAdd: (fertilizer) {
+          setState(() => fertilizers.add(fertilizer));
+        },
+      ),
     );
   }
 }

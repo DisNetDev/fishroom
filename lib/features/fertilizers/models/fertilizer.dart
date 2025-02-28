@@ -28,4 +28,16 @@ class Fertilizer {
       'perVolume': perVolume,
     };
   }
+
+  Fertilizer copyWith({
+    String? name,
+    String? dosage,
+    String? perVolume,
+  }) {
+    return Fertilizer(
+        id: id,
+        name: name ?? this.name,
+        dosage: dosage ?? this.dosage,
+        perVolume: perVolume ?? this.perVolume);
+  }
 }
