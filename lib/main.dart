@@ -36,11 +36,13 @@ void main() async {
         if (kDebugMode) {
           return null;
         }
+
         return event;
       };
-      options.dsn =
-          'https://09181f12e7794ff303bdc7f88309ca26@o4508846445297664.ingest.us.sentry.io/4508846446673920';
-      options.attachScreenshot = true;
+      options.dsn = kDebugMode
+          ? "false-yet"
+          : 'https://09181f12e7794ff303bdc7f88309ca26@o4508846445297664.ingest.us.sentry.io/4508846446673920';
+      options.attachScreenshot = kDebugMode ? false : true;
       options.environment = appFlavor;
       // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
       // We recommend adjusting this value in production.
