@@ -115,7 +115,7 @@ class AppCubit extends HydratedCubit<AppState> {
           user = FishUser.fromJson(data.first);
           settings = data.first["settings"] != null
               ? Settings.fromJson(data.first["settings"])
-              : Settings(parameters: []);
+              : Settings(parameters: [], fertilizers: []);
 
           emit(state.copyWith(user: user, settings: settings));
         }

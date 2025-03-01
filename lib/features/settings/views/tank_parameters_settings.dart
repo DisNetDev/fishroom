@@ -26,17 +26,20 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
   bool resettingDefaults = false;
   List<Parameter> parameters = [];
   bool loading = false;
+  bool edited = false;
 
   @override
   void initState() {
-    parameters.addAll(context.read<AppCubit>().state.settings.parameters ?? []);
+    parameters.addAll(context.read<AppCubit>().state.settings.parameters);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    bool edited = areParametersEdited(
-        parameters, context.read<AppCubit>().state.settings.parameters ?? []);
+    if (!edited) {
+      edited = areParametersEdited(
+          parameters, context.read<AppCubit>().state.settings.parameters);
+    }
 
     return Scaffold(
       floatingActionButton: !edited

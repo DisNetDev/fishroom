@@ -13,6 +13,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/widgets/date_time_text.dart';
+import '../../tank_reading/models/dosage.dart';
 import 'small_entry_graph.dart';
 import 'tank_entry_graph.dart';
 
@@ -135,6 +136,12 @@ class _ClosedReadingState extends State<ClosedReading> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Gap(5),
+                    if (widget.reading.dosages.isNotEmpty)
+                      for (Dosage dosages in widget.reading.dosages)
+                        Text(
+                          "${dosages.fertilizer.name} - ${dosages.amount}${dosages.fertilizer.dosageUnit}",
+                          style: kHeading2TextStyle,
+                        ),
                     if (widget.reading.waterChangePercentage != null)
                       Text(
                         "${widget.reading.waterChangePercentage.toString()}%",
@@ -284,6 +291,13 @@ class _OpenedReadingState extends State<_OpenedReading> {
                         ),
                       if (widget.reading.type == TankReadingType.measurement)
                         TankEntryGraph(tankReading: widget.reading),
+                      if (widget.reading.type == TankReadingType.fertilize)
+                        if (widget.reading.dosages.isNotEmpty)
+                          for (Dosage dosages in widget.reading.dosages)
+                            Text(
+                              "${dosages.fertilizer.name} - ${dosages.amount}${dosages.fertilizer.dosageUnit}",
+                              style: kHeading2TextStyle,
+                            ),
                     ],
                   ),
                 ),

@@ -1,4 +1,3 @@
-import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';

@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';

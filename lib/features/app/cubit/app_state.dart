@@ -9,7 +9,7 @@ class AppState {
     this.user,
     Settings? settings,
     this.appLoaded = false,
-  }) : settings = settings ?? Settings(parameters: []);
+  }) : settings = settings ?? Settings(parameters: [], fertilizers: []);
 
   AppState copyWith({
     FishUser? user,

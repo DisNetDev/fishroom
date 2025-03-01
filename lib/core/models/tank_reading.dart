@@ -1,3 +1,4 @@
+import 'package:fishroom/features/tank_reading/models/dosage.dart';
 import 'package:fishroom/features/tank_reading/models/parameter.dart';
 
 class TankReading {
@@ -6,10 +7,11 @@ class TankReading {
   final String tankId;
   final String ownerId;
   final String createdAt;
-  final List<Parameter> parameters;
+  List<Parameter> parameters;
   String? note;
   String? imageUrl;
   int? waterChangePercentage;
+  List<Dosage> dosages = [];
 
   TankReading({
     required this.id,
@@ -21,7 +23,9 @@ class TankReading {
     this.note,
     this.imageUrl,
     this.waterChangePercentage,
-  }) : parameters = parameters ?? [];
+    List<Dosage>? dosages,
+  })  : parameters = parameters ?? [],
+        dosages = dosages ?? [];
 
   factory TankReading.fromJson(Map<String, dynamic> json) {
     final typeStr = json['type'] as String;
@@ -42,7 +46,11 @@ class TankReading {
                 ?.map((param) => Parameter.fromJson(param))
                 .toList() ??
             [],
-        waterChangePercentage: json["water_change_percentage"] as int?);
+        waterChangePercentage: json["water_change_percentage"] as int?,
+        dosages: (json['dosages'] as List<dynamic>?)
+                ?.map((dosage) => Dosage.fromJson(dosage))
+                .toList() ??
+            []);
   }
 
   Map<String, dynamic> toJson() {
@@ -55,7 +63,8 @@ class TankReading {
       'note': note,
       'image_url': imageUrl,
       'data': parameters.map((param) => param.toJson()).toList(),
-      'water_change_percentage': waterChangePercentage
+      'water_change_percentage': waterChangePercentage,
+      "dosages": dosages.map((dosage) => dosage.toJson()).toList(),
     };
   }
 
@@ -69,6 +78,7 @@ class TankReading {
     String? imageUrl,
     List<Parameter>? parameters,
     int? waterChangePercentage,
+    List<Dosage>? dosages,
   }) {
     return TankReading(
         id: id ?? this.id,
@@ -80,7 +90,8 @@ class TankReading {
         imageUrl: imageUrl ?? this.imageUrl,
         parameters: parameters ?? this.parameters,
         waterChangePercentage:
-            waterChangePercentage ?? this.waterChangePercentage);
+            waterChangePercentage ?? this.waterChangePercentage,
+        dosages: dosages ?? this.dosages);
   }
 }
 

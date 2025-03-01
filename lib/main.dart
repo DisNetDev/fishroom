@@ -1,5 +1,7 @@
+import 'package:fishroom/core/theme/dropdown_theme.dart';
 import 'package:fishroom/core/theme/slider_theme.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,9 +33,17 @@ void main() async {
 
   await SentryFlutter.init(
     (options) {
-      options.dsn =
-          'https://09181f12e7794ff303bdc7f88309ca26@o4508846445297664.ingest.us.sentry.io/4508846446673920';
-      options.attachScreenshot = true;
+      options.beforeSend = (event, hint) {
+        if (kDebugMode) {
+          return null;
+        }
+
+        return event;
+      };
+      options.dsn = kDebugMode
+          ? "false-yet"
+          : 'https://09181f12e7794ff303bdc7f88309ca26@o4508846445297664.ingest.us.sentry.io/4508846446673920';
+      options.attachScreenshot = kDebugMode ? false : true;
       options.environment = appFlavor;
       // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
       // We recommend adjusting this value in production.
@@ -97,8 +107,7 @@ class MainApp extends StatelessWidget {
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-        sliderTheme: sliderTheme,
-      ),
+          sliderTheme: sliderTheme, dropdownMenuTheme: dropdownThemeData),
       darkTheme: ThemeData.from(
         colorScheme: const ColorScheme.dark(
           primary: Color.fromARGB(255, 33, 138, 243),

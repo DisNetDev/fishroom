@@ -21,7 +21,9 @@ class TextInput extends StatefulWidget {
       this.keyboardType,
       this.label,
       this.prefixIcon,
-      this.controller});
+      this.onTap,
+      this.controller,
+      this.validator});
 
   final String? hintText;
   final int? characterLimit;
@@ -39,6 +41,8 @@ class TextInput extends StatefulWidget {
   final TextInputType? keyboardType;
   final Widget? label;
   final TextEditingController? controller;
+  final FormFieldValidator? validator;
+  final Function()? onTap;
 
   @override
   State<TextInput> createState() => _TextInputState();
@@ -62,6 +66,9 @@ class _TextInputState extends State<TextInput> {
         child: Column(
           children: [
             TextFormField(
+              onTap: widget.onTap,
+              validator: widget.validator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               controller: widget.controller,
               buildCounter: (context,
                       {required currentLength,
@@ -83,6 +90,11 @@ class _TextInputState extends State<TextInput> {
                       border: InputBorder.none,
                     )
                   : InputDecoration(
+                      errorMaxLines: 3,
+                      errorStyle: kDateTimeTextStyle.copyWith(
+                        color: Colors.deepOrange,
+                      ),
+                      errorBorder: _errorGradient,
                       alignLabelWithHint: true,
                       labelStyle: kHintTextStyle,
                       label: widget.label,
@@ -90,27 +102,9 @@ class _TextInputState extends State<TextInput> {
                       suffix: widget.suffix,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 15),
-                      focusedBorder: const GradientUnderlineInputBorder(
-                        width: 0.5,
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            kPrimaryColor,
-                            kPrimaryColor,
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                      enabledBorder: const GradientUnderlineInputBorder(
-                        width: 0.5,
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            Colors.grey,
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
+                      focusedBorder: _focusedGradient,
+                      enabledBorder: _enabledBorder,
+                      focusedErrorBorder: _errorGradient,
                       hintText: widget.hintText,
                       hintStyle: const TextStyle(color: Colors.grey),
                     ),
@@ -129,3 +123,38 @@ class _TextInputState extends State<TextInput> {
     );
   }
 }
+
+GradientUnderlineInputBorder _errorGradient = GradientUnderlineInputBorder(
+  width: 0.5,
+  gradient: LinearGradient(
+    colors: [
+      Colors.transparent,
+      Colors.deepOrange,
+      Colors.deepOrange,
+      Colors.transparent,
+    ],
+  ),
+);
+
+GradientUnderlineInputBorder _focusedGradient = GradientUnderlineInputBorder(
+  width: 0.5,
+  gradient: LinearGradient(
+    colors: [
+      Colors.transparent,
+      kPrimaryColor,
+      kPrimaryColor,
+      Colors.transparent,
+    ],
+  ),
+);
+
+GradientUnderlineInputBorder _enabledBorder = GradientUnderlineInputBorder(
+  width: 0.5,
+  gradient: LinearGradient(
+    colors: [
+      Colors.transparent,
+      Colors.grey,
+      Colors.transparent,
+    ],
+  ),
+);

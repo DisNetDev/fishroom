@@ -10,10 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/app/cubit/app_cubit.dart';
 import '../../features/bug_report/views/bug_report_view.dart';
+import '../../features/fertilizers/views/fertilizer_settings.dart';
 import '../constants.dart';
 import '../usecases/nav_push.dart';
 
@@ -62,8 +62,23 @@ class RootDrawer extends StatelessWidget {
                   subtitleTextStyle:
                       kDateTimeTextStyle.copyWith(color: Colors.grey),
                   leading: const Icon(Symbols.bar_chart_rounded),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const TankParametersSettings())),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TankParametersSettings()));
+                  },
+                ),
+                ListTile(
+                  title: const Text("Fertilizers"),
+                  subtitle: const Text("Adjust your dosages and fertilizers"),
+                  subtitleTextStyle:
+                      kDateTimeTextStyle.copyWith(color: Colors.grey),
+                  leading: const Icon(Symbols.water_drop_rounded),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const FertilizerSettings()));
+                  },
                 ),
 
                 const Expanded(child: SizedBox()),
@@ -137,18 +152,18 @@ class RootDrawer extends StatelessWidget {
                     color: Colors.grey,
                   ),
                 ),
-                ListTile(
-                  enabled: false,
-                  leading: const Icon(Icons.person),
-                  title: const Text("Logged in as:"),
-                  subtitle: Text(
-                      context.read<AppCubit>().state.user?.email ?? "No One?"),
-                  subtitleTextStyle: const TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey,
-                  ),
-                ),
+                // ListTile(
+                //   enabled: false,
+                //   leading: const Icon(Icons.person),
+                //   title: const Text("Logged in as:"),
+                //   subtitle: Text(
+                //       context.read<AppCubit>().state.user?.email ?? "No One?"),
+                //   subtitleTextStyle: const TextStyle(
+                //     fontSize: 12,
+                //     fontStyle: FontStyle.italic,
+                //     color: Colors.grey,
+                //   ),
+                // ),
 
                 ListTile(
                   leading: const Icon(Symbols.bug_report_rounded),
