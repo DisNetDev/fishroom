@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/app/cubit/app_cubit.dart';
 import '../../features/bug_report/views/bug_report_view.dart';
@@ -63,8 +62,11 @@ class RootDrawer extends StatelessWidget {
                   subtitleTextStyle:
                       kDateTimeTextStyle.copyWith(color: Colors.grey),
                   leading: const Icon(Symbols.bar_chart_rounded),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const TankParametersSettings())),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TankParametersSettings()));
+                  },
                 ),
                 ListTile(
                   title: const Text("Fertilizers"),
@@ -72,8 +74,11 @@ class RootDrawer extends StatelessWidget {
                   subtitleTextStyle:
                       kDateTimeTextStyle.copyWith(color: Colors.grey),
                   leading: const Icon(Symbols.water_drop_rounded),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const FertilizerSettings())),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const FertilizerSettings()));
+                  },
                 ),
 
                 const Expanded(child: SizedBox()),

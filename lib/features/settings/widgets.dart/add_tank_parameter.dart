@@ -89,7 +89,7 @@ class _EditParameterState extends State<EditParameter> {
         }
       },
       child: Material(
-        color: Colors.transparent,
+        color: isDarkMode(context) ? Colors.black : Colors.white,
         child: SafeArea(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),

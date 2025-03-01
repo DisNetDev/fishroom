@@ -1,6 +1,5 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
-import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/features/tank_reading/usecases/calculate_values_for_parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

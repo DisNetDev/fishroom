@@ -1,3 +1,4 @@
+import 'package:fishroom/core/theme/dropdown_theme.dart';
 import 'package:fishroom/core/theme/slider_theme.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/foundation.dart';
@@ -106,8 +107,7 @@ class MainApp extends StatelessWidget {
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-        sliderTheme: sliderTheme,
-      ),
+          sliderTheme: sliderTheme, dropdownMenuTheme: dropdownThemeData),
       darkTheme: ThemeData.from(
         colorScheme: const ColorScheme.dark(
           primary: Color.fromARGB(255, 33, 138, 243),

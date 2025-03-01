@@ -1,6 +1,5 @@
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
-import 'package:fishroom/features/create_tank_flow/create_tank_upload_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
