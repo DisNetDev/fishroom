@@ -73,6 +73,7 @@ class Tank {
     String? imageLocalPath,
     String? imageUrl,
     List<Inhabitant>? inhabitants,
+    List<Target>? targets,
   }) {
     return Tank(
         id: id ?? this.id,
@@ -84,7 +85,8 @@ class Tank {
         measurementUnit: measurementUnit ?? this.measurementUnit,
         imageLocalPath: imageLocalPath ?? this.imageLocalPath,
         imageUrl: imageUrl ?? this.imageUrl,
-        inhabitants: inhabitants ?? this.inhabitants);
+        inhabitants: inhabitants ?? this.inhabitants,
+        targets: targets ?? this.targets);
   }
 }
 
