@@ -141,17 +141,33 @@ class _ToleranceSliderState extends State<ToleranceSlider> {
           children: [
             Expanded(
               child: TextInput(
+                validator: (value) {
+                  if (!isValidToleranceMin(value)) {
+                    return "Invalid value";
+                  }
+
+                  return null;
+                },
                 keyboardType: TextInputType.number,
                 controller: toleranceMinController,
                 label: Text("Min"),
-                onEditingComplete: runOnChangeEnd,
+                onChanged: (_) => runOnChangeEnd(),
+                // onEditingComplete: runOnChangeEnd,
               ),
             ),
             Expanded(
               child: TextInput(
+                validator: (value) {
+                  if (!isValidToleranceMax(value)) {
+                    return "Invalid value";
+                  }
+
+                  return null;
+                },
                 keyboardType: TextInputType.number,
                 controller: toleranceMaxController,
-                onEditingComplete: runOnChangeEnd,
+                onChanged: (_) => runOnChangeEnd(),
+                // onEditingComplete: runOnChangeEnd,
                 label: Text("Max"),
               ),
             ),
