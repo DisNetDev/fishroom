@@ -7,6 +7,7 @@ import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -123,9 +124,25 @@ class _FishroomState extends State<Fishroom> {
                                     .state
                                     .settings
                                     .compactTankTile
-                                ? TankTileCompact(
-                                    tank: Tank(id: const Uuid().v4()))
-                                : TankTile(tank: Tank(id: const Uuid().v4())))
+                                ? Animate(
+                                    effects: [
+                                      FadeEffect(
+                                          delay: 100.ms,
+                                          duration: 500.ms,
+                                          curve: Curves.ease),
+                                    ],
+                                    child: TankTileCompact(
+                                        tank: Tank(id: const Uuid().v4())),
+                                  )
+                                : Animate(
+                                    effects: [
+                                        FadeEffect(
+                                            delay: 100.ms,
+                                            duration: 500.ms,
+                                            curve: Curves.ease),
+                                      ],
+                                    child: TankTile(
+                                        tank: Tank(id: const Uuid().v4()))))
                       ],
                     );
                   }
@@ -149,8 +166,24 @@ class _FishroomState extends State<Fishroom> {
                                         .state
                                         .settings
                                         .compactTankTile
-                                    ? TankTileCompact(tank: sortedTanks[index])
-                                    : TankTile(tank: sortedTanks[index]);
+                                    ? Animate(
+                                        effects: [
+                                            FadeEffect(
+                                                delay: ((index + 1) * 100).ms,
+                                                duration: 500.ms,
+                                                curve: Curves.ease),
+                                          ],
+                                        child: TankTileCompact(
+                                            tank: sortedTanks[index]))
+                                    : Animate(
+                                        effects: [
+                                            FadeEffect(
+                                                delay: ((index + 1) * 100).ms,
+                                                duration: 500.ms,
+                                                curve: Curves.ease),
+                                          ],
+                                        child:
+                                            TankTile(tank: sortedTanks[index]));
                               }
                             },
                             childCount: sortedTanks.length + 1,

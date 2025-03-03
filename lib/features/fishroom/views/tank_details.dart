@@ -6,6 +6,7 @@ import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -112,17 +113,42 @@ class _TankDetailsState extends State<TankDetails> {
                       delegate: SliverChildListDelegate([
                         ...List.generate(
                           _tank.inhabitants.length,
-                          (index) => InhabitantWidget(
-                            inhabitant: _tank.inhabitants[index],
-                            onAdd: _addInhabitant,
+                          (index) => Animate(
+                            effects: [
+                              SlideEffect(
+                                curve: Curves.ease,
+                                delay: Duration(milliseconds: 100 * index),
+                                begin: Offset(1, 0),
+                              )
+                            ],
+                            child: InhabitantWidget(
+                              inhabitant: _tank.inhabitants[index],
+                              onAdd: _addInhabitant,
+                            ),
                           ),
                         ),
-                        AddInhabitants(
-                          tank: _tank,
-                          chosenInhabitant: _addInhabitant,
+                        Animate(
+                          effects: [
+                            FadeEffect(
+                              curve: Curves.ease,
+                              delay: 100.ms,
+                            )
+                          ],
+                          child: AddInhabitants(
+                            tank: _tank,
+                            chosenInhabitant: _addInhabitant,
+                          ),
                         ),
                         if (appCubit.state.settings.parameters.isNotEmpty)
-                          LineGraphMain(data: readings.reversed.toList()),
+                          Animate(
+                              effects: [
+                                FadeEffect(
+                                  curve: Curves.ease,
+                                  delay: 100.ms,
+                                )
+                              ],
+                              child: LineGraphMain(
+                                  data: readings.reversed.toList())),
                         Gap(20),
                         if (loading)
                           for (var i = 0; i < 4; i++)
@@ -141,22 +167,30 @@ class _TankDetailsState extends State<TankDetails> {
                                         note: "Some Dummy Info"))),
                         ...List.generate(
                           readings.length,
-                          (index) => TankReadingListItem(
-                            onDismissed: () {
-                              try {
-                                final readingToRemove = readings[index];
-                                readings.removeAt(index);
-                                tanksCubit.deleteTankReading(readingToRemove);
-                              } catch (e) {
-                                if (context.mounted) {
-                                  showToast(context,
-                                      title: "Something went wrong.",
-                                      toastType: ToastType.error,
-                                      description: e.toString());
+                          (index) => Animate(
+                            effects: [
+                              FadeEffect(
+                                curve: Curves.ease,
+                                delay: Duration(milliseconds: 100 * index),
+                              )
+                            ],
+                            child: TankReadingListItem(
+                              onDismissed: () {
+                                try {
+                                  final readingToRemove = readings[index];
+                                  readings.removeAt(index);
+                                  tanksCubit.deleteTankReading(readingToRemove);
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    showToast(context,
+                                        title: "Something went wrong.",
+                                        toastType: ToastType.error,
+                                        description: e.toString());
+                                  }
                                 }
-                              }
-                            },
-                            reading: readings[index],
+                              },
+                              reading: readings[index],
+                            ),
                           ),
                         ),
                         const Gap(300),
