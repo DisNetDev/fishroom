@@ -223,6 +223,7 @@ class _LineGraphMainState extends State<LineGraphMain> {
       //CHART DATA
       lineBarsData: [
         LineChartBarData(
+          preventCurveOverShooting: true,
           spots: List.generate(
               filteredData.length,
               (index) => FlSpot(

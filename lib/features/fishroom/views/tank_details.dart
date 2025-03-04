@@ -1,4 +1,5 @@
 import 'package:fishroom/core/usecases/nav_push.dart';
+import 'package:fishroom/core/usecases/random_number.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
@@ -33,6 +34,7 @@ class TankDetails extends StatefulWidget {
 
 class _TankDetailsState extends State<TankDetails> {
   bool loading = false;
+  bool initialLoad = true;
 
   AppCubit get appCubit => context.read<AppCubit>();
   TanksCubit get tanksCubit => context.read<TanksCubit>();
@@ -45,6 +47,9 @@ class _TankDetailsState extends State<TankDetails> {
       setState(() => loading = true);
       await tanksCubit.getReadingsForTank(_tank);
       setState(() => loading = false);
+      Future.delayed(200.ms, () {
+        setState(() => initialLoad = false);
+      });
     }
   }
 
@@ -131,7 +136,7 @@ class _TankDetailsState extends State<TankDetails> {
                           effects: [
                             FadeEffect(
                               curve: Curves.ease,
-                              delay: 100.ms,
+                              delay: 200.ms,
                             )
                           ],
                           child: AddInhabitants(
@@ -169,10 +174,12 @@ class _TankDetailsState extends State<TankDetails> {
                           readings.length,
                           (index) => Animate(
                             effects: [
-                              FadeEffect(
-                                curve: Curves.ease,
-                                delay: Duration(milliseconds: 100 * index),
-                              )
+                              SlideEffect(
+                                  begin: Offset(1, 0),
+                                  curve: Curves.ease,
+                                  delay: Duration(
+                                      milliseconds:
+                                          initialLoad ? 100 * index : 250)),
                             ],
                             child: TankReadingListItem(
                               onDismissed: () {
