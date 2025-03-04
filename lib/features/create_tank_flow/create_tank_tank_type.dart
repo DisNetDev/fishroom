@@ -44,6 +44,7 @@ class _CreateTankTankTypeState extends State<CreateTankTankType> {
                 style: kHeading2TextStyle,
                 textAlign: TextAlign.center,
               ),
+              const Gap(20),
               TextInput(
                   initialValue: tank.type,
                   onEditingComplete: () => onComplete(),

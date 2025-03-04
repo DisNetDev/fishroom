@@ -1,6 +1,8 @@
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:gradient_borders/gradient_borders.dart';
 import 'package:gradient_borders/input_borders/gradient_underline_input_border.dart';
 
 class TextInput extends StatefulWidget {
@@ -94,7 +96,6 @@ class _TextInputState extends State<TextInput> {
                       errorStyle: kDateTimeTextStyle.copyWith(
                         color: Colors.deepOrange,
                       ),
-                      errorBorder: _errorGradient,
                       alignLabelWithHint: true,
                       labelStyle: kHintTextStyle,
                       label: widget.label,
@@ -102,9 +103,10 @@ class _TextInputState extends State<TextInput> {
                       suffix: widget.suffix,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 15),
-                      focusedBorder: _focusedGradient,
+                      focusedBorder: _focusedBorder,
                       enabledBorder: _enabledBorder,
                       focusedErrorBorder: _errorGradient,
+                      errorBorder: _errorGradient,
                       hintText: widget.hintText,
                       hintStyle: const TextStyle(color: Colors.grey),
                     ),
@@ -122,39 +124,28 @@ class _TextInputState extends State<TextInput> {
       ),
     );
   }
+
+  GradientOutlineInputBorder get _focusedBorder => GradientOutlineInputBorder(
+      borderRadius: BorderRadius.circular(50),
+      gradient: LinearGradient(colors: [
+        isDarkMode(context) ? kSecondaryColor : kPrimaryColor,
+        Colors.grey,
+        isDarkMode(context) ? kSecondaryColor : kPrimaryColor,
+      ]));
+
+  GradientOutlineInputBorder get _enabledBorder => GradientOutlineInputBorder(
+      borderRadius: BorderRadius.circular(50),
+      gradient: LinearGradient(colors: [
+        Colors.grey.shade300,
+        Colors.grey,
+        Colors.grey.shade300,
+      ]));
+
+  GradientOutlineInputBorder get _errorGradient => GradientOutlineInputBorder(
+      borderRadius: BorderRadius.circular(50),
+      gradient: LinearGradient(colors: [
+        Colors.red,
+        Colors.grey,
+        Colors.red,
+      ]));
 }
-
-GradientUnderlineInputBorder _errorGradient = GradientUnderlineInputBorder(
-  width: 0.5,
-  gradient: LinearGradient(
-    colors: [
-      Colors.transparent,
-      Colors.deepOrange,
-      Colors.deepOrange,
-      Colors.transparent,
-    ],
-  ),
-);
-
-GradientUnderlineInputBorder _focusedGradient = GradientUnderlineInputBorder(
-  width: 0.5,
-  gradient: LinearGradient(
-    colors: [
-      Colors.transparent,
-      kPrimaryColor,
-      kPrimaryColor,
-      Colors.transparent,
-    ],
-  ),
-);
-
-GradientUnderlineInputBorder _enabledBorder = GradientUnderlineInputBorder(
-  width: 0.5,
-  gradient: LinearGradient(
-    colors: [
-      Colors.transparent,
-      Colors.grey,
-      Colors.transparent,
-    ],
-  ),
-);

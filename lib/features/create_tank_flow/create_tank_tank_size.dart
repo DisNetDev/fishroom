@@ -46,6 +46,7 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
                 style: kHeading2TextStyle,
                 textAlign: TextAlign.center,
               ),
+              const Gap(20),
               TextInput(
                   initialValue: tank.measurementUnit,
                   hintText: "Gallons, Litres, Feet, Cm's, etc.",
@@ -58,6 +59,7 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
                 style: kHeading2TextStyle,
                 textAlign: TextAlign.center,
               ),
+              const Gap(20),
               TextInput(
                   initialValue: tank.size != null ? tank.size.toString() : "",
                   focusNode: sizeFocusNode,

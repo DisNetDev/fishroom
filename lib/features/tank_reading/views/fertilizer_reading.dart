@@ -63,6 +63,22 @@ class _FertilizerReadingState extends State<FertilizerReading> {
                 Gap(20),
                 for (Fertilizer fertilizer in fertilizers)
                   DosageWidget(
+                    onTap: () {
+                      setState(() {
+                        if (reading.dosages.any(
+                            (test) => test.fertilizer.id == fertilizer.id)) {
+                          reading.dosages.removeWhere(
+                              (test) => test.fertilizer.id == fertilizer.id);
+                        } else {
+                          reading.dosages.add(
+                            Dosage(
+                              amount: null,
+                              fertilizer: fertilizer,
+                            ),
+                          );
+                        }
+                      });
+                    },
                     fertilizer: fertilizer,
                     enabled: reading.dosages
                         .any((test) => test.fertilizer.id == fertilizer.id),

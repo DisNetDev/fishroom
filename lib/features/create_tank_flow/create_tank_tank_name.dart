@@ -73,6 +73,7 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
                   style: kHeading2TextStyle,
                   textAlign: TextAlign.center,
                 ),
+                const Gap(20),
                 TextInput(
                     initialValue: tank.name,
                     focusNode: nameFocusNode,
