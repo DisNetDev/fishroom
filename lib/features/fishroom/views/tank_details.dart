@@ -1,5 +1,4 @@
 import 'package:fishroom/core/usecases/nav_push.dart';
-import 'package:fishroom/core/usecases/random_number.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';

@@ -12,6 +12,7 @@ class Tank {
   String? imageUrl;
   List<Inhabitant> inhabitants;
   List<Target> targets;
+  List<String> achievementIds;
 
   Tank(
       {required this.id,
@@ -24,7 +25,8 @@ class Tank {
       this.imageLocalPath,
       this.imageUrl,
       this.targets = const [],
-      this.inhabitants = const []});
+      this.inhabitants = const [],
+      this.achievementIds = const []});
 
   Map<String, dynamic> toJson() {
     return {
@@ -39,27 +41,28 @@ class Tank {
       'image_local_path': imageLocalPath,
       'targets': targets.map((e) => e.toJson()).toList(),
       'inhabitants': inhabitants.map((e) => e.toJson()).toList(),
+      'achievement_ids': achievementIds
     };
   }
 
   factory Tank.fromJson(Map<String, dynamic> json) {
     return Tank(
-      id: json['id'],
-      name: json['name'],
-      createdAt: json['created_at'],
-      ownerId: json['owner_id'],
-      type: json['tank_type'],
-      size: json['tank_size'],
-      measurementUnit: json['tank_measurement'],
-      imageUrl: json['image_url'],
-      imageLocalPath: json['image_local_path'],
-      targets: (json['targets'] as List<dynamic>)
-          .map((e) => Target.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      inhabitants: (json['inhabitants'] as List<dynamic>)
-          .map((e) => Inhabitant.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+        id: json['id'],
+        name: json['name'],
+        createdAt: json['created_at'],
+        ownerId: json['owner_id'],
+        type: json['tank_type'],
+        size: json['tank_size'],
+        measurementUnit: json['tank_measurement'],
+        imageUrl: json['image_url'],
+        imageLocalPath: json['image_local_path'],
+        targets: (json['targets'] as List<dynamic>)
+            .map((e) => Target.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        inhabitants: (json['inhabitants'] as List<dynamic>)
+            .map((e) => Inhabitant.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        achievementIds: json["achievement_ids"]);
   }
 
   Tank copyWith({
@@ -74,19 +77,22 @@ class Tank {
     String? imageUrl,
     List<Inhabitant>? inhabitants,
     List<Target>? targets,
+    List<String>? achievementIds,
   }) {
     return Tank(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        createdAt: createdAt ?? this.createdAt,
-        ownerId: ownerId ?? this.ownerId,
-        type: type ?? this.type,
-        size: size ?? this.size,
-        measurementUnit: measurementUnit ?? this.measurementUnit,
-        imageLocalPath: imageLocalPath ?? this.imageLocalPath,
-        imageUrl: imageUrl ?? this.imageUrl,
-        inhabitants: inhabitants ?? this.inhabitants,
-        targets: targets ?? this.targets);
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createdAt: createdAt ?? this.createdAt,
+      ownerId: ownerId ?? this.ownerId,
+      type: type ?? this.type,
+      size: size ?? this.size,
+      measurementUnit: measurementUnit ?? this.measurementUnit,
+      imageLocalPath: imageLocalPath ?? this.imageLocalPath,
+      imageUrl: imageUrl ?? this.imageUrl,
+      inhabitants: inhabitants ?? this.inhabitants,
+      targets: targets ?? this.targets,
+      achievementIds: achievementIds ?? this.achievementIds,
+    );
   }
 }
 
