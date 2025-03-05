@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'dart:io'; // Import the dart:io library
@@ -178,6 +179,16 @@ class _TankTileState extends State<TankTile> {
               ),
             ),
           ),
+          if (widget.tank.achievementIds.isNotEmpty)
+            Positioned(
+                left: 22,
+                top: 16,
+                child: Row(
+                  children: [
+                    Icon(Symbols.social_leaderboard_rounded),
+                    Text(widget.tank.achievementIds.length.toString())
+                  ],
+                )),
           Builder(
             builder: (context) {
               int totalFishCount = 0;

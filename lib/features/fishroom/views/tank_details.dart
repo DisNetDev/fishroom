@@ -2,16 +2,20 @@ import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
+import 'package:fishroom/features/achievements/views/achievements.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/fishroom/usecases/get_reading_streak.dart';
 import 'package:fishroom/features/fishroom/widgets/counter_widget.dart';
+import 'package:fishroom/features/tank_inhabitants/views/tank_inhabitants.dart';
 import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants.dart';
@@ -118,53 +122,39 @@ class _TankDetailsState extends State<TankDetails> {
 
                     return SliverList(
                       delegate: SliverChildListDelegate([
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: CounterWidget(
-                                heading: "Current Streak",
-                                counter: countDailyStreak(
-                                    widget.tank, tanksCubit.state.readings),
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 10,
+                            children: [
+                              Expanded(
+                                child: CounterWidget(
+                                  heading: "Current Streak",
+                                  counter: countDailyStreak(
+                                      widget.tank, tanksCubit.state.readings),
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: CounterWidget(
-                                  heading: "Inhabitants",
-                                  counter: widget.tank.inhabitants.fold(
-                                      0,
-                                      (previousValue, element) =>
-                                          previousValue +
-                                          (element.count ?? 0))),
-                            )
-                          ],
-                        ),
-                        ...List.generate(
-                          _tank.inhabitants.length,
-                          (index) => Animate(
-                            effects: [
-                              SlideEffect(
-                                curve: Curves.ease,
-                                delay: Duration(milliseconds: 100 * index),
-                                begin: Offset(1, 0),
+                              Expanded(
+                                child: CounterWidget(
+                                    heading: "Inhabitants",
+                                    onTap: () => navPush(context,
+                                        TankInhabitants(tank: widget.tank)),
+                                    counter: widget.tank.inhabitants.fold(
+                                        0,
+                                        (previousValue, element) =>
+                                            previousValue +
+                                            (element.count ?? 0))),
+                              ),
+                              Expanded(
+                                child: CounterWidget(
+                                  heading: "Achievements",
+                                  counter: widget.tank.achievementIds.length,
+                                  onTap: () => navPush(
+                                      context, Achievements(tank: _tank)),
+                                ),
                               )
                             ],
-                            child: InhabitantWidget(
-                              inhabitant: _tank.inhabitants[index],
-                              onAdd: _addInhabitant,
-                            ),
-                          ),
-                        ),
-                        Animate(
-                          effects: [
-                            FadeEffect(
-                              curve: Curves.ease,
-                              delay: 200.ms,
-                            )
-                          ],
-                          child: AddInhabitants(
-                            tank: _tank,
-                            chosenInhabitant: _addInhabitant,
                           ),
                         ),
                         if (appCubit.state.settings.parameters.isNotEmpty)
@@ -234,25 +224,5 @@ class _TankDetailsState extends State<TankDetails> {
         ],
       ),
     );
-  }
-
-  void _addInhabitant(Inhabitant inhabitant) {
-    Tank tank = _tank.copyWith(
-      inhabitants: [
-        inhabitant,
-        ..._tank.inhabitants.where(
-            (existingInhabitant) => existingInhabitant.id != inhabitant.id),
-      ],
-    );
-    tank.inhabitants.removeWhere((inhabitant) => inhabitant.count == 0);
-
-    try {
-      tanksCubit.updateTank(tank, null);
-    } catch (e) {
-      showToast(context,
-          title: "Error adding inhabitant...",
-          description: e.toString(),
-          toastType: ToastType.error);
-    }
   }
 }

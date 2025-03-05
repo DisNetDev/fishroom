@@ -78,6 +78,10 @@ class TanksCubit extends HydratedCubit<TanksState> {
     }
   }
 
+  void rebuildUI() {
+    emit(state);
+  }
+
   Future<void> getTanks() async {
     try {
       fishLog("Getting tanks...");
