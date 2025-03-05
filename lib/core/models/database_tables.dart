@@ -90,6 +90,18 @@ class AppDefaults extends DatabaseTables {
   static const DBColumn _value = DBColumn('value');
 }
 
+class Achievements extends DatabaseTables {
+  Achievements() : super('achievements');
+
+  String get id => _id.columnName;
+  String get name => _name.columnName;
+  String get description => _description.columnName;
+
+  static const DBColumn _id = DBColumn("id");
+  static const DBColumn _name = DBColumn("name");
+  static const DBColumn _description = DBColumn("description");
+}
+
 class BugReports extends DatabaseTables {
   BugReports() : super('bug_reports');
 
@@ -121,4 +133,5 @@ class Table {
   static final appDefaults = AppDefaults();
   static final bugReports = BugReports();
   static final fish = Fish();
+  static final achievements = Achievements();
 }

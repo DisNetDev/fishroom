@@ -62,7 +62,8 @@ class Tank {
         inhabitants: (json['inhabitants'] as List<dynamic>)
             .map((e) => Inhabitant.fromJson(e as Map<String, dynamic>))
             .toList(),
-        achievementIds: json["achievement_ids"]);
+        achievementIds:
+            json["achievement_ids"] != null ? json['achievements_ids'] : []);
   }
 
   Tank copyWith({

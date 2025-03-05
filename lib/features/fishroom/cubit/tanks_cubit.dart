@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/log.dart';
+import 'package:fishroom/features/fishroom/usecases/get_reading_streak.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
+import '../../achievements/models/achievement.dart';
 
 part 'tanks_state.dart';
 
@@ -98,6 +102,51 @@ class TanksCubit extends HydratedCubit<TanksState> {
     }
   }
 
+  Future<List<Achievement>> getAvailableAchievements() async {
+    List<Achievement> availableAchievements = [];
+
+    try {
+      final response = await supabaseRepository.fetchAll(
+          tableName: Table.achievements.tableName);
+
+      if (response != null) {
+        for (Map<String, dynamic> json in response) {
+          availableAchievements.add(Achievement.fromJson(json));
+        }
+      }
+
+      return availableAchievements;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Achievement>> checkForAchievement(
+      Tank tank, List<TankReading> readings) async {
+    List<Achievement> achievementsToAdd = [];
+    List<Achievement> availableAchievements = await getAvailableAchievements();
+
+    int streak = countDailyStreak(tank, readings);
+
+    if (streak >= 7) {
+      tank.achievementIds.add(availableAchievements
+          .firstWhere((e) => e.name.toLowerCase() == "weekly tester")
+          .id);
+    }
+    if (streak >= 30) {
+      tank.achievementIds.add(availableAchievements
+          .firstWhere((e) => e.name.toLowerCase() == "monthly tester")
+          .id);
+    }
+    if (streak >= 365) {
+      tank.achievementIds.add(availableAchievements
+          .firstWhere((e) => e.name.toLowerCase() == "yearly tester")
+          .id);
+    }
+
+    return achievementsToAdd;
+  }
+
   Future<void> getReadingsForTank(Tank tank) async {
     try {
       fishLog("Getting Tank Readings...");
@@ -147,6 +196,20 @@ class TanksCubit extends HydratedCubit<TanksState> {
       readings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       emit(state.copyWith(readings: readings));
+
+      Tank? selectedTank =
+          state.tanks.firstWhereOrNull((e) => e.id == reading.tankId);
+
+      if (selectedTank != null) {
+        List<Achievement> achievementsToAdd =
+            await checkForAchievement(selectedTank, readings);
+        List<String> achievementIds = [...selectedTank.achievementIds];
+        for (Achievement achievement in achievementsToAdd) {
+          achievementIds.add(achievement.id);
+        }
+        await updateTank(
+            selectedTank.copyWith(achievementIds: achievementIds), image);
+      }
     } catch (e) {
       rethrow;
     }

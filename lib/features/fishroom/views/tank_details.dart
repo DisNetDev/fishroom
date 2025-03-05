@@ -4,11 +4,14 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
+import 'package:fishroom/features/fishroom/usecases/get_reading_streak.dart';
+import 'package:fishroom/features/fishroom/widgets/counter_widget.dart';
 import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:gradient_borders/gradient_borders.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants.dart';
@@ -115,6 +118,27 @@ class _TankDetailsState extends State<TankDetails> {
 
                     return SliverList(
                       delegate: SliverChildListDelegate([
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: CounterWidget(
+                                heading: "Current Streak",
+                                counter: countDailyStreak(
+                                    widget.tank, tanksCubit.state.readings),
+                              ),
+                            ),
+                            Expanded(
+                              child: CounterWidget(
+                                  heading: "Inhabitants",
+                                  counter: widget.tank.inhabitants.fold(
+                                      0,
+                                      (previousValue, element) =>
+                                          previousValue +
+                                          (element.count ?? 0))),
+                            )
+                          ],
+                        ),
                         ...List.generate(
                           _tank.inhabitants.length,
                           (index) => Animate(
