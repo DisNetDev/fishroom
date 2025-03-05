@@ -207,6 +207,7 @@ class TanksCubit extends HydratedCubit<TanksState> {
         for (Achievement achievement in achievementsToAdd) {
           achievementIds.add(achievement.id);
         }
+        achievementIds.toSet();
         await updateTank(
             selectedTank.copyWith(achievementIds: achievementIds), image);
       }
