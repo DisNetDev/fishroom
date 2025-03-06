@@ -9,7 +9,8 @@ import 'get_middle_value.dart';
 
 Gradient generateGradient(
     BuildContext context, Target target, Parameter parameter) {
-  Color firstColor = isDarkMode(context) ? Colors.black : Colors.grey.shade100;
+  Color firstColor =
+      isDarkMode(context) ? darkmodeBackgroundColor : lightmodeBackgroundColor;
   Color secondColor = isDarkMode(context) ? kSecondaryColor : kPrimaryColor;
 
   LinearGradient baseGradient = LinearGradient(

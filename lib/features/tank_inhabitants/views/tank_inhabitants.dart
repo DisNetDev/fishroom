@@ -34,6 +34,7 @@ class _TankInhabitantsState extends State<TankInhabitants> {
       children: [
         CustomBackground(),
         Scaffold(
+            backgroundColor: Colors.transparent,
             appBar: RootSliverAppBar(
               title: "Inhabitants",
               implyLeading: true,

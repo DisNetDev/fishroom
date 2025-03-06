@@ -1,3 +1,4 @@
+import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../usecases/is_dark_mode.dart';
@@ -11,7 +12,9 @@ class CustomBackground extends StatelessWidget {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: isDarkMode(context) ? Colors.black : Colors.white,
+        color: isDarkMode(context)
+            ? darkmodeBackgroundColor
+            : lightmodeBackgroundColor,
         // gradient: LinearGradient(
         //   begin: Alignment.topLeft,
         //   end: Alignment.bottomRight,

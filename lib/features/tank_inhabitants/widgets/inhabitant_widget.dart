@@ -2,10 +2,9 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/capitalize_each_word.dart';
 import 'package:fishroom/features/tank_inhabitants/widgets/inhabitant_details.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_borders/gradient_borders.dart';
+import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../../core/usecases/is_dark_mode.dart';
 import '../models/inhabitant.dart';
 
 class InhabitantWidget extends StatelessWidget {
@@ -31,14 +30,10 @@ class InhabitantWidget extends StatelessWidget {
       child: Skeletonizer(
         enabled: loading,
         child: Container(
-          margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
           padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
           decoration: BoxDecoration(
-            color:
-                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.00 : 0.1),
-            borderRadius: BorderRadius.circular(8),
-            border: GradientBoxBorder(gradient: kPrimaryGradient),
-          ),
+              border:
+                  Border(bottom: BorderSide(color: Colors.grey, width: 0.5))),
           child: Row(
             children: [
               Expanded(
@@ -64,6 +59,7 @@ class InhabitantWidget extends StatelessWidget {
                   ],
                 ),
               ),
+              Gap(20),
               if (inhabitant.count != null && inhabitant.count! > 0)
                 Text(
                   "x${inhabitant.count}",

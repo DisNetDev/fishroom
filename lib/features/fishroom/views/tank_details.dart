@@ -122,52 +122,36 @@ class _TankDetailsState extends State<TankDetails> {
 
                     return SliverList(
                       delegate: SliverChildListDelegate([
-                        Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.vertical(
-                                  bottom: Radius.circular(20)),
-                              boxShadow: [
-                                BoxShadow(
-                                    offset: Offset(0, 0),
-                                    color: Colors.black,
-                                    blurRadius: 2)
-                              ],
-                              gradient: LinearGradient(colors: [
-                                const Color.fromARGB(58, 0, 198, 253),
-                                Colors.transparent
-                              ])),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: CounterWidget(
-                                  heading: "Current Streak",
-                                  counter: countDailyStreak(
-                                      widget.tank, tanksCubit.state.readings),
-                                ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: CounterWidget(
+                                heading: "Current Streak",
+                                counter: countDailyStreak(
+                                    widget.tank, tanksCubit.state.readings),
                               ),
-                              Expanded(
-                                child: CounterWidget(
-                                    heading: "Inhabitants",
-                                    onTap: () => navPush(context,
-                                        TankInhabitants(tank: widget.tank)),
-                                    counter: widget.tank.inhabitants.fold(
-                                        0,
-                                        (previousValue, element) =>
-                                            previousValue +
-                                            (element.count ?? 0))),
+                            ),
+                            Expanded(
+                              child: CounterWidget(
+                                  heading: "Inhabitants",
+                                  onTap: () => navPush(context,
+                                      TankInhabitants(tank: widget.tank)),
+                                  counter: widget.tank.inhabitants.fold(
+                                      0,
+                                      (previousValue, element) =>
+                                          previousValue +
+                                          (element.count ?? 0))),
+                            ),
+                            Expanded(
+                              child: CounterWidget(
+                                heading: "Achievements",
+                                counter: widget.tank.achievementIds.length,
+                                onTap: () =>
+                                    navPush(context, Achievements(tank: _tank)),
                               ),
-                              Expanded(
-                                child: CounterWidget(
-                                  heading: "Achievements",
-                                  counter: widget.tank.achievementIds.length,
-                                  onTap: () => navPush(
-                                      context, Achievements(tank: _tank)),
-                                ),
-                              )
-                            ],
-                          ),
+                            )
+                          ],
                         ),
                         if (appCubit.state.settings.parameters.isNotEmpty)
                           Animate(

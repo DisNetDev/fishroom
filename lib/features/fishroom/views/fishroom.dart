@@ -49,6 +49,8 @@ class _FishroomState extends State<Fishroom> {
         );
       }
     }
+
+    Future.delayed(500.ms);
     setState(() => loading = false);
     if (context.read<TanksCubit>().state.tanks.isEmpty &&
         !context.read<AppCubit>().state.appLoaded) {

@@ -6,7 +6,6 @@ import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -62,7 +61,7 @@ class _AchievementsState extends State<Achievements> {
         CustomBackground(),
         Scaffold(
           appBar: RootSliverAppBar(
-            title: "Inhabitants",
+            title: "Achievements",
             implyLeading: true,
           ),
           body: loading

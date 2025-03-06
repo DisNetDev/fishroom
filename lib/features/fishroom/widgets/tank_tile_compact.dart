@@ -54,8 +54,6 @@ class _TankTileCompactState extends State<TankTileCompact> {
 
   @override
   Widget build(BuildContext context) {
-    double borderRadius = 16;
-
     String tankTypeNonNullable = widget.tank.type ?? "Tank Type";
     if (tankTypeNonNullable == "") {
       tankTypeNonNullable = "Tank Type";
@@ -75,42 +73,38 @@ class _TankTileCompactState extends State<TankTileCompact> {
             MaterialContainer(
               width: double.infinity,
               height: 75,
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: const EdgeInsets.symmetric(vertical: 5),
               decoration: BoxDecoration(
                 color: !isDarkMode(context)
                     ? const Color.fromARGB(255, 255, 255, 255)
                     : Colors.black,
-                borderRadius: BorderRadius.circular(borderRadius),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(borderRadius),
-                child: Skeletonizer(
-                  enabled: loadingImage,
-                  child: Skeleton.replace(
-                    child: widget.tank.imageLocalPath != null &&
-                            File(widget.tank.imageLocalPath!)
-                                .existsSync() // Check if the local image path is valid
-                        ? Image(
-                            image: FileImage(File(widget.tank.imageLocalPath!)),
-                            fit: BoxFit.cover,
-                          )
-                        : CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: widget.tank.imageUrl ?? "",
-                            errorWidget: (context, url, error) {
-                              return const Center(child: SizedBox());
-                            },
-                            placeholder: (context, url) =>
-                                const Center(child: Loader()),
-                          ),
-                  ),
+              child: Skeletonizer(
+                enabled: loadingImage,
+                child: Skeleton.replace(
+                  child: widget.tank.imageLocalPath != null &&
+                          File(widget.tank.imageLocalPath!)
+                              .existsSync() // Check if the local image path is valid
+                      ? Image(
+                          image: FileImage(File(widget.tank.imageLocalPath!)),
+                          fit: BoxFit.cover,
+                        )
+                      : CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: widget.tank.imageUrl ?? "",
+                          errorWidget: (context, url, error) {
+                            return const Center(child: SizedBox());
+                          },
+                          placeholder: (context, url) =>
+                              const Center(child: Loader()),
+                        ),
                 ),
               ),
             ),
           Skeleton.replace(
             child: Container(
               height: 75,
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: const EdgeInsets.symmetric(vertical: 5),
               padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
               decoration: BoxDecoration(
                 border: widget.tank.imageUrl != null
@@ -123,7 +117,6 @@ class _TankTileCompactState extends State<TankTileCompact> {
                         colors: [Colors.transparent, Colors.black],
                       )
                     : kPrimaryGradient,
-                borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
