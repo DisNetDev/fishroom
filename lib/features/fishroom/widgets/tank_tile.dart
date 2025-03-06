@@ -154,8 +154,10 @@ class _TankTileState extends State<TankTile> {
                       textAlign: TextAlign.end,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: widget.tank.imageUrl != null
+                            ? Colors.white
+                            : Colors.black87,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -168,8 +170,10 @@ class _TankTileState extends State<TankTile> {
                       textAlign: TextAlign.end,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: widget.tank.imageUrl != null
+                            ? Colors.white
+                            : Colors.black87,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -185,8 +189,13 @@ class _TankTileState extends State<TankTile> {
                 top: 16,
                 child: Row(
                   children: [
-                    Icon(Symbols.social_leaderboard_rounded),
-                    Text(widget.tank.achievementIds.length.toString())
+                    Icon(Symbols.social_leaderboard_rounded,
+                        color: Colors.white),
+                    Gap(5),
+                    Text(
+                      widget.tank.achievementIds.length.toString(),
+                      style: kPlainTextStyle.copyWith(color: Colors.white),
+                    )
                   ],
                 )),
           Builder(
@@ -206,20 +215,27 @@ class _TankTileState extends State<TankTile> {
                 bottom: widget.tank.imageUrl == null ? 16 : null,
                 left: widget.tank.imageUrl == null ? 22 : null,
                 child: SimpleShadow(
-                  opacity: 0.5,
+                  opacity: widget.tank.imageUrl == null ? 0.0 : 0.5,
                   child: Row(
                     children: [
                       SvgPicture.asset(
                         "assets/icons/fish.svg",
-                        colorFilter: const ColorFilter.mode(
-                            Colors.white, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                            widget.tank.imageUrl == null && !isDarkMode(context)
+                                ? Colors.black87
+                                : Colors.white,
+                            BlendMode.srcIn),
                         height: 14,
                       ),
                       Gap(8),
                       Text(
                         "x${totalFishCount.toString()}",
                         style: kHeading1TextStyle.copyWith(
-                            color: Colors.white, fontSize: 12),
+                            color: widget.tank.imageUrl == null &&
+                                    !isDarkMode(context)
+                                ? Colors.black87
+                                : Colors.white,
+                            fontSize: 12),
                       ),
                     ],
                   ),

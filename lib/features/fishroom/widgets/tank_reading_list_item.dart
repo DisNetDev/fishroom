@@ -61,10 +61,9 @@ class _TankReadingListItemState extends State<TankReadingListItem> {
         direction: DismissDirection.endToStart,
         background: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: const GradientBoxBorder(gradient: kErrorGradient)),
+              border: const GradientBoxBorder(
+                  width: 0.5, gradient: kErrorGradient)),
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -112,20 +111,18 @@ class _ClosedReadingState extends State<ClosedReading> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           decoration: BoxDecoration(
-            border: const GradientBoxBorder(gradient: kPrimaryGradient),
-            borderRadius: BorderRadius.circular(10),
-            color:
-                Colors.grey.withValues(alpha: isDarkMode(context) ? 0.00 : 0.1),
-          ),
+              border: Border(
+                  bottom: BorderSide(
+                      color: const Color.fromARGB(74, 158, 158, 158)))),
           child: Column(
             children: [
               Container(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -164,12 +161,6 @@ class _ClosedReadingState extends State<ClosedReading> {
                   child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 5, vertical: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: open
-                            ? null
-                            : const BorderRadius.vertical(
-                                bottom: Radius.circular(10)),
-                      ),
                       child: Row(
                         children: [
                           const Icon(
@@ -205,14 +196,10 @@ class _ClosedReadingState extends State<ClosedReading> {
               //     ),
               //   ),
               if (open && widget.reading.imageUrl != null)
-                ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(10)),
-                    child: CachedNetworkImage(
-                        placeholder: (context, url) => const AspectRatio(
-                            aspectRatio: 16 / 9,
-                            child: SizedBox(child: Loader())),
-                        imageUrl: widget.reading.imageUrl!))
+                CachedNetworkImage(
+                    placeholder: (context, url) => const AspectRatio(
+                        aspectRatio: 16 / 9, child: SizedBox(child: Loader())),
+                    imageUrl: widget.reading.imageUrl!)
             ],
           ),
         ),

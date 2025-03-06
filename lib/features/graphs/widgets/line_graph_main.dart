@@ -279,6 +279,8 @@ class _LineGraphMainState extends State<LineGraphMain> {
     )
       ..lineBarsData.add(
         LineChartBarData(
+          preventCurveOverShooting: true,
+
           dotData: const FlDotData(show: false),
           show: !(targetMinValue <
               getLowestValue(
@@ -289,13 +291,16 @@ class _LineGraphMainState extends State<LineGraphMain> {
                 targetMinValue), // End point
           ],
           isCurved: false,
-          color: Colors.red.withAlpha(100), // Color for the target line
+          color: targetMinValue < getLowestValue(filteredData, parameterFilter!)
+              ? Colors.transparent
+              : Colors.red.withAlpha(100), // Color for the target line
           barWidth: 1,
           belowBarData: BarAreaData(show: false),
         ),
       )
       ..lineBarsData.add(
         LineChartBarData(
+          preventCurveOverShooting: true,
           dotData: const FlDotData(show: false),
           show: !(targetMaxValue >
               getHighestValue(
@@ -306,7 +311,9 @@ class _LineGraphMainState extends State<LineGraphMain> {
                 targetMaxValue), // End point
           ],
           isCurved: false,
-          color: Colors.red.withAlpha(100), // Color for the target line
+          color: targetMaxValue < getLowestValue(filteredData, parameterFilter!)
+              ? Colors.transparent
+              : Colors.red.withAlpha(100), // Color for the target line
           barWidth: 1,
           belowBarData: BarAreaData(show: false),
         ),

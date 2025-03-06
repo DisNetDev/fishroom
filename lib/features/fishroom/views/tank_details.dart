@@ -122,11 +122,23 @@ class _TankDetailsState extends State<TankDetails> {
 
                     return SliverList(
                       delegate: SliverChildListDelegate([
-                        Padding(
-                          padding: EdgeInsets.all(10),
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.vertical(
+                                  bottom: Radius.circular(20)),
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: Offset(0, 0),
+                                    color: Colors.black,
+                                    blurRadius: 2)
+                              ],
+                              gradient: LinearGradient(colors: [
+                                const Color.fromARGB(58, 0, 198, 253),
+                                Colors.transparent
+                              ])),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 10,
                             children: [
                               Expanded(
                                 child: CounterWidget(
@@ -187,12 +199,11 @@ class _TankDetailsState extends State<TankDetails> {
                           readings.length,
                           (index) => Animate(
                             effects: [
-                              SlideEffect(
-                                  begin: Offset(1, 0),
+                              FadeEffect(
                                   curve: Curves.ease,
                                   delay: Duration(
                                       milliseconds:
-                                          initialLoad ? 100 * index : 250)),
+                                          initialLoad ? (100 * index) : 100)),
                             ],
                             child: TankReadingListItem(
                               onDismissed: () {

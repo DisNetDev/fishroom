@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/gradient_borders.dart';
 
 import '../../../core/constants.dart';
-import '../../../core/usecases/is_dark_mode.dart';
 
 class CounterWidget extends StatelessWidget {
   const CounterWidget(
@@ -24,11 +22,6 @@ class CounterWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color:
-                isDarkMode(context) ? Colors.transparent : Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(20),
-            border: GradientBoxBorder(gradient: kPrimaryGradient)),
         child: Column(
           children: [
             Text(
@@ -38,9 +31,9 @@ class CounterWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: kHeading2TextStyle,
             ),
-            Gap(10),
+            Gap(5),
             if (icon != null) icon!,
-            Gap(10),
+            Gap(5),
             Text(
               counter.toString(),
               style: kHeadingTextStyle,
