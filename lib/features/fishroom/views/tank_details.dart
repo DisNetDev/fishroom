@@ -12,10 +12,7 @@ import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/gradient_borders.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants.dart';
@@ -23,9 +20,6 @@ import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
 import '../../graphs/widgets/line_graph_main.dart';
-import '../../tank_inhabitants/models/inhabitant.dart';
-import '../../tank_inhabitants/widgets/add_inhabitants.dart';
-import '../../tank_inhabitants/widgets/inhabitant_widget.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_reading_list_item.dart';
 
@@ -53,10 +47,9 @@ class _TankDetailsState extends State<TankDetails> {
       setState(() => loading = true);
       await tanksCubit.getReadingsForTank(_tank);
       setState(() => loading = false);
-      Future.delayed(200.ms, () {
-        setState(() => initialLoad = false);
-      });
+      Future.delayed(200.ms, () {});
     }
+    setState(() => initialLoad = false);
   }
 
   @override

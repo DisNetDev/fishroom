@@ -145,7 +145,9 @@ class _TankTileState extends State<TankTile> {
                       style: TextStyle(
                         color: widget.tank.imageUrl != null
                             ? Colors.white
-                            : Colors.black87,
+                            : isDarkMode(context)
+                                ? Colors.white
+                                : Colors.black87,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -161,7 +163,9 @@ class _TankTileState extends State<TankTile> {
                       style: TextStyle(
                         color: widget.tank.imageUrl != null
                             ? Colors.white
-                            : Colors.black87,
+                            : isDarkMode(context)
+                                ? Colors.white
+                                : Colors.black87,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
