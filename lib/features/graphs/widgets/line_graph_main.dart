@@ -35,7 +35,11 @@ class _LineGraphMainState extends State<LineGraphMain> {
   Target? get target => tank?.targets
       .firstWhereOrNull((test) => test.paramID == parameterFilter?.id);
 
-  List<Color> gradientColors = [kPrimaryColor, kSecondaryColor];
+  List<Color> lineGradientColors = [kPrimaryColor, kSecondaryColor];
+  List<Color> gradientColors = [
+    kPrimaryColor.withValues(alpha: 1),
+    kSecondaryColor.withValues(alpha: 0.01),
+  ];
 
   bool showAvg = false;
 
@@ -238,7 +242,7 @@ class _LineGraphMainState extends State<LineGraphMain> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: gradientColors.reversed.toList(),
+            colors: lineGradientColors.reversed.toList(),
           ),
           barWidth: 2,
           isStrokeCapRound: true,
@@ -248,12 +252,9 @@ class _LineGraphMainState extends State<LineGraphMain> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: gradientColors
-                  .map((color) => color.withValues(alpha: 0.3))
-                  .toList(),
-            ),
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: gradientColors),
           ),
         ),
       ],
