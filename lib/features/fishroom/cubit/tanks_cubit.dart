@@ -133,19 +133,16 @@ class TanksCubit extends HydratedCubit<TanksState> {
     int streak = countDailyStreak(tank, readings);
 
     if (streak >= 7) {
-      tank.achievementIds.add(availableAchievements
-          .firstWhere((e) => e.name.toLowerCase() == "weekly tester")
-          .id);
+      achievementsToAdd.add(availableAchievements
+          .firstWhere((e) => e.name.toLowerCase() == "average cycler"));
     }
     if (streak >= 30) {
-      tank.achievementIds.add(availableAchievements
-          .firstWhere((e) => e.name.toLowerCase() == "monthly tester")
-          .id);
+      achievementsToAdd.add(availableAchievements
+          .firstWhere((e) => e.name.toLowerCase() == "dedicated"));
     }
     if (streak >= 365) {
-      tank.achievementIds.add(availableAchievements
-          .firstWhere((e) => e.name.toLowerCase() == "yearly tester")
-          .id);
+      achievementsToAdd.add(availableAchievements
+          .firstWhere((e) => e.name.toLowerCase() == "testing machine"));
     }
 
     return achievementsToAdd;
@@ -273,5 +270,11 @@ class TanksCubit extends HydratedCubit<TanksState> {
 
   void clearCubit() {
     emit(const TanksState(tanks: [], error: false, readings: []));
+  }
+
+  Future<void> getTankStreak(Tank tank) async {
+    final data = await supabaseRepository.runFunction(
+        "calculate_longest_daily_streak", {"tank_id_input": tank.id});
+    fishLog(data.toString());
   }
 }

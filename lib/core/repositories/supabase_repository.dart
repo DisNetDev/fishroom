@@ -222,6 +222,12 @@ class SupabaseRepository {
     }
   }
 
+  Future<dynamic> runFunction(
+      String functionName, Map<String, dynamic> params) async {
+    final data = await supabase.rpc(functionName, params: params);
+    return data;
+  }
+
   Future<UserSession> nativeGoogleSignIn() async {
     try {
       final GoogleSignIn googleSignIn =

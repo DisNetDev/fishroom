@@ -1,10 +1,13 @@
 import 'package:collection/collection.dart';
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
+import 'package:fishroom/features/achievements/views/congrats.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -14,6 +17,7 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/usecases/show_toast.dart';
 import '../models/achievement.dart';
+import '../widgets/achievement_card.dart';
 
 class Achievements extends StatefulWidget {
   const Achievements({super.key, required this.tank});
@@ -78,7 +82,7 @@ class _AchievementsState extends State<Achievements> {
                           Gap(20),
                           ...List.generate(
                               achievements.length,
-                              (index) => _AchievementWidget(
+                              (index) => AchievementCard(
                                   achievement: achievements[index],
                                   enabled: _tank.achievementIds.any((test) =>
                                       test == achievements[index].id))),
@@ -90,53 +94,6 @@ class _AchievementsState extends State<Achievements> {
                 ),
         ),
       ],
-    );
-  }
-}
-
-class _AchievementWidget extends StatelessWidget {
-  const _AchievementWidget({required this.achievement, required this.enabled});
-
-  final Achievement achievement;
-  final bool enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: GradientBoxBorder(
-              gradient: enabled ? kSuccessGradient : kDisabledGradient),
-          color:
-              isDarkMode(context) ? Colors.transparent : Colors.grey.shade100),
-      child: Row(
-        children: [
-          Icon(
-            Symbols.social_leaderboard_rounded,
-            color: enabled ? null : Colors.grey,
-          ),
-          Gap(10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  achievement.name,
-                  style: kHeading1TextStyle.copyWith(
-                      color: enabled ? null : Colors.grey),
-                ),
-                Text(
-                  achievement.description,
-                  style: kPlainTextStyle.copyWith(
-                      color: enabled ? null : Colors.grey),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

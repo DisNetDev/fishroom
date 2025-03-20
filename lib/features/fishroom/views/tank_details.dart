@@ -56,6 +56,7 @@ class _TankDetailsState extends State<TankDetails> {
   void initState() {
     _tank = widget.tank;
     getTankReadings();
+    tanksCubit.getTankStreak(_tank);
     super.initState();
   }
 
