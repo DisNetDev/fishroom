@@ -5,7 +5,7 @@ import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/achievements/views/achievements.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
-import 'package:fishroom/features/fishroom/usecases/get_reading_streak.dart';
+import 'package:fishroom/features/fishroom/usecases/check_for_achievements.dart';
 import 'package:fishroom/features/fishroom/widgets/counter_widget.dart';
 import 'package:fishroom/features/tank_inhabitants/views/tank_inhabitants.dart';
 import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
@@ -35,7 +35,7 @@ class TankDetails extends StatefulWidget {
 class _TankDetailsState extends State<TankDetails> {
   bool loading = false;
   bool initialLoad = true;
-
+  bool streakLoading = false;
   AppCubit get appCubit => context.read<AppCubit>();
   TanksCubit get tanksCubit => context.read<TanksCubit>();
 
@@ -47,17 +47,27 @@ class _TankDetailsState extends State<TankDetails> {
       setState(() => loading = true);
       await tanksCubit.getReadingsForTank(_tank);
       setState(() => loading = false);
-      Future.delayed(200.ms, () {});
     }
     setState(() => initialLoad = false);
   }
 
   @override
   void initState() {
-    _tank = widget.tank;
+    _tank =
+        tanksCubit.state.tanks.firstWhere((tank) => tank.id == widget.tank.id);
     getTankReadings();
-    tanksCubit.getTankStreak(_tank);
+    getTankStreakAndCheckForAchievements();
     super.initState();
+  }
+
+  Future<void> getTankStreakAndCheckForAchievements() async {
+    setState(() => streakLoading = true);
+    await Future.wait([
+      tanksCubit.updateTankStreak(context, _tank.id),
+      Future.delayed(1000.ms, () {}),
+    ]);
+    setState(() => streakLoading = false);
+    checkForAchievement(context, _tank.id);
   }
 
   @override
@@ -65,9 +75,9 @@ class _TankDetailsState extends State<TankDetails> {
     return RefreshIndicator(
       edgeOffset: 20,
       onRefresh: () async {
-        await tanksCubit
-            .getReadingsForTank(_tank)
-            .then((value) => setState(() => loading = false));
+        await tanksCubit.getReadingsForTank(_tank);
+        setState(() => loading = false);
+        getTankStreakAndCheckForAchievements();
       },
       child: Stack(
         children: [
@@ -82,7 +92,7 @@ class _TankDetailsState extends State<TankDetails> {
                   SelectReadingType(
                     tank: _tank,
                   ),
-                );
+                ).then((value) => getTankStreakAndCheckForAchievements());
               },
               child: const Icon(Icons.add),
             ),
@@ -102,13 +112,7 @@ class _TankDetailsState extends State<TankDetails> {
                     )
                   ],
                 ),
-                BlocConsumer<TanksCubit, TanksState>(
-                  listener: (context, state) {
-                    setState(() {
-                      _tank =
-                          state.tanks.firstWhere((tank) => tank.id == _tank.id);
-                    });
-                  },
+                BlocBuilder<TanksCubit, TanksState>(
                   builder: (context, state) {
                     List<TankReading> readings = state.readings
                         .where((reading) => reading.tankId == _tank.id)
@@ -122,8 +126,8 @@ class _TankDetailsState extends State<TankDetails> {
                             Expanded(
                               child: CounterWidget(
                                 heading: "Current Streak",
-                                counter: countDailyStreak(
-                                    widget.tank, tanksCubit.state.readings),
+                                counter: _tank.streak,
+                                loading: streakLoading,
                               ),
                             ),
                             Expanded(

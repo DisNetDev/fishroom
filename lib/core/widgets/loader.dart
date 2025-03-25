@@ -34,7 +34,7 @@ class _LoaderState extends State<Loader> {
     //Wrap with AnimatedScale
     Widget animated = AnimatedScale(
       scale: _showLoader ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 500),
       curve: Curves.easeOut,
       child: main,
     );

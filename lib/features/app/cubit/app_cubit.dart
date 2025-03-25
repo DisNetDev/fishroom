@@ -156,8 +156,8 @@ class AppCubit extends HydratedCubit<AppState> {
       fishLog("Getting Settings...");
 
       final data = await _supabaseRepository.fetch(
-          tableName: Table.users.tableName,
-          conditionalColumn: Table.users.id,
+          tableName: SupabaseTable.users.tableName,
+          conditionalColumn: SupabaseTable.users.id,
           condition: state.user!.uuid);
       if (data != null && data.isNotEmpty) {
         emit(state.copyWith(
@@ -172,8 +172,8 @@ class AppCubit extends HydratedCubit<AppState> {
     fishLog("Resetting parameters...");
     try {
       final data = await _supabaseRepository.fetch(
-          tableName: Table.appDefaults.tableName,
-          conditionalColumn: Table.appDefaults.name,
+          tableName: SupabaseTable.appDefaults.tableName,
+          conditionalColumn: SupabaseTable.appDefaults.name,
           condition: "default_params");
       if (data != null && data.isNotEmpty) {
         List<Parameter> parameters = [];
@@ -200,9 +200,9 @@ class AppCubit extends HydratedCubit<AppState> {
     if (state.user != null || uuid != null) {
       try {
         await _supabaseRepository.update(
-            tableName: Table.users.tableName,
-            json: {Table.users.settings: settings.toJson()},
-            conditionalColumn: Table.users.id,
+            tableName: SupabaseTable.users.tableName,
+            json: {SupabaseTable.users.settings: settings.toJson()},
+            conditionalColumn: SupabaseTable.users.id,
             condition: uuid ?? state.user!.uuid);
       } catch (e) {
         emit(oldState);
@@ -215,9 +215,9 @@ class AppCubit extends HydratedCubit<AppState> {
     try {
       if (state.user != null) {
         await _supabaseRepository.update(
-            tableName: Table.users.tableName,
-            json: {Table.users.premium: true},
-            conditionalColumn: Table.users.id,
+            tableName: SupabaseTable.users.tableName,
+            json: {SupabaseTable.users.premium: true},
+            conditionalColumn: SupabaseTable.users.id,
             condition: state.user!.uuid);
         emit(state.copyWith(user: state.user!.copyWith(premium: true)));
       }
@@ -231,7 +231,8 @@ class AppCubit extends HydratedCubit<AppState> {
     fishLog(bugReport.toJson().toString());
     try {
       await _supabaseRepository.insert(
-          tableName: Table.bugReports.tableName, json: bugReport.toJson());
+          tableName: SupabaseTable.bugReports.tableName,
+          json: bugReport.toJson());
     } catch (e) {
       rethrow;
     }

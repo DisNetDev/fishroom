@@ -34,7 +34,7 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
       nameFocusNode.requestFocus();
     }
     if (widget.tank != null) {
-      tank = widget.tank!;
+      tank = widget.tank!.copyWith();
       editTank = true;
     } else {
       if (context.read<AppCubit>().state.user != null) {

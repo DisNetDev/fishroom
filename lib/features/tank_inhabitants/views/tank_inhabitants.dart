@@ -94,7 +94,7 @@ class _TankInhabitantsState extends State<TankInhabitants> {
     tank.inhabitants.removeWhere((inhabitant) => inhabitant.count == 0);
 
     try {
-      await tanksCubit.updateTank(tank, null);
+      await tanksCubit.updateTankInhabitants(tank.id, tank.inhabitants);
     } catch (e) {
       showToast(context,
           title: "Error adding inhabitant...",

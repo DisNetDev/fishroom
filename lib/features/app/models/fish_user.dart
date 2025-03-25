@@ -5,21 +5,20 @@ class FishUser {
   final String uuid;
   final String email;
   bool premium;
-  
 
   factory FishUser.fromJson(Map<String, dynamic> json) {
     return FishUser(
-      uuid: json[Table.users.id],
-      email: json[Table.users.email],
-      premium: json[Table.users.premium] ?? false,
+      uuid: json[SupabaseTable.users.id],
+      email: json[SupabaseTable.users.email],
+      premium: json[SupabaseTable.users.premium] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      Table.users.id: uuid,
-      Table.users.email: email,
-      Table.users.premium: premium,
+      SupabaseTable.users.id: uuid,
+      SupabaseTable.users.email: email,
+      SupabaseTable.users.premium: premium,
     };
   }
 

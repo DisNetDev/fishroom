@@ -22,7 +22,7 @@ class AchievementCard extends StatelessWidget {
     return GestureDetector(
       onDoubleTap: () {
         if (kDebugMode) {
-          navPush(context, Congrats(achievement: achievement));
+          navPush(context, Congrats(achievements: [achievement]));
         }
       },
       child: Container(
@@ -31,7 +31,14 @@ class AchievementCard extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: GradientBoxBorder(
-                gradient: enabled ? kSuccessGradient : kDisabledGradient),
+                gradient: enabled
+                    ? LinearGradient(
+                        colors: [
+                          kPrimaryColor,
+                          kSecondaryColor,
+                        ],
+                      )
+                    : kDisabledGradient),
             color: isDarkMode(context)
                 ? Colors.transparent
                 : Colors.grey.shade100),

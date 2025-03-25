@@ -117,11 +117,12 @@ class _ReadingWidgetState extends State<ReadingWidget> {
             ).createShader(rect);
           },
           child: AnimatedSize(
-            curve: Curves.ease,
+            alignment: Alignment.topCenter,
             duration: const Duration(milliseconds: 300),
+            curve: Curves.ease,
             child: Container(
               alignment: Alignment.topCenter,
-              height: open ? null : 80,
+              height: open ? null : 70,
               child: InkWell(
                 splashColor:
                     const Color.fromARGB(255, 0, 82, 105).withAlpha(128),

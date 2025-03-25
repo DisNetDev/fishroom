@@ -1,3 +1,4 @@
+import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -9,13 +10,14 @@ class CounterWidget extends StatelessWidget {
       required this.heading,
       required this.counter,
       this.icon,
-      this.onTap});
+      this.onTap,
+      this.loading = false});
 
   final String heading;
   final int counter;
   final Widget? icon;
   final VoidCallback? onTap;
-
+  final bool loading;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -34,10 +36,23 @@ class CounterWidget extends StatelessWidget {
             Gap(5),
             if (icon != null) icon!,
             Gap(5),
-            Text(
-              counter.toString(),
-              style: kHeadingTextStyle,
-            )
+            if (loading) Gap(5),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: loading
+                  ? const Center(
+                      child: Loader(
+                        height: 26,
+                      ),
+                    )
+                  : Text(
+                      counter.toString(),
+                      style: kHeadingTextStyle,
+                    ),
+            ),
           ],
         ),
       ),

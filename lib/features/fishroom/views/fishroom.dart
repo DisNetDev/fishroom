@@ -36,18 +36,20 @@ class _FishroomState extends State<Fishroom> {
     if (context.read<AppCubit>().state.user == null) {
       logOut(context);
     }
-    setState(() => loading = true);
+
     if (!context.read<AppCubit>().state.appLoaded) {
-      try {
-        await context.read<TanksCubit>().getTanks();
-      } catch (e) {
-        showToast(
-          context,
-          title: "Something went wrong.",
-          description: e.toString(),
-          toastType: ToastType.error,
-        );
-      }
+      setState(() => loading = true);
+    }
+
+    try {
+      await context.read<TanksCubit>().getTanks();
+    } catch (e) {
+      showToast(
+        context,
+        title: "Something went wrong.",
+        description: e.toString(),
+        toastType: ToastType.error,
+      );
     }
 
     Future.delayed(500.ms);

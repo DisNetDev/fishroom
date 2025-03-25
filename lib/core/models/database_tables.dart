@@ -125,7 +125,7 @@ class Fish extends DatabaseTables {
   // No columns defined yet
 }
 
-class Table {
+class SupabaseTable {
   static final users = Users();
   static final usersCheck = UsersCheck();
   static final tanks = Tanks();

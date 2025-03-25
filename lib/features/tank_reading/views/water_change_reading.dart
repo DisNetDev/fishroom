@@ -1,5 +1,4 @@
 import 'package:fishroom/core/models/tank_reading.dart';
-import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';

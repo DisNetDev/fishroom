@@ -40,7 +40,8 @@ class _TankTileState extends State<TankTile> {
           widget.tank.imageUrl!, getFileNameFromUrl(widget.tank.imageUrl!));
 
       if (context.mounted) {
-        await context.read<TanksCubit>().updateTank(widget.tank, null);
+        await context.read<TanksCubit>().updateTankLocalImagePath(
+            widget.tank.id, widget.tank.imageLocalPath!);
         setState(() => loadingImage = false);
       }
     } else {

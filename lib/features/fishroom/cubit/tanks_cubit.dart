@@ -1,16 +1,15 @@
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/log.dart';
-import 'package:fishroom/features/fishroom/usecases/get_reading_streak.dart';
+import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:intl/intl.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../achievements/models/achievement.dart';
+import '../../tank_inhabitants/models/inhabitant.dart';
 
 part 'tanks_state.dart';
 
@@ -46,7 +45,7 @@ class TanksCubit extends HydratedCubit<TanksState> {
       tank.createdAt = DateTime.now().toString();
 
       await supabaseRepository.insert(
-          tableName: Table.tanks.tableName, json: tank.toJson());
+          tableName: SupabaseTable.tanks.tableName, json: tank.toJson());
 
       emit(state.copyWith(tanks: [...state.tanks, tank]));
     } on Exception catch (_) {
@@ -57,12 +56,12 @@ class TanksCubit extends HydratedCubit<TanksState> {
   Future<void> deleteTank(Tank tank) async {
     try {
       await supabaseRepository.delete(
-          tableName: Table.tanks.tableName,
-          column: Table.tanks.id,
+          tableName: SupabaseTable.tanks.tableName,
+          column: SupabaseTable.tanks.id,
           condition: tank.id);
       await supabaseRepository.delete(
-          tableName: Table.tankReadings.tableName,
-          column: Table.tankReadings.tankId,
+          tableName: SupabaseTable.tankReadings.tableName,
+          column: SupabaseTable.tankReadings.tankId,
           condition: tank.id);
       List<Tank> stateTanks = state.tanks
           .where((tankInState) => tank.id != tankInState.id)
@@ -86,8 +85,8 @@ class TanksCubit extends HydratedCubit<TanksState> {
     try {
       fishLog("Getting tanks...");
       final data = await supabaseRepository.fetch(
-          tableName: Table.tanks.tableName,
-          conditionalColumn: Table.tanks.ownerId,
+          tableName: SupabaseTable.tanks.tableName,
+          conditionalColumn: SupabaseTable.tanks.ownerId,
           condition: supabaseRepository.user!.id);
       fishLog(data.toString());
 
@@ -111,7 +110,7 @@ class TanksCubit extends HydratedCubit<TanksState> {
 
     try {
       final response = await supabaseRepository.fetchAll(
-          tableName: Table.achievements.tableName);
+          tableName: SupabaseTable.achievements.tableName);
 
       if (response != null) {
         for (Map<String, dynamic> json in response) {
@@ -125,36 +124,13 @@ class TanksCubit extends HydratedCubit<TanksState> {
     }
   }
 
-  Future<List<Achievement>> checkForAchievement(
-      Tank tank, List<TankReading> readings) async {
-    List<Achievement> achievementsToAdd = [];
-    List<Achievement> availableAchievements = await getAvailableAchievements();
-
-    int streak = countDailyStreak(tank, readings);
-
-    if (streak >= 7) {
-      achievementsToAdd.add(availableAchievements
-          .firstWhere((e) => e.name.toLowerCase() == "average cycler"));
-    }
-    if (streak >= 30) {
-      achievementsToAdd.add(availableAchievements
-          .firstWhere((e) => e.name.toLowerCase() == "dedicated"));
-    }
-    if (streak >= 365) {
-      achievementsToAdd.add(availableAchievements
-          .firstWhere((e) => e.name.toLowerCase() == "testing machine"));
-    }
-
-    return achievementsToAdd;
-  }
-
   Future<void> getReadingsForTank(Tank tank) async {
     try {
       fishLog("Getting Tank Readings...");
 
       final data = await supabaseRepository.fetch(
-          tableName: Table.tankReadings.tableName,
-          conditionalColumn: Table.tankReadings.tankId,
+          tableName: SupabaseTable.tankReadings.tableName,
+          conditionalColumn: SupabaseTable.tankReadings.tankId,
           condition: tank.id);
 
       if (data != null) {
@@ -188,7 +164,7 @@ class TanksCubit extends HydratedCubit<TanksState> {
       }
 
       await supabaseRepository.insert(
-        tableName: Table.tankReadings.tableName,
+        tableName: SupabaseTable.tankReadings.tableName,
         json: amendedReading.toJson(),
       );
 
@@ -197,21 +173,6 @@ class TanksCubit extends HydratedCubit<TanksState> {
       readings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       emit(state.copyWith(readings: readings));
-
-      Tank? selectedTank =
-          state.tanks.firstWhereOrNull((e) => e.id == reading.tankId);
-
-      if (selectedTank != null) {
-        List<Achievement> achievementsToAdd =
-            await checkForAchievement(selectedTank, readings);
-        List<String> achievementIds = [...selectedTank.achievementIds];
-        for (Achievement achievement in achievementsToAdd) {
-          achievementIds.add(achievement.id);
-        }
-        achievementIds.toSet();
-        await updateTank(
-            selectedTank.copyWith(achievementIds: achievementIds), image);
-      }
     } catch (e) {
       rethrow;
     }
@@ -233,9 +194,9 @@ class TanksCubit extends HydratedCubit<TanksState> {
       }
 
       await supabaseRepository.update(
-        tableName: Table.tanks.tableName,
+        tableName: SupabaseTable.tanks.tableName,
         json: tank.toJson(),
-        conditionalColumn: Table.tanks.id,
+        conditionalColumn: SupabaseTable.tanks.id,
         condition: tank.id,
       );
 
@@ -255,8 +216,8 @@ class TanksCubit extends HydratedCubit<TanksState> {
     try {
       fishLog("Deleting tank reading...");
       await supabaseRepository.delete(
-          tableName: Table.tankReadings.tableName,
-          column: Table.tankReadings.id,
+          tableName: SupabaseTable.tankReadings.tableName,
+          column: SupabaseTable.tankReadings.id,
           condition: reading.id);
       List<TankReading> readings = [];
       readings.addAll(state.readings);
@@ -272,9 +233,59 @@ class TanksCubit extends HydratedCubit<TanksState> {
     emit(const TanksState(tanks: [], error: false, readings: []));
   }
 
-  Future<void> getTankStreak(Tank tank) async {
-    final data = await supabaseRepository.runFunction(
-        "calculate_longest_daily_streak", {"tank_id_input": tank.id});
-    fishLog(data.toString());
+  Future<void> updateTankStreak(BuildContext context, String tankId) async {
+    Tank tank = state.tanks.firstWhere((tank) => tank.id == tankId).copyWith();
+    int oldTankStreak = tank.streak;
+
+    try {
+      fishLog("Getting tank streak for tank ${tank.id}");
+      final data = await supabaseRepository
+          .runFunction("get_streak", {"input_tank_id": tank.id});
+
+      tank.streak = int.tryParse(data.toString()) ?? 0;
+
+      if (tank.streak != oldTankStreak) {
+        await updateTank(tank, null);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateTankInhabitants(
+      String tankId, List<Inhabitant> inhabitants) async {
+    try {
+      Tank tank = state.tanks
+          .firstWhere((tank) => tank.id == tankId)
+          .copyWith(inhabitants: inhabitants);
+      await updateTank(tank, null);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateTankLocalImagePath(
+      String tankId, String localImagePath) async {
+    try {
+      Tank tank = state.tanks
+          .firstWhere((tank) => tank.id == tankId)
+          .copyWith(imageLocalPath: localImagePath);
+      await updateTank(tank, null);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateTankAchievements(
+      String tankId, List<Achievement> achievements) async {
+    try {
+      Tank tank =
+          state.tanks.firstWhere((tank) => tank.id == tankId).copyWith();
+      tank.achievementIds =
+          achievements.map((achievement) => achievement.id).toList();
+      await updateTank(tank, null);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

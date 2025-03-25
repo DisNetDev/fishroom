@@ -10,9 +10,9 @@ import '../models/achievement.dart';
 import '../widgets/achievement_card.dart';
 
 class Congrats extends StatefulWidget {
-  const Congrats({super.key, required this.achievement});
+  const Congrats({super.key, required this.achievements});
 
-  final Achievement achievement;
+  final List<Achievement> achievements;
 
   @override
   State<Congrats> createState() => _CongratsState();
@@ -35,7 +35,7 @@ class _CongratsState extends State<Congrats> {
   }
 
   Future<void> _playAnimation() async {
-    await Future.delayed(Duration(milliseconds: 1500));
+    await Future.delayed(Duration(milliseconds: 500));
     fishLog('Playing animation');
     setState(() => _controller.isActive = true);
   }
@@ -58,33 +58,40 @@ class _CongratsState extends State<Congrats> {
           backgroundColor: Colors.transparent,
           body: SafeArea(
             child: Container(
+              alignment: Alignment.center,
+              height: MediaQuery.of(context).size.height,
               padding: EdgeInsets.all(20),
-              child: Column(
-                spacing: 20,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Congrats',
-                    style: kHeadingTextStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    'You have earned a new achievement',
-                    style: kHeading1TextStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  Gap(50),
-                  Icon(
-                    Symbols.social_leaderboard_rounded,
-                    size: MediaQuery.of(context).size.width * 0.2,
-                  ),
-                  Gap(50),
-                  AchievementCard(
-                    achievement: widget.achievement,
-                    enabled: true,
-                  ),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  spacing: 20,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Congrats',
+                      style: kHeadingTextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      'You have earned a new achievement',
+                      style: kHeading1TextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    Gap(50),
+                    Icon(
+                      Symbols.social_leaderboard_rounded,
+                      size: MediaQuery.of(context).size.width * 0.2,
+                    ),
+                    Gap(50),
+                    ...List.generate(
+                      widget.achievements.length,
+                      (index) => AchievementCard(
+                        achievement: widget.achievements[index],
+                        enabled: true,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,6 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
@@ -11,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/gradient_borders.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../../../core/models/tank.dart';
@@ -64,6 +61,21 @@ class _AchievementsState extends State<Achievements> {
       children: [
         CustomBackground(),
         Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButton: kDebugMode
+              ? FloatingActionButton(
+                  onPressed: () {
+                    navPush(
+                        context,
+                        Congrats(achievements: [
+                          ...achievements,
+                          ...achievements,
+                          ...achievements
+                        ]));
+                  },
+                  child: Icon(Symbols.bug_report),
+                )
+              : null,
           appBar: RootSliverAppBar(
             title: "Achievements",
             implyLeading: true,

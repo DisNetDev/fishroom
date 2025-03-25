@@ -13,6 +13,7 @@ class Tank {
   List<Inhabitant> inhabitants;
   List<Target> targets;
   List<String> achievementIds;
+  int streak;
 
   Tank(
       {required this.id,
@@ -26,7 +27,8 @@ class Tank {
       this.imageUrl,
       this.targets = const [],
       this.inhabitants = const [],
-      this.achievementIds = const []});
+      this.achievementIds = const [],
+      this.streak = 0});
 
   Map<String, dynamic> toJson() {
     return {
@@ -41,7 +43,8 @@ class Tank {
       'image_local_path': imageLocalPath,
       'targets': targets.map((e) => e.toJson()).toList(),
       'inhabitants': inhabitants.map((e) => e.toJson()).toList(),
-      'achievement_ids': achievementIds
+      'achievement_ids': achievementIds,
+      'streak': streak
     };
   }
 
@@ -66,7 +69,8 @@ class Tank {
             ? (json['achievement_ids'] as List<dynamic>)
                 .map((e) => e.toString())
                 .toList()
-            : []);
+            : [],
+        streak: json['streak'] ?? 0);
   }
 
   Tank copyWith({
@@ -82,6 +86,7 @@ class Tank {
     List<Inhabitant>? inhabitants,
     List<Target>? targets,
     List<String>? achievementIds,
+    int? streak,
   }) {
     return Tank(
       id: id ?? this.id,
@@ -96,6 +101,7 @@ class Tank {
       inhabitants: inhabitants ?? this.inhabitants,
       targets: targets ?? this.targets,
       achievementIds: achievementIds ?? this.achievementIds,
+      streak: streak ?? this.streak,
     );
   }
 }

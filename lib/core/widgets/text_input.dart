@@ -3,7 +3,6 @@ import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
-import 'package:gradient_borders/input_borders/gradient_underline_input_border.dart';
 
 class TextInput extends StatefulWidget {
   const TextInput(

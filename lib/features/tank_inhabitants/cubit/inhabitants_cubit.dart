@@ -16,7 +16,7 @@ class InhabitantsCubit extends Cubit<InhabitantsState> {
     try {
       List<Inhabitant> inhabitants = [];
       final response = await _supabaseRepository.fetchAll(
-        tableName: Table.fish.tableName,
+        tableName: SupabaseTable.fish.tableName,
       );
 
       if (response != null) {
