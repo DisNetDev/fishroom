@@ -29,12 +29,12 @@ class _AddTankParameterState extends State<AddTankParameter> {
   Widget build(BuildContext context) {
     return OpenContainer(
         transitionType: ContainerTransitionType.fadeThrough,
-        closedColor: isDarkMode(context) ? Colors.black : Colors.white,
+        closedColor: isDarkMode(context) ? Colors.transparent : Colors.white,
         openColor: isDarkMode(context) ? Colors.black : Colors.white,
         closedBuilder: (BuildContext context, action) => Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(16),
                 border: const GradientBoxBorder(gradient: kPrimaryGradient),
               ),
               child: const Icon(Symbols.add),

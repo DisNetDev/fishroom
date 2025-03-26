@@ -113,7 +113,8 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
                         border: GradientBoxBorder(gradient: kPrimaryGradient)),
                     child: Text("Add Fertilizer"),
                   ),
-                )
+                ),
+                Gap(40),
               ],
             ),
           ),

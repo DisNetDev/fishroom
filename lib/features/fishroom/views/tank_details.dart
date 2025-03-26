@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
@@ -118,6 +119,9 @@ class _TankDetailsState extends State<TankDetails> {
                         .where((reading) => reading.tankId == _tank.id)
                         .toList();
 
+                    Tank? currentTank = state.tanks
+                        .firstWhereOrNull((test) => test.id == _tank.id);
+
                     return SliverList(
                       delegate: SliverChildListDelegate([
                         Row(
@@ -126,25 +130,30 @@ class _TankDetailsState extends State<TankDetails> {
                             Expanded(
                               child: CounterWidget(
                                 heading: "Current Streak",
-                                counter: _tank.streak,
+                                counter: currentTank?.streak ?? 0,
                                 loading: streakLoading,
                               ),
                             ),
                             Expanded(
                               child: CounterWidget(
                                   heading: "Inhabitants",
-                                  onTap: () => navPush(context,
-                                      TankInhabitants(tank: widget.tank)),
-                                  counter: widget.tank.inhabitants.fold(
-                                      0,
-                                      (previousValue, element) =>
-                                          previousValue +
-                                          (element.count ?? 0))),
+                                  onTap: () async {
+                                    navPush(
+                                        context, TankInhabitants(tank: _tank));
+                                  },
+                                  counter: currentTank == null
+                                      ? 0
+                                      : currentTank.inhabitants.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.count ?? 0))),
                             ),
                             Expanded(
                               child: CounterWidget(
                                 heading: "Achievements",
-                                counter: widget.tank.achievementIds.length,
+                                counter:
+                                    currentTank?.achievementIds.length ?? 0,
                                 onTap: () =>
                                     navPush(context, Achievements(tank: _tank)),
                               ),
