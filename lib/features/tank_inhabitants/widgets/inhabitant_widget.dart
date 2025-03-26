@@ -30,7 +30,7 @@ class InhabitantWidget extends StatelessWidget {
       child: Skeletonizer(
         enabled: loading,
         child: Container(
-          padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+          padding: EdgeInsets.only(left: 20, right: 10, top: 10, bottom: 10),
           decoration: BoxDecoration(
               border:
                   Border(bottom: BorderSide(color: Colors.grey, width: 0.5))),

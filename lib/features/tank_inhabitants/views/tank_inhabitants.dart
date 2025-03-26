@@ -2,15 +2,16 @@ import 'package:collection/collection.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
+import 'package:fishroom/features/tank_inhabitants/views/add_inhabitants_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../../core/models/tank.dart';
+import '../../../core/usecases/nav_push.dart';
 import '../../../core/usecases/show_toast.dart';
 import '../models/inhabitant.dart';
-import '../widgets/add_inhabitants.dart';
 import '../widgets/inhabitant_widget.dart';
 
 class TankInhabitants extends StatefulWidget {
@@ -34,6 +35,15 @@ class _TankInhabitantsState extends State<TankInhabitants> {
       children: [
         CustomBackground(),
         Scaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                navPush(
+                    context,
+                    AddInhabitantsView(
+                        tank: _tank, chosenInhabitant: _addInhabitant));
+              },
+              child: Icon(Icons.add),
+            ),
             backgroundColor: Colors.transparent,
             appBar: RootSliverAppBar(
               title: "Inhabitants",
@@ -59,18 +69,6 @@ class _TankInhabitantsState extends State<TankInhabitants> {
                             inhabitant: _tank.inhabitants[index],
                             onAdd: _addInhabitant,
                           ),
-                        ),
-                      ),
-                      Animate(
-                        effects: [
-                          FadeEffect(
-                            curve: Curves.ease,
-                            delay: 200.ms,
-                          )
-                        ],
-                        child: AddInhabitants(
-                          tank: widget.tank,
-                          chosenInhabitant: _addInhabitant,
                         ),
                       ),
                       Gap(20),
