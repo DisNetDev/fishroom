@@ -1,0 +1,54 @@
+class CTPost {
+  final String id;
+  final String title;
+  final String content;
+  final String authorID;
+  final String authorName;
+  final String createdAt;
+  final String? updatedAt;
+  final List<String> images;
+  final int upVotes;
+  final int downVotes;
+  CTPost({
+    required this.id,
+    required this.title,
+    required this.content,
+    required this.authorID,
+    required this.authorName,
+    required this.createdAt,
+    this.updatedAt,
+    required this.images,
+    required this.upVotes,
+    required this.downVotes,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'author_id': authorID,
+      'author_name': authorName,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'images': images,
+      'up_votes': upVotes,
+      'down_votes': downVotes,
+    };
+  }
+
+  factory CTPost.fromJson(Map<String, dynamic> json) {
+    return CTPost(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      content: json['content'] as String,
+      authorID: json['author_id'] as String,
+      authorName: json['author_name'] as String,
+      createdAt: json['created_at'] as String,
+      updatedAt: json['updated_at'] as String?,
+      images: List<String>.from(json['images'] as List),
+      upVotes: json['up_votes'] as int,
+      downVotes: json['down_votes'] as int,
+    );
+  }
+}

@@ -125,6 +125,32 @@ class Fish extends DatabaseTables {
   // No columns defined yet
 }
 
+class CommunityTankPosts extends DatabaseTables {
+  CommunityTankPosts() : super('community_tank_posts');
+
+  String get id => _id.columnName;
+  String get title => _title.columnName;
+  String get content => _content.columnName;
+  String get authorId => _authorId.columnName;
+  String get authorName => _authorName.columnName;
+  String get createdAt => _createdAt.columnName;
+  String get updatedAt => _updatedAt.columnName;
+  String get images => _images.columnName;
+  String get upVotes => _upVotes.columnName;
+  String get downVotes => _downVotes.columnName;
+
+  static const DBColumn _id = DBColumn('id');
+  static const DBColumn _title = DBColumn('title');
+  static const DBColumn _content = DBColumn('content');
+  static const DBColumn _authorId = DBColumn('author_id');
+  static const DBColumn _authorName = DBColumn('author_name');
+  static const DBColumn _createdAt = DBColumn('created_at');
+  static const DBColumn _updatedAt = DBColumn('updated_at');
+  static const DBColumn _images = DBColumn('images');
+  static const DBColumn _upVotes = DBColumn('up_votes');
+  static const DBColumn _downVotes = DBColumn('down_votes');
+}
+
 class SupabaseTable {
   static final users = Users();
   static final usersCheck = UsersCheck();
@@ -134,4 +160,5 @@ class SupabaseTable {
   static final bugReports = BugReports();
   static final fish = Fish();
   static final achievements = Achievements();
+  static final communityTankPost = CommunityTankPosts();
 }

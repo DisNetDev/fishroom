@@ -4,8 +4,8 @@ import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 
-class CommunityView extends StatelessWidget {
-  const CommunityView({super.key});
+class CommunityTankView extends StatelessWidget {
+  const CommunityTankView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-import 'package:fishroom/features/community/views/community_view.dart';
+import 'package:fishroom/features/community_tank/views/community_tank_view.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
@@ -20,7 +20,7 @@ class RootNavbar extends StatelessWidget {
 
   final List<Widget> _viewList = const [
     Fishroom(),
-    CommunityView(),
+    CommunityTankView(),
   ];
 
   @override

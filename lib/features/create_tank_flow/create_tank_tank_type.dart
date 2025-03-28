@@ -60,13 +60,16 @@ class _CreateTankTankTypeState extends State<CreateTankTankType> {
     );
   }
 
-  void onComplete() {
+  void onComplete() async {
     if (tank.type == null || tank.type == "") {
       showToast(context,
           title: "Your tank needs a type!",
           toastType: ToastType.error,
           description: 'Even if its just "Freshwater" :)');
     } else {
+      tank.type = tank.type?.trim();
+      await Future.delayed(const Duration(milliseconds: 400), () {});
+
       Navigator.push(
           context,
           MaterialPageRoute(

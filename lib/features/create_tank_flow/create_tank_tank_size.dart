@@ -47,12 +47,28 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
                 textAlign: TextAlign.center,
               ),
               const Gap(20),
-              TextInput(
-                  initialValue: tank.measurementUnit,
-                  hintText: "Gallons, Litres, Feet, Cm's, etc.",
-                  focusNode: measurementFocusNode,
-                  onEditingComplete: () => sizeFocusNode.requestFocus(),
-                  onChanged: (p0) => setState(() => tank.measurementUnit = p0)),
+              Align(
+                alignment: Alignment.center,
+                child: DropdownMenu(
+                    label: Text("Unit"),
+                    onSelected: (value) =>
+                        setState(() => tank.measurementUnit = value),
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(value: "Liters", label: "Liters"),
+                      DropdownMenuEntry(value: "Gallons", label: "Gallons"),
+                      DropdownMenuEntry(value: "Feet", label: "Feet"),
+                      DropdownMenuEntry(value: "Cm", label: "Cm"),
+                      DropdownMenuEntry(value: "Inches", label: "Inches"),
+                      DropdownMenuEntry(value: "P", label: "P"),
+                    ],
+                    initialSelection: tank.measurementUnit ?? "Liters"),
+              ),
+              // TextInput(
+              //     initialValue: tank.measurementUnit,
+              //     hintText: "Gallons, Litres, Feet, Cm's, etc.",
+              //     focusNode: measurementFocusNode,
+              //     onEditingComplete: () => sizeFocusNode.requestFocus(),
+              //     onChanged: (p0) => setState(() => tank.measurementUnit = p0)),
               Gap(50),
               Text(
                 "How many ${tank.measurementUnit == "" || tank.measurementUnit == null ? "_______" : tank.measurementUnit} is your tank?",
@@ -78,11 +94,15 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
     );
   }
 
-  void onComplete() {
+  void onComplete() async {
     if (tank.size == null || tank.size == 0 || tank.measurementUnit == null) {
       showToast(context,
           title: "Your tank needs a size!", toastType: ToastType.error);
     } else {
+      measurementFocusNode.unfocus();
+      sizeFocusNode.unfocus();
+
+      await Future.delayed(const Duration(milliseconds: 400), () {});
       Navigator.push(
           context,
           MaterialPageRoute(
