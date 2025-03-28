@@ -237,4 +237,10 @@ class AppCubit extends HydratedCubit<AppState> {
       rethrow;
     }
   }
+
+  Future<bool> checkUsernameExists(String username) async {
+    final data = await _supabaseRepository
+        .runFunction("check_username_existence", {"username": username});
+    return data;
+  }
 }

@@ -15,11 +15,12 @@ class Users extends DatabaseTables {
   String get email => _email.columnName;
   String get premium => _premium.columnName;
   String get settings => _settings.columnName;
-
+  String get username => _username.columnName;
   static const DBColumn _id = DBColumn('id');
   static const DBColumn _email = DBColumn('email');
   static const DBColumn _premium = DBColumn('premium');
   static const DBColumn _settings = DBColumn('settings');
+  static const DBColumn _username = DBColumn('username');
 }
 
 class UsersCheck extends DatabaseTables {

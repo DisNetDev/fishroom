@@ -11,6 +11,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:soft_edge_blur/soft_edge_blur.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
@@ -151,49 +152,83 @@ class _FishroomState extends State<Fishroom> {
                     );
                   }
                   if (sortedTanks.isNotEmpty) {
-                    return CustomScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      slivers: [
-                        const RootSliverAppBar(
-                          title: "Fishroom",
-                          sliver: true,
+                    return SoftEdgeBlur(
+                      edges: [
+                        EdgeBlur(
+                          type: EdgeType.topEdge,
+                          size: 10,
+                          sigma: 10,
+                          controlPoints: [
+                            ControlPoint(
+                              position: 0.0,
+                              type: ControlPointType.visible,
+                            ),
+                            ControlPoint(
+                              position: 1,
+                              type: ControlPointType.transparent,
+                            ),
+                          ],
                         ),
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              if (index == sortedTanks.length) {
-                                return const Gap(
-                                    200); //return a gap at the bottom of the screen
-                              } else {
-                                return context
-                                        .read<AppCubit>()
-                                        .state
-                                        .settings
-                                        .compactTankTile
-                                    ? Animate(
-                                        effects: [
-                                            FadeEffect(
-                                                delay: ((index + 1) * 100).ms,
-                                                duration: 500.ms,
-                                                curve: Curves.ease),
-                                          ],
-                                        child: TankTileCompact(
-                                            tank: sortedTanks[index]))
-                                    : Animate(
-                                        effects: [
-                                            FadeEffect(
-                                                delay: ((index + 1) * 100).ms,
-                                                duration: 500.ms,
-                                                curve: Curves.ease),
-                                          ],
-                                        child:
-                                            TankTile(tank: sortedTanks[index]));
-                              }
-                            },
-                            childCount: sortedTanks.length + 1,
-                          ),
-                        ),
+                        EdgeBlur(
+                          type: EdgeType.bottomEdge,
+                          size: 170,
+                          sigma: 30,
+                          controlPoints: [
+                            ControlPoint(
+                              position: 0.5,
+                              type: ControlPointType.visible,
+                            ),
+                            ControlPoint(
+                              position: 1,
+                              type: ControlPointType.transparent,
+                            ),
+                          ],
+                        )
                       ],
+                      child: CustomScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        slivers: [
+                          const RootSliverAppBar(
+                            title: "Fishroom",
+                            sliver: true,
+                          ),
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                                if (index == sortedTanks.length) {
+                                  return const Gap(
+                                      200); //return a gap at the bottom of the screen
+                                } else {
+                                  return context
+                                          .read<AppCubit>()
+                                          .state
+                                          .settings
+                                          .compactTankTile
+                                      ? Animate(
+                                          effects: [
+                                              FadeEffect(
+                                                  delay: ((index + 1) * 100).ms,
+                                                  duration: 500.ms,
+                                                  curve: Curves.ease),
+                                            ],
+                                          child: TankTileCompact(
+                                              tank: sortedTanks[index]))
+                                      : Animate(
+                                          effects: [
+                                              FadeEffect(
+                                                  delay: ((index + 1) * 100).ms,
+                                                  duration: 500.ms,
+                                                  curve: Curves.ease),
+                                            ],
+                                          child: TankTile(
+                                              tank: sortedTanks[index]));
+                                }
+                              },
+                              childCount: sortedTanks.length + 1,
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   } else {
                     return InkWell(
