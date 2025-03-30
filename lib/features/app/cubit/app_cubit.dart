@@ -127,7 +127,11 @@ class AppCubit extends HydratedCubit<AppState> {
   }
 
   Future<bool> checkIfEmailExists(String email) async {
-    return _supabaseRepository.checkIfEmailExists(email);
+    try {
+      return _supabaseRepository.checkIfEmailExists(email);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   void clearCubit() {
@@ -239,8 +243,26 @@ class AppCubit extends HydratedCubit<AppState> {
   }
 
   Future<bool> checkUsernameExists(String username) async {
-    final data = await _supabaseRepository
-        .runFunction("check_username_existence", {"username": username});
-    return data;
+    try {
+      final data = await _supabaseRepository
+          .runFunction("check_username_existence", {"p_username": username});
+      fishLog("Username '$username' exists: ${data.toString()}");
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> createUsername(String username) async {
+    try {
+      await _supabaseRepository.update(
+          tableName: SupabaseTable.users.tableName,
+          json: {SupabaseTable.users.username: username},
+          conditionalColumn: SupabaseTable.users.id,
+          condition: state.user!.uuid);
+      emit(state.copyWith(user: state.user!.copyWith(username: username)));
+    } catch (e) {
+      rethrow;
+    }
   }
 }

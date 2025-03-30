@@ -88,7 +88,6 @@ class TanksCubit extends HydratedCubit<TanksState> {
           tableName: SupabaseTable.tanks.tableName,
           conditionalColumn: SupabaseTable.tanks.ownerId,
           condition: supabaseRepository.user!.id);
-      fishLog(data.toString());
 
       if (data != null) {
         List<Tank> tanks = [];

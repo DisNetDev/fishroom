@@ -51,4 +51,29 @@ class CTPost {
       downVotes: json['down_votes'] as int,
     );
   }
+
+  CTPost copyWith({
+    String? title,
+    String? content,
+    String? authorID,
+    String? authorName,
+    String? createdAt,
+    String? updatedAt,
+    List<String>? images,
+    int? upVotes,
+    int? downVotes,
+  }) {
+    return CTPost(
+      id: id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      authorID: authorID ?? this.authorID,
+      authorName: authorName ?? this.authorName,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      images: images ?? this.images,
+      upVotes: upVotes ?? this.upVotes,
+      downVotes: downVotes ?? this.downVotes,
+    );
+  }
 }

@@ -15,6 +15,7 @@ import 'package:toastification/toastification.dart';
 import 'core/repositories/supabase_repository.dart';
 import 'features/app/cubit/app_cubit.dart';
 import 'features/app/usecases/my_secure_storage.dart';
+import 'features/community_tank/cubit/community_tank_cubit.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 import 'features/tank_inhabitants/cubit/inhabitants_cubit.dart';
 
@@ -71,6 +72,9 @@ void main() async {
               BlocProvider(
                   create: (context) =>
                       InhabitantsCubit(context.read<SupabaseRepository>())),
+              BlocProvider(
+                  create: (context) => CommunityTankCubit(
+                      supabaseRepository: context.read<SupabaseRepository>())),
             ],
             child: ToastificationWrapper(
                 child: KeyboardVisibilityProvider(child: MainApp())),

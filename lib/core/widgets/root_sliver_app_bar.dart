@@ -45,7 +45,10 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: implyLeading,
             centerTitle: false,
-            title: Text(title),
+            title: Text(
+              title,
+              style: kHeadingTextStyle,
+            ),
             surfaceTintColor: Colors.transparent,
             actions: actions,
             elevation: 5,
