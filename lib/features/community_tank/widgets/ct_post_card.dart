@@ -101,7 +101,7 @@ class CTPostCardActions extends StatelessWidget {
           child: Row(
             children: [
               Icon(Icons.arrow_upward,
-                  color: post.upVotes > 0 ? Colors.blue : Colors.grey,
+                  color: post.isUpvoted == true ? Colors.blue : Colors.grey,
                   size: 20),
               Gap(5),
               Text(post.upVotes.toString(),
@@ -123,7 +123,9 @@ class CTPostCardActions extends StatelessWidget {
           },
           child: Row(
             children: [
-              Icon(Icons.arrow_downward, color: Colors.grey, size: 20),
+              Icon(Icons.arrow_downward,
+                  color: post.isUpvoted == false ? Colors.blue : Colors.grey,
+                  size: 20),
               Gap(5),
               Text(post.downVotes.toString(),
                   style: kDateTimeTextStyle.copyWith(fontSize: 12)),

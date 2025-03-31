@@ -1,3 +1,4 @@
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
@@ -102,6 +103,7 @@ class _CreateUsernameModalState extends State<CreateUsernameModal> {
                 setState(() => isLoading = true);
                 try {
                   await appCubit.createUsername(username);
+                  navPop(context);
                   setState(() => isLoading = false);
                 } catch (e) {
                   setState(() => isLoading = false);

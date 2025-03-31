@@ -1,4 +1,5 @@
 import 'package:fishroom/core/usecases/log.dart';
+import 'package:fishroom/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/models/database_tables.dart';
@@ -32,14 +33,35 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
     List<CTPost> newPosts = [];
 
     try {
-      final response = await supabaseRepository.fetchAll(
-          tableName: SupabaseTable.communityTankPost.tableName,
-          limit: 50,
-          offset: initial ? 0 : state.posts.length);
+      //i have no idea how this works but it does. Dont touch it.
+      final response = await supabase
+          .from(SupabaseTable.communityTankPost.tableName)
+          .select('''
+            *,
+            upvotes:votes!inner(count),
+            downvotes:votes!inner(count),
+            user_vote:votes!inner(vote_type)
+          ''')
+          .eq('upvotes.vote_type', 'upvote')
+          .eq('downvotes.vote_type', 'downvote')
+          .eq('user_vote.user_id', supabaseRepository.user?.id ?? '')
+          .order('created_at', ascending: false)
+          .range(initial ? 0 : state.posts.length, 50);
 
-      if (response != null) {
-        newPosts = response.map((e) => CTPost.fromJson(e)).toList();
+      for (var postData in response) {
+        // Create post with voting status
+        final post = CTPost.fromJson(postData);
+        final userVotes =
+            List<Map<String, dynamic>>.from(postData['user_vote']);
+        final isUpvoted =
+            userVotes.isNotEmpty ? userVotes[0]['vote_type'] == 'upvote' : null;
+
+        newPosts.add(post.copyWith(
+            isUpvoted: isUpvoted,
+            upVotes: postData['upvotes'][0]['count'] ?? 0,
+            downVotes: postData['downvotes'][0]['count'] ?? 0));
       }
+
       if (initial) {
         emit(state.copyWith(posts: newPosts));
       } else {

@@ -9,6 +9,7 @@ class CTPost {
   final List<String> images;
   final int upVotes;
   final int downVotes;
+  final bool? isUpvoted;
   CTPost({
     required this.id,
     required this.title,
@@ -18,8 +19,9 @@ class CTPost {
     required this.createdAt,
     this.updatedAt,
     required this.images,
-    required this.upVotes,
-    required this.downVotes,
+    this.upVotes = 0,
+    this.downVotes = 0,
+    this.isUpvoted,
   });
 
   Map<String, dynamic> toJson() {
@@ -47,8 +49,6 @@ class CTPost {
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String?,
       images: List<String>.from(json['images'] as List),
-      upVotes: json['up_votes'] as int,
-      downVotes: json['down_votes'] as int,
     );
   }
 
@@ -62,6 +62,7 @@ class CTPost {
     List<String>? images,
     int? upVotes,
     int? downVotes,
+    bool? isUpvoted,
   }) {
     return CTPost(
       id: id,
@@ -74,6 +75,7 @@ class CTPost {
       images: images ?? this.images,
       upVotes: upVotes ?? this.upVotes,
       downVotes: downVotes ?? this.downVotes,
+      isUpvoted: isUpvoted ?? this.isUpvoted,
     );
   }
 }
