@@ -124,7 +124,8 @@ class CTPostCardActions extends StatelessWidget {
           child: Row(
             children: [
               Icon(Icons.arrow_downward,
-                  color: post.isUpvoted == false ? Colors.blue : Colors.grey,
+                  color:
+                      post.isUpvoted == false ? Colors.deepOrange : Colors.grey,
                   size: 20),
               Gap(5),
               Text(post.downVotes.toString(),

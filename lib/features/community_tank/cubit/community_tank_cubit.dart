@@ -38,9 +38,9 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
           .from(SupabaseTable.communityTankPost.tableName)
           .select('''
             *,
-            upvotes:votes!inner(count),
-            downvotes:votes!inner(count),
-            user_vote:votes!inner(vote_type)
+            upvotes:votes(count),
+            downvotes:votes(count),
+            user_vote:votes(vote_type)
           ''')
           .eq('upvotes.vote_type', 'upvote')
           .eq('downvotes.vote_type', 'downvote')
@@ -52,14 +52,18 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
         // Create post with voting status
         final post = CTPost.fromJson(postData);
         final userVotes =
-            List<Map<String, dynamic>>.from(postData['user_vote']);
+            List<Map<String, dynamic>>.from(postData['user_vote'] ?? []);
         final isUpvoted =
             userVotes.isNotEmpty ? userVotes[0]['vote_type'] == 'upvote' : null;
 
         newPosts.add(post.copyWith(
             isUpvoted: isUpvoted,
-            upVotes: postData['upvotes'][0]['count'] ?? 0,
-            downVotes: postData['downvotes'][0]['count'] ?? 0));
+            upVotes: postData['upvotes']?.isNotEmpty == true
+                ? postData['upvotes'][0]['count'] ?? 0
+                : 0,
+            downVotes: postData['downvotes']?.isNotEmpty == true
+                ? postData['downvotes'][0]['count'] ?? 0
+                : 0));
       }
 
       if (initial) {

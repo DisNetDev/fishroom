@@ -34,8 +34,6 @@ class CTPost {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'images': images,
-      'up_votes': upVotes,
-      'down_votes': downVotes,
     };
   }
 
