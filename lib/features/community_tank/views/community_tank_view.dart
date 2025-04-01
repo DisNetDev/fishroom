@@ -1,4 +1,5 @@
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/root_navbar.dart';
@@ -8,7 +9,7 @@ import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../../core/widgets/loader.dart';
 import '../../app/cubit/app_cubit.dart';
@@ -65,6 +66,9 @@ class _CommunityTankViewState extends State<CommunityTankView> {
     getInitialPosts();
   }
 
+  DraggableScrollableController scrollableController =
+      DraggableScrollableController();
+
   @override
   Widget build(BuildContext context) {
     bool hasUsername = appCubit.state.user?.username != null;
@@ -84,12 +88,32 @@ class _CommunityTankViewState extends State<CommunityTankView> {
               floatingActionButton: FloatingActionButton(
                 shape: CircleBorder(),
                 child: const Icon(Icons.add),
-                onPressed: () => showModalBottomSheet(
+                onPressed: () => showMaterialModalBottomSheet(
                   enableDrag: true,
-                  isScrollControlled: true,
-                  scrollControlDisabledMaxHeightRatio: 0.5,
                   context: context,
-                  builder: (context) => const CreatePostModal(),
+                  backgroundColor: Colors.transparent,
+                  isDismissible: true,
+                  builder: (context) => Container(
+                    color: Colors.transparent,
+                    child: Container(
+                      padding: MediaQuery.of(context).viewInsets,
+                      child: DraggableScrollableSheet(
+                        controller: scrollableController,
+                        expand: false,
+                        snap: true,
+                        initialChildSize: 0.9,
+                        maxChildSize: 1,
+                        snapSizes: [0.9],
+                        builder: (context, scrollController) => Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20)),
+                            ),
+                            child: CreatePostModal()),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               bottomNavigationBar: RootNavbar(currentIndex: 1),

@@ -3,16 +3,16 @@ class CTComment {
   final String postId;
   final String content;
   final String createdAt;
-  final String authorId;
-  final String authorName;
+  final String userId;
+  final String username;
 
   CTComment({
     required this.id,
     required this.postId,
     required this.content,
     required this.createdAt,
-    required this.authorId,
-    required this.authorName,
+    required this.userId,
+    required this.username,
   });
 
   factory CTComment.fromJson(Map<String, dynamic> json) {
@@ -21,8 +21,8 @@ class CTComment {
       postId: json['post_id'] as String,
       content: json['content'] as String,
       createdAt: json['created_at'] as String,
-      authorId: json['author_id'] as String,
-      authorName: json['author_name'] as String,
+      userId: json['user_id'] as String,
+      username: json['username'] as String,
     );
   }
 
@@ -32,8 +32,8 @@ class CTComment {
       'post_id': postId,
       'content': content,
       'created_at': createdAt,
-      'author_id': authorId,
-      'author_name': authorName,
+      'user_id': userId,
+      'username': username,
     };
   }
 }

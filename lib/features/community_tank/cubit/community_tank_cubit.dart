@@ -152,4 +152,14 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
       rethrow;
     }
   }
+
+  Future<void> createComment(String postId, CTComment comment) async {
+    try {
+      await supabaseRepository.insert(
+          tableName: SupabaseTable.communityTankPostComments.tableName,
+          json: comment.toJson());
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

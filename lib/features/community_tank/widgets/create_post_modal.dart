@@ -16,7 +16,9 @@ import '../cubit/community_tank_cubit.dart';
 import '../models/ct_post.dart';
 
 class CreatePostModal extends StatefulWidget {
-  const CreatePostModal({super.key});
+  const CreatePostModal({
+    super.key,
+  });
 
   @override
   State<CreatePostModal> createState() => _CreatePostModalState();
@@ -49,10 +51,10 @@ class _CreatePostModalState extends State<CreatePostModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      padding: EdgeInsets.symmetric(vertical: 50),
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        padding: EdgeInsets.symmetric(vertical: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

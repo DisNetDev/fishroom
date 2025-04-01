@@ -1,4 +1,3 @@
-import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
@@ -8,7 +7,8 @@ import 'package:gap/gap.dart';
 
 import '../cubit/community_tank_cubit.dart';
 import '../models/ct_comment.dart';
-import '../widgets/ct_omment_card.dart';
+import '../widgets/create_comment_modal.dart';
+import '../widgets/ct_comment_card.dart';
 import '../widgets/ct_post_card.dart';
 
 class CTPostDetails extends StatefulWidget {
@@ -21,6 +21,8 @@ class CTPostDetails extends StatefulWidget {
 }
 
 class _CTPostDetailsState extends State<CTPostDetails> {
+  DraggableScrollableController scrollController =
+      DraggableScrollableController();
   bool loadingComments = false;
   CommunityTankCubit get communityTankCubit =>
       context.read<CommunityTankCubit>();
@@ -55,23 +57,61 @@ class _CTPostDetailsState extends State<CTPostDetails> {
         final post =
             state.posts.firstWhere((element) => element.id == widget.postId);
         return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            shape: CircleBorder(),
+            onPressed: () async {
+              await showModalBottomSheet(
+                enableDrag: true,
+                context: context,
+                backgroundColor: Colors.transparent,
+                isDismissible: true,
+                isScrollControlled: true,
+                builder: (context) => Container(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: DraggableScrollableSheet(
+                      controller: scrollController,
+                      expand: false,
+                      snap: true,
+                      minChildSize: 0.1,
+                      initialChildSize: 0.5,
+                      maxChildSize: 0.9,
+                      snapSizes: [0.1, 0.5, 0.9],
+                      builder: (context, scrollController) => Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        child: CreateCommentModal(
+                          postId: widget.postId,
+                          onCommentCreated: (comment) => setState(
+                            () => comments.add(comment),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ).then((value) => init());
+            },
+            child: const Icon(Icons.add),
+          ),
           appBar: RootSliverAppBar(
             implyLeading: true,
             title: "",
           ),
           body: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CTPostCard(post: post, isDetailedView: true),
                 if (loadingComments) Gap(100),
                 if (loadingComments)
                   Center(child: Loader())
                 else
-                  ListView.builder(
-                    itemBuilder: (context, index) =>
-                        CTCommentCard(comments[index]),
-                    itemCount: comments.length,
-                  )
+                  ...comments.map((e) => CTCommentCard(e)),
               ],
             ),
           ),
