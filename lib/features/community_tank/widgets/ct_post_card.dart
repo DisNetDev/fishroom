@@ -5,21 +5,29 @@ import 'package:fishroom/features/community_tank/models/ct_post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
+import '../../../core/usecases/nav_push.dart';
 import '../../../core/usecases/show_toast.dart';
+import '../views/ct_post_details.dart';
+import 'ct_post_card_action_button.dart';
 
 class CTPostCard extends StatelessWidget {
   const CTPostCard({
     super.key,
     required this.post,
     this.index,
+    this.isDetailedView = false,
   });
 
   final CTPost post;
   final int? index;
-
+  final bool isDetailedView;
   @override
   Widget build(BuildContext context) {
+    final CommunityTankCubit communityTankCubit =
+        context.read<CommunityTankCubit>();
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -30,25 +38,39 @@ class CTPostCard extends StatelessWidget {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Text(
-              post.title,
-              style: kHeading1TextStyle,
+          InkWell(
+            splashColor: kPrimaryColor,
+            radius: 10,
+            onTap: () {
+              if (!isDetailedView) {
+                navPush(context, CTPostDetails(postId: post.id));
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Text(
+                    post.title,
+                    style: kHeading1TextStyle,
+                  ),
+                ),
+                if (post.images.isNotEmpty)
+                  CachedNetworkImage(
+                    errorWidget: (context, error, stackTrace) => AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Icon(Icons.error),
+                    ),
+                    imageUrl: post.images.first,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+              ],
             ),
           ),
-          if (post.images.isNotEmpty)
-            CachedNetworkImage(
-              errorWidget: (context, error, stackTrace) => AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Icon(Icons.error),
-              ),
-              imageUrl: post.images.first,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
           Gap(10),
           Row(
             children: [
@@ -65,76 +87,57 @@ class CTPostCard extends StatelessWidget {
                     fontSize: 12, color: Colors.grey),
               ),
               Expanded(child: Container()),
-              CTPostCardActions(post: post),
+              Row(
+                children: [
+                  CTPActionButton(
+                      count: post.commentCount,
+                      icon: Symbols.mode_comment_rounded,
+                      onTap: () {
+                        if (!isDetailedView) {
+                          navPush(context, CTPostDetails(postId: post.id));
+                        }
+                      },
+                      color: Colors.grey),
+                  CTPActionButton(
+                    count: post.upVotes,
+                    icon: Icons.arrow_upward,
+                    color: post.isUpvoted == true ? kPrimaryColor : Colors.grey,
+                    onTap: () {
+                      try {
+                        communityTankCubit.upvotePost(post.id);
+                      } catch (e) {
+                        showToast(context,
+                            title: "Something went wrong while upvoting:",
+                            description: e.toString(),
+                            toastType: ToastType.error);
+                      }
+                    },
+                  ),
+                  CTPActionButton(
+                    count: post.downVotes,
+                    icon: Icons.arrow_downward,
+                    color: post.isUpvoted == false
+                        ? Colors.deepOrange
+                        : Colors.grey,
+                    onTap: () {
+                      try {
+                        communityTankCubit.downvotePost(post.id);
+                      } catch (e) {
+                        showToast(context,
+                            title: "Something went wrong while downvoting:",
+                            description: e.toString(),
+                            toastType: ToastType.error);
+                      }
+                    },
+                  ),
+                ],
+              ),
               Gap(20),
             ],
           ),
           Gap(10),
         ],
       ),
-    );
-  }
-}
-
-class CTPostCardActions extends StatelessWidget {
-  const CTPostCardActions({super.key, required this.post});
-
-  final CTPost post;
-
-  @override
-  Widget build(BuildContext context) {
-    final CommunityTankCubit communityTankCubit =
-        context.read<CommunityTankCubit>();
-    return Row(
-      children: [
-        InkWell(
-          onTap: () {
-            try {
-              communityTankCubit.upvotePost(post.id);
-            } catch (e) {
-              showToast(context,
-                  title: "Something went wrong while upvoting:",
-                  description: e.toString(),
-                  toastType: ToastType.error);
-            }
-          },
-          child: Row(
-            children: [
-              Icon(Icons.arrow_upward,
-                  color: post.isUpvoted == true ? Colors.blue : Colors.grey,
-                  size: 20),
-              Gap(5),
-              Text(post.upVotes.toString(),
-                  style: kDateTimeTextStyle.copyWith(fontSize: 12)),
-              Gap(10),
-            ],
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            try {
-              communityTankCubit.downvotePost(post.id);
-            } catch (e) {
-              showToast(context,
-                  title: "Something went wrong while downvoting:",
-                  description: e.toString(),
-                  toastType: ToastType.error);
-            }
-          },
-          child: Row(
-            children: [
-              Icon(Icons.arrow_downward,
-                  color:
-                      post.isUpvoted == false ? Colors.deepOrange : Colors.grey,
-                  size: 20),
-              Gap(5),
-              Text(post.downVotes.toString(),
-                  style: kDateTimeTextStyle.copyWith(fontSize: 12)),
-              Gap(10),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

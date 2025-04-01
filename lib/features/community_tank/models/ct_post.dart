@@ -10,6 +10,7 @@ class CTPost {
   final int upVotes;
   final int downVotes;
   final bool? isUpvoted;
+  final int commentCount;
   CTPost({
     required this.id,
     required this.title,
@@ -22,6 +23,7 @@ class CTPost {
     this.upVotes = 0,
     this.downVotes = 0,
     this.isUpvoted,
+    this.commentCount = 0,
   });
 
   Map<String, dynamic> toJson() {
@@ -61,6 +63,7 @@ class CTPost {
     int? upVotes,
     int? downVotes,
     bool? isUpvoted,
+    int? commentCount,
   }) {
     return CTPost(
       id: id,
@@ -74,6 +77,7 @@ class CTPost {
       upVotes: upVotes ?? this.upVotes,
       downVotes: downVotes ?? this.downVotes,
       isUpvoted: isUpvoted ?? this.isUpvoted,
+      commentCount: commentCount ?? this.commentCount,
     );
   }
 }

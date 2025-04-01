@@ -1,9 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
+import '../models/ct_comment.dart';
 import '../models/ct_post.dart';
 
 part 'community_tank_state.dart';
@@ -33,14 +35,14 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
     List<CTPost> newPosts = [];
 
     try {
-      //i have no idea how this works but it does. Dont touch it.
       final response = await supabase
           .from(SupabaseTable.communityTankPost.tableName)
           .select('''
             *,
             upvotes:votes(count),
             downvotes:votes(count),
-            user_vote:votes(vote_type)
+            user_vote:votes(vote_type),
+            comment_count:community_tank_posts_comments(count)
           ''')
           .eq('upvotes.vote_type', 'upvote')
           .eq('downvotes.vote_type', 'downvote')
@@ -63,6 +65,9 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
                 : 0,
             downVotes: postData['downvotes']?.isNotEmpty == true
                 ? postData['downvotes'][0]['count'] ?? 0
+                : 0,
+            commentCount: postData['comment_count']?.isNotEmpty == true
+                ? postData['comment_count'][0]['count'] ?? 0
                 : 0));
       }
 
@@ -84,33 +89,65 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
   }
 
   Future<void> upvotePost(String postId) async {
+    CommunityTankState oldState = state.copyWith();
+    bool? isAlreadyUpVoted =
+        state.posts.firstWhereOrNull((test) => test.id == postId)?.isUpvoted;
+    if (isAlreadyUpVoted == true) return;
+    emit(state.copyWith(
+        posts: state.posts
+            .map((e) => e.id == postId
+                ? e.copyWith(
+                    upVotes: e.upVotes + 1,
+                    downVotes:
+                        e.isUpvoted == false ? e.downVotes - 1 : e.downVotes,
+                    isUpvoted: true)
+                : e)
+            .toList()));
     try {
       fishLog("Upvoting post: $postId");
-      final response = await supabaseRepository.runFunction("upvote_post", {
+      await supabaseRepository.runFunction("upvote_post", {
         "post_id_param": postId,
       });
-      fishLog("Response: $response");
-      emit(state.copyWith(
-          posts: state.posts
-              .map((e) =>
-                  e.id == postId ? e.copyWith(upVotes: e.upVotes + 1) : e)
-              .toList()));
     } catch (e) {
+      emit(oldState);
+
       rethrow;
     }
   }
 
   Future<void> downvotePost(String postId) async {
+    CommunityTankState oldState = state.copyWith();
+    bool? isAlreadyDownVoted =
+        state.posts.firstWhereOrNull((test) => test.id == postId)?.isUpvoted;
+    if (isAlreadyDownVoted == false) return;
+    emit(state.copyWith(
+        posts: state.posts
+            .map((e) => e.id == postId
+                ? e.copyWith(
+                    upVotes: e.isUpvoted == true ? e.upVotes - 1 : e.upVotes,
+                    downVotes: e.downVotes + 1,
+                    isUpvoted: false)
+                : e)
+            .toList()));
     try {
       fishLog("Downvoting post: $postId");
       await supabaseRepository.runFunction("downvote_post", {
         "post_id_param": postId,
       });
-      emit(state.copyWith(
-          posts: state.posts
-              .map((e) =>
-                  e.id == postId ? e.copyWith(downVotes: e.downVotes + 1) : e)
-              .toList()));
+    } catch (e) {
+      emit(oldState);
+      rethrow;
+    }
+  }
+
+  Future<List<CTComment>> getComments(String postId) async {
+    try {
+      final response = await supabase
+          .from(SupabaseTable.communityTankPostComments.tableName)
+          .select('*')
+          .eq('post_id', postId);
+
+      return response.map((e) => CTComment.fromJson(e)).toList();
     } catch (e) {
       rethrow;
     }

@@ -152,6 +152,24 @@ class CommunityTankPosts extends DatabaseTables {
   static const DBColumn _downVotes = DBColumn('down_votes');
 }
 
+class CommunityTankPostsComments extends DatabaseTables {
+  CommunityTankPostsComments() : super('community_tank_posts_comments');
+
+  String get id => _id.columnName;
+  String get postId => _postId.columnName;
+  String get content => _content.columnName;
+  String get createdAt => _createdAt.columnName;
+  String get authorId => _authorId.columnName;
+  String get authorName => _authorName.columnName;
+
+  static const DBColumn _id = DBColumn('id');
+  static const DBColumn _postId = DBColumn('post_id');
+  static const DBColumn _content = DBColumn('content');
+  static const DBColumn _createdAt = DBColumn('created_at');
+  static const DBColumn _authorId = DBColumn('author_id');
+  static const DBColumn _authorName = DBColumn('author_name');
+}
+
 class SupabaseTable {
   static final users = Users();
   static final usersCheck = UsersCheck();
@@ -162,4 +180,5 @@ class SupabaseTable {
   static final fish = Fish();
   static final achievements = Achievements();
   static final communityTankPost = CommunityTankPosts();
+  static final communityTankPostComments = CommunityTankPostsComments();
 }
