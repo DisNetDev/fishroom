@@ -1,17 +1,20 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
+import 'package:fishroom/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:soft_edge_blur/soft_edge_blur.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
@@ -31,6 +34,7 @@ class Fishroom extends StatefulWidget {
 }
 
 class _FishroomState extends State<Fishroom> {
+  AppCubit get appCubit => context.read<AppCubit>();
   bool loading = false;
 
   init() async {
@@ -61,6 +65,22 @@ class _FishroomState extends State<Fishroom> {
           MaterialPageRoute(builder: (context) => const CreateTankTankName()));
     }
     context.read<AppCubit>().setAppLoaded(true);
+
+//sends welcome email if it hasn't yet.
+    if (appCubit.state.user?.welcomeEmailSent == false) {
+      try {
+        fishLog("Sending email...");
+        //This is technically the reauthenticate email, but I adjusted it on the server side to be a welcome email. Its dumb but it works.
+        await supabase.auth.reauthenticate();
+        fishLog("Welcome Email Sent. Updating field...");
+        await appCubit.setWelcomeEmailSent(true);
+      } catch (e) {
+        showToast(context,
+            title: "Error Sending Email",
+            toastType: ToastType.error,
+            description: e.toString());
+      }
+    }
   }
 
   @override

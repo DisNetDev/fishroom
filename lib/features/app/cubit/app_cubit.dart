@@ -265,4 +265,16 @@ class AppCubit extends HydratedCubit<AppState> {
       rethrow;
     }
   }
+
+  Future<void> setWelcomeEmailSent(bool value) async {
+    try {
+      await _supabaseRepository.update(
+          tableName: SupabaseTable.users.tableName,
+          json: {"welcome_email_sent": value},
+          conditionalColumn: SupabaseTable.users.id,
+          condition: state.user!.uuid);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
