@@ -1,6 +1,8 @@
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
+import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -26,6 +28,7 @@ class _CTPostDetailsState extends State<CTPostDetails> {
   bool loadingComments = false;
   CommunityTankCubit get communityTankCubit =>
       context.read<CommunityTankCubit>();
+  AppCubit get appCubit => context.read<AppCubit>();
 
   List<CTComment> comments = [];
 
@@ -54,8 +57,13 @@ class _CTPostDetailsState extends State<CTPostDetails> {
   Widget build(BuildContext context) {
     return BlocBuilder<CommunityTankCubit, CommunityTankState>(
       builder: (context, state) {
+        bool isMyPost = false;
+
         final post =
             state.posts.firstWhere((element) => element.id == widget.postId);
+        if (post.authorID == appCubit.state.user!.uuid) {
+          isMyPost = true;
+        }
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             shape: CircleBorder(),
@@ -101,6 +109,16 @@ class _CTPostDetailsState extends State<CTPostDetails> {
           appBar: RootSliverAppBar(
             implyLeading: true,
             title: "",
+            actions: isMyPost
+                ? [
+                    IconButton(
+                        onPressed: () async {
+                          communityTankCubit.deletePost(post.id);
+                          navPop(context);
+                        },
+                        icon: Icon(Icons.delete))
+                  ]
+                : [],
           ),
           body: SingleChildScrollView(
             child: Column(

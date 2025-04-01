@@ -162,4 +162,18 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
       rethrow;
     }
   }
+
+  Future<void> deletePost(String postId) async {
+    try {
+      await supabaseRepository.delete(
+          tableName: SupabaseTable.communityTankPost.tableName,
+          column: SupabaseTable.communityTankPost.id,
+          condition: postId);
+
+      emit(state.copyWith(
+          posts: state.posts.where((test) => test.id != postId).toList()));
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

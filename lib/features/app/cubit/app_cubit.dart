@@ -273,6 +273,7 @@ class AppCubit extends HydratedCubit<AppState> {
           json: {"welcome_email_sent": value},
           conditionalColumn: SupabaseTable.users.id,
           condition: state.user!.uuid);
+      emit(state.copyWith(user: state.user!.copyWith(welcomeEmailSent: value)));
     } catch (e) {
       rethrow;
     }
