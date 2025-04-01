@@ -69,7 +69,7 @@ class _FishroomState extends State<Fishroom> {
 //sends welcome email if it hasn't yet.
     if (appCubit.state.user?.welcomeEmailSent == false) {
       try {
-        fishLog("Sending email...");
+        fishLog("Sending welcome email...");
         //This is technically the reauthenticate email, but I adjusted it on the server side to be a welcome email. Its dumb but it works.
         await supabase.auth.reauthenticate();
         fishLog("Welcome Email Sent. Updating field...");
