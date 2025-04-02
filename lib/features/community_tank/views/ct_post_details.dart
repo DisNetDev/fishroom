@@ -1,5 +1,6 @@
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
@@ -64,75 +65,85 @@ class _CTPostDetailsState extends State<CTPostDetails> {
         if (post.authorID == appCubit.state.user!.uuid) {
           isMyPost = true;
         }
-        return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            shape: CircleBorder(),
-            onPressed: () async {
-              await showModalBottomSheet(
-                enableDrag: true,
-                context: context,
-                backgroundColor: Colors.transparent,
-                isDismissible: true,
-                isScrollControlled: true,
-                builder: (context) => Container(
-                  color: Colors.transparent,
-                  child: Container(
-                    padding: MediaQuery.of(context).viewInsets,
-                    child: DraggableScrollableSheet(
-                      controller: scrollController,
-                      expand: false,
-                      snap: true,
-                      minChildSize: 0.1,
-                      initialChildSize: 0.5,
-                      maxChildSize: 0.9,
-                      snapSizes: [0.1, 0.5, 0.9],
-                      builder: (context, scrollController) => Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        child: CreateCommentModal(
-                          postId: widget.postId,
-                          onCommentCreated: (comment) => setState(
-                            () => comments.add(comment),
+        return Stack(
+          children: [
+            CustomBackground(),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              floatingActionButton: FloatingActionButton(
+                shape: CircleBorder(),
+                onPressed: () async {
+                  await showModalBottomSheet(
+                    enableDrag: true,
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isDismissible: true,
+                    isScrollControlled: true,
+                    builder: (context) => Container(
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: MediaQuery.of(context).viewInsets,
+                        child: DraggableScrollableSheet(
+                          controller: scrollController,
+                          expand: false,
+                          snap: true,
+                          minChildSize: 0.1,
+                          initialChildSize: 0.5,
+                          maxChildSize: 0.9,
+                          snapSizes: [0.1, 0.5, 0.9],
+                          builder: (context, scrollController) => Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20)),
+                            ),
+                            child: CreateCommentModal(
+                              postId: widget.postId,
+                              onCommentCreated: (comment) => setState(
+                                () => comments.add(comment),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
+                  ).then((value) => init());
+                },
+                child: const Icon(Icons.add),
+              ),
+              appBar: RootSliverAppBar(
+                implyLeading: true,
+                title: "",
+                actions: isMyPost
+                    ? [
+                        IconButton(
+                            onPressed: () async {
+                              communityTankCubit.deletePost(post.id);
+                              navPop(context);
+                            },
+                            icon: Icon(Icons.delete))
+                      ]
+                    : [],
+              ),
+              body: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: SingleChildScrollView(
+                  child: Column(
+                    spacing: 5,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CTPostCard(post: post, isDetailedView: true),
+                      if (loadingComments) Gap(100),
+                      if (loadingComments)
+                        Center(child: Loader())
+                      else
+                        ...comments.map((e) => CTCommentCard(e)),
+                    ],
                   ),
                 ),
-              ).then((value) => init());
-            },
-            child: const Icon(Icons.add),
-          ),
-          appBar: RootSliverAppBar(
-            implyLeading: true,
-            title: "",
-            actions: isMyPost
-                ? [
-                    IconButton(
-                        onPressed: () async {
-                          communityTankCubit.deletePost(post.id);
-                          navPop(context);
-                        },
-                        icon: Icon(Icons.delete))
-                  ]
-                : [],
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                CTPostCard(post: post, isDetailedView: true),
-                if (loadingComments) Gap(100),
-                if (loadingComments)
-                  Center(child: Loader())
-                else
-                  ...comments.map((e) => CTCommentCard(e)),
-              ],
+              ),
             ),
-          ),
+          ],
         );
       },
     );

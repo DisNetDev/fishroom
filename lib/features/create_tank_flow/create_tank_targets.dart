@@ -66,7 +66,7 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                   ),
                   Gap(50),
                   Text(
-                    "You can set targets for your tank parameters here.\nThis will help you keep track of your tank's health, by letting you know when parameters are off.\n\nThis is not required, you can just click the skip button to skip this step.\n\nIf you would like to add more parameters, you can do so in the settings page and come back here to edit them.\n\nSelect your middle ground and tolerance for each parameter.",
+                    "You can set targets for your tank parameters here.\nThis will help you keep track of your tank's health, by letting you know when parameters are off.",
                     style: kHeading2TextStyle,
                     textAlign: TextAlign.center,
                   ),

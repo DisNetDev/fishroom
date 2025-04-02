@@ -1,6 +1,8 @@
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:glass/glass.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -53,9 +55,6 @@ class _TankReadingListItemState extends State<TankReadingListItem> {
           },
           direction: DismissDirection.endToStart,
           background: Container(
-            decoration: BoxDecoration(
-                border: const GradientBoxBorder(
-                    width: 0.5, gradient: kErrorGradient)),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -93,12 +92,8 @@ class _ReadingWidgetState extends State<ReadingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color.fromARGB(74, 158, 158, 158)),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
       child: ClipRRect(
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: ShaderMask(
@@ -130,6 +125,7 @@ class _ReadingWidgetState extends State<ReadingWidget> {
                 onTap: () => setState(() => open = !open),
                 child: Stack(
                   clipBehavior: Clip.none,
+                  alignment: Alignment.bottomCenter,
                   children: [
                     Container(
                       padding: const EdgeInsets.only(
@@ -188,13 +184,24 @@ class _ReadingWidgetState extends State<ReadingWidget> {
                       right: 20,
                       child: DateTimeText(dateTime: widget.reading.createdAt),
                     ),
+                    Positioned(
+                        bottom: 2,
+                        right: 5,
+                        child: AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          child: Icon(Icons.keyboard_arrow_down),
+                        ))
                   ],
                 ),
               ),
             ),
           ),
         ),
-      ),
+      ).asGlass(
+          clipBorderRadius: BorderRadius.circular(16),
+          tintColor: isDarkMode(context)
+              ? const Color.fromARGB(255, 50, 50, 50)
+              : Colors.white),
     );
   }
 }

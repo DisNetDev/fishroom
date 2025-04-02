@@ -59,7 +59,7 @@ class _BottomBar extends StatelessWidget {
     }
 
     LinearGradient gradient = LinearGradient(colors: [
-      isDarkMode(context) ? darkmodeBackgroundColor : lightmodeBackgroundColor,
+      isDarkMode(context) ? Colors.transparent : Colors.white.withAlpha(0),
       isDarkMode(context) ? kSecondaryColor : kPrimaryColor.withAlpha(120)
     ], begin: Alignment.centerLeft, end: Alignment.centerRight);
 

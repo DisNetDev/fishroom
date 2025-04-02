@@ -1,12 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/features/community_tank/cubit/community_tank_cubit.dart';
 import 'package:fishroom/features/community_tank/models/ct_post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:glass/glass.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/usecases/nav_push.dart';
 import '../../../core/usecases/show_toast.dart';
 import '../views/ct_post_details.dart';
@@ -29,14 +32,7 @@ class CTPostCard extends StatelessWidget {
         context.read<CommunityTankCubit>();
 
     return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          top: index == 0
-              ? BorderSide(color: Colors.grey.withAlpha(40))
-              : BorderSide.none,
-          bottom: BorderSide(color: Colors.grey.withAlpha(40)),
-        ),
-      ),
+      decoration: BoxDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -60,6 +56,12 @@ class CTPostCard extends StatelessWidget {
                 ),
                 if (post.images.isNotEmpty)
                   CachedNetworkImage(
+                    placeholder: (context, url) => AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Center(
+                        child: Loader(color: Colors.black),
+                      ),
+                    ),
                     errorWidget: (context, error, stackTrace) => AspectRatio(
                       aspectRatio: 16 / 9,
                       child: Icon(Icons.error),
@@ -138,6 +140,11 @@ class CTPostCard extends StatelessWidget {
           Gap(10),
         ],
       ),
+    ).asGlass(
+      clipBorderRadius: BorderRadius.circular(16),
+      tintColor: isDarkMode(context)
+          ? const Color.fromARGB(255, 50, 50, 50)
+          : Colors.white,
     );
   }
 }

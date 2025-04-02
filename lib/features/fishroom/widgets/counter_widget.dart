@@ -1,6 +1,8 @@
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:glass/glass.dart';
 
 import '../../../core/constants.dart';
 
@@ -23,6 +25,9 @@ class CounterWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+        ),
         padding: EdgeInsets.all(10),
         child: Column(
           children: [
@@ -55,6 +60,11 @@ class CounterWidget extends StatelessWidget {
             ),
           ],
         ),
+      ).asGlass(
+        tintColor: isDarkMode(context)
+            ? const Color.fromARGB(255, 50, 50, 50)
+            : Colors.white,
+        clipBorderRadius: BorderRadius.circular(16),
       ),
     );
   }

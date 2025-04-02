@@ -1,7 +1,8 @@
+import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/features/community_tank/views/community_tank_view.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:flutter_svg/svg.dart';
 
 class RootNavbar extends StatelessWidget {
   RootNavbar({super.key, required this.currentIndex});
@@ -10,12 +11,39 @@ class RootNavbar extends StatelessWidget {
 
   final List<BottomNavigationBarItem> _navbarItems = [
     BottomNavigationBarItem(
-        icon: Icon(
-          Symbols.home,
+      activeIcon: Padding(
+        padding: EdgeInsets.only(bottom: 10),
+        child: SvgPicture.asset(
+          "assets/icons/home.svg",
+          colorFilter: ColorFilter.mode(kPrimaryColor, BlendMode.srcIn),
         ),
-        label: "Home"),
+      ),
+      icon: Padding(
+        padding: EdgeInsets.only(bottom: 10),
+        child: SvgPicture.asset(
+          "assets/icons/home.svg",
+          colorFilter: ColorFilter.mode(Colors.grey.shade400, BlendMode.srcIn),
+        ),
+      ),
+      label: "Home",
+    ),
     BottomNavigationBarItem(
-        icon: Icon(Symbols.communities), label: "The Community Tank"),
+        activeIcon: Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: SvgPicture.asset(
+            "assets/icons/chat.svg",
+            colorFilter: ColorFilter.mode(kPrimaryColor, BlendMode.srcIn),
+          ),
+        ),
+        icon: Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: SvgPicture.asset(
+            "assets/icons/chat.svg",
+            colorFilter:
+                ColorFilter.mode(Colors.grey.shade400, BlendMode.srcIn),
+          ),
+        ),
+        label: "The Community Tank"),
   ];
 
   final List<Widget> _viewList = const [
@@ -46,13 +74,17 @@ class RootNavbar extends StatelessWidget {
         child: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           height: 80,
+          color: Colors.black54,
           child: Hero(
             tag: "bottomNavBar",
             child: BottomNavigationBar(
+              selectedItemColor: kPrimaryColor,
               backgroundColor: Colors.transparent,
               elevation: 0,
               currentIndex: currentIndex,
               items: _navbarItems,
+              selectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 13),
+              unselectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 12),
               onTap: (index) {
                 if (index != currentIndex) {
                   Navigator.pushReplacement(

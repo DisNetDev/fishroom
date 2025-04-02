@@ -7,6 +7,7 @@ import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 
 import '../../../core/models/tank.dart';
@@ -114,6 +115,7 @@ class _LineGraphMainState extends State<LineGraphMain> {
                 ],
               ),
             ),
+            Gap(8)
           ],
         ),
       ],

@@ -1,7 +1,7 @@
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/community_tank/cubit/community_tank_cubit.dart';
@@ -79,80 +79,91 @@ class _CommunityTankViewState extends State<CommunityTankView> {
           navReplace(context, Fishroom()),
       child: !hasUsername
           ? CreateUsernameModal()
-          : Scaffold(
-              appBar: RootSliverAppBar(
-                title: "Community Tank",
-              ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              floatingActionButton: FloatingActionButton(
-                shape: CircleBorder(),
-                child: const Icon(Icons.add),
-                onPressed: () => showMaterialModalBottomSheet(
-                  enableDrag: true,
-                  context: context,
+          : Stack(
+              children: [
+                CustomBackground(),
+                Scaffold(
                   backgroundColor: Colors.transparent,
-                  isDismissible: true,
-                  builder: (context) => Container(
-                    color: Colors.transparent,
-                    child: Container(
-                      padding: MediaQuery.of(context).viewInsets,
-                      child: DraggableScrollableSheet(
-                        controller: scrollableController,
-                        expand: false,
-                        snap: true,
-                        initialChildSize: 0.9,
-                        maxChildSize: 1,
-                        snapSizes: [0.9],
-                        builder: (context, scrollController) => Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20)),
-                            ),
-                            child: CreatePostModal()),
+                  appBar: RootSliverAppBar(
+                    title: "Community Tank",
+                  ),
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerDocked,
+                  floatingActionButton: FloatingActionButton(
+                    shape: CircleBorder(),
+                    child: const Icon(Icons.add),
+                    onPressed: () => showMaterialModalBottomSheet(
+                      enableDrag: true,
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      isDismissible: true,
+                      builder: (context) => Container(
+                        color: Colors.transparent,
+                        child: Container(
+                          padding: MediaQuery.of(context).viewInsets,
+                          child: DraggableScrollableSheet(
+                            controller: scrollableController,
+                            expand: false,
+                            snap: true,
+                            initialChildSize: 0.9,
+                            maxChildSize: 1,
+                            snapSizes: [0.9],
+                            builder: (context, scrollController) => Container(
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20)),
+                                ),
+                                child: CreatePostModal()),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              bottomNavigationBar: RootNavbar(currentIndex: 1),
-              body: BlocBuilder<CommunityTankCubit, CommunityTankState>(
-                builder: (context, state) {
-                  if (loadingInitialPosts) {
-                    return Center(child: Loader());
-                  }
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      await getInitialPosts(showLoading: false);
-                    },
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (communityTankCubit.state.posts.isEmpty)
-                            Center(
-                              child: Text(
-                                "Welcome to the Community Tank! \nThe tank seems to be empty. \nCreate a post to get started.",
-                                style: kHeadingTextStyle,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ...List.generate(
-                            state.posts.length,
-                            (index) => Animate(
-                              effects: [FadeEffect(duration: 500.ms)],
-                              child: CTPostCard(
-                                  post: state.posts[index], index: index),
+                  bottomNavigationBar: RootNavbar(currentIndex: 1),
+                  body: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: BlocBuilder<CommunityTankCubit, CommunityTankState>(
+                      builder: (context, state) {
+                        if (loadingInitialPosts) {
+                          return Center(child: Loader());
+                        }
+                        return RefreshIndicator(
+                          onRefresh: () async {
+                            await getInitialPosts(showLoading: false);
+                          },
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Column(
+                              spacing: 5,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (communityTankCubit.state.posts.isEmpty)
+                                  Center(
+                                    child: Text(
+                                      "Welcome to the Community Tank! \nThe tank seems to be empty. \nCreate a post to get started.",
+                                      style: kHeadingTextStyle,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ...List.generate(
+                                  state.posts.length,
+                                  (index) => Animate(
+                                    effects: [FadeEffect(duration: 500.ms)],
+                                    child: CTPostCard(
+                                        post: state.posts[index], index: index),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
     );
   }

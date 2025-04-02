@@ -37,7 +37,7 @@ const LinearGradient kDisabledGradient = LinearGradient(
   ],
 );
 
-const Color darkmodeBackgroundColor = Color.fromARGB(255, 0, 23, 26);
+const Color darkmodeBackgroundColor = Color.fromARGB(255, 15, 15, 15);
 const Color lightmodeBackgroundColor = Color.fromARGB(255, 250, 254, 255);
 
 const LinearGradient kErrorGradient = LinearGradient(

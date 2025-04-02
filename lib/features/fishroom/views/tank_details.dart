@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:glass/glass.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants.dart';
@@ -97,130 +98,143 @@ class _TankDetailsState extends State<TankDetails> {
               },
               child: const Icon(Icons.add),
             ),
-            body: CustomScrollView(
-              slivers: [
-                RootSliverAppBar(
-                  title: _tank.name ?? "Tank Details",
-                  sliver: true,
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        navPush(context, CreateTankTankName(tank: _tank));
-                      },
-                      icon: const Icon(
-                        Icons.edit,
-                      ),
-                    )
-                  ],
-                ),
-                BlocBuilder<TanksCubit, TanksState>(
-                  builder: (context, state) {
-                    List<TankReading> readings = state.readings
-                        .where((reading) => reading.tankId == _tank.id)
-                        .toList();
-
-                    Tank? currentTank = state.tanks
-                        .firstWhereOrNull((test) => test.id == _tank.id);
-
-                    return SliverList(
-                      delegate: SliverChildListDelegate([
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: CounterWidget(
-                                heading: "Current Streak",
-                                counter: currentTank?.streak ?? 0,
-                                loading: streakLoading,
-                              ),
-                            ),
-                            Expanded(
-                              child: CounterWidget(
-                                  heading: "Inhabitants",
-                                  onTap: () async {
-                                    navPush(
-                                        context, TankInhabitants(tank: _tank));
-                                  },
-                                  counter: currentTank == null
-                                      ? 0
-                                      : currentTank.inhabitants.fold(
-                                          0,
-                                          (previousValue, element) =>
-                                              previousValue +
-                                              (element.count ?? 0))),
-                            ),
-                            Expanded(
-                              child: CounterWidget(
-                                heading: "Achievements",
-                                counter:
-                                    currentTank?.achievementIds.length ?? 0,
-                                onTap: () =>
-                                    navPush(context, Achievements(tank: _tank)),
-                              ),
-                            )
-                          ],
+            body: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: CustomScrollView(
+                slivers: [
+                  RootSliverAppBar(
+                    title: _tank.name ?? "Tank Details",
+                    sliver: true,
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          navPush(context, CreateTankTankName(tank: _tank));
+                        },
+                        icon: const Icon(
+                          Icons.edit,
                         ),
-                        if (appCubit.state.settings.parameters.isNotEmpty)
-                          Animate(
+                      )
+                    ],
+                  ),
+                  BlocBuilder<TanksCubit, TanksState>(
+                    builder: (context, state) {
+                      List<TankReading> readings = state.readings
+                          .where((reading) => reading.tankId == _tank.id)
+                          .toList();
+
+                      Tank? currentTank = state.tanks
+                          .firstWhereOrNull((test) => test.id == _tank.id);
+
+                      return SliverList(
+                        delegate: SliverChildListDelegate([
+                          Row(
+                            spacing: 8,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: CounterWidget(
+                                  heading: "Current Streak",
+                                  counter: currentTank?.streak ?? 0,
+                                  loading: streakLoading,
+                                ),
+                              ),
+                              Expanded(
+                                child: CounterWidget(
+                                    heading: "Inhabitants",
+                                    onTap: () async {
+                                      navPush(context,
+                                          TankInhabitants(tank: _tank));
+                                    },
+                                    counter: currentTank == null
+                                        ? 0
+                                        : currentTank.inhabitants.fold(
+                                            0,
+                                            (previousValue, element) =>
+                                                previousValue +
+                                                (element.count ?? 0))),
+                              ),
+                              Expanded(
+                                child: CounterWidget(
+                                  heading: "Achievements",
+                                  counter:
+                                      currentTank?.achievementIds.length ?? 0,
+                                  onTap: () => navPush(
+                                      context, Achievements(tank: _tank)),
+                                ),
+                              )
+                            ],
+                          ),
+                          Gap(8),
+                          if (appCubit.state.settings.parameters.isNotEmpty)
+                            Animate(
+                                effects: [
+                                  FadeEffect(
+                                    curve: Curves.ease,
+                                    delay: 100.ms,
+                                  )
+                                ],
+                                child: SizedBox(
+                                  child: LineGraphMain(
+                                      data: readings.reversed.toList()),
+                                ).asGlass(
+                                    tintColor: isDarkMode(context)
+                                        ? const Color.fromARGB(255, 50, 50, 50)
+                                        : Colors.white,
+                                    clipBorderRadius:
+                                        BorderRadius.circular(16))),
+                          Gap(20),
+                          if (loading)
+                            for (var i = 0; i < 4; i++)
+                              Skeletonizer(
+                                  effect: isDarkMode(context)
+                                      ? kDarkModeShimmer
+                                      : kLightModeShimmer,
+                                  child: TankReadingListItem(
+                                      onDismissed: () {},
+                                      reading: TankReading(
+                                          id: "aaa",
+                                          ownerId: "bleh",
+                                          type: TankReadingType.measurement,
+                                          tankId: _tank.id,
+                                          createdAt: DateTime.now().toString(),
+                                          note: "Some Dummy Info"))),
+                          ...List.generate(
+                            readings.length,
+                            (index) => Animate(
                               effects: [
                                 FadeEffect(
-                                  curve: Curves.ease,
-                                  delay: 100.ms,
-                                )
+                                    curve: Curves.ease,
+                                    delay: Duration(
+                                        milliseconds:
+                                            initialLoad ? (100 * index) : 100)),
                               ],
-                              child: LineGraphMain(
-                                  data: readings.reversed.toList())),
-                        Gap(20),
-                        if (loading)
-                          for (var i = 0; i < 4; i++)
-                            Skeletonizer(
-                                effect: isDarkMode(context)
-                                    ? kDarkModeShimmer
-                                    : kLightModeShimmer,
-                                child: TankReadingListItem(
-                                    onDismissed: () {},
-                                    reading: TankReading(
-                                        id: "aaa",
-                                        ownerId: "bleh",
-                                        type: TankReadingType.measurement,
-                                        tankId: _tank.id,
-                                        createdAt: DateTime.now().toString(),
-                                        note: "Some Dummy Info"))),
-                        ...List.generate(
-                          readings.length,
-                          (index) => Animate(
-                            effects: [
-                              FadeEffect(
-                                  curve: Curves.ease,
-                                  delay: Duration(
-                                      milliseconds:
-                                          initialLoad ? (100 * index) : 100)),
-                            ],
-                            child: TankReadingListItem(
-                              onDismissed: () {
-                                try {
-                                  final readingToRemove = readings[index];
-                                  readings.removeAt(index);
-                                  tanksCubit.deleteTankReading(readingToRemove);
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    showToast(context,
-                                        title: "Something went wrong.",
-                                        toastType: ToastType.error,
-                                        description: e.toString());
+                              child: TankReadingListItem(
+                                onDismissed: () {
+                                  try {
+                                    final readingToRemove = readings[index];
+                                    readings.removeAt(index);
+                                    tanksCubit
+                                        .deleteTankReading(readingToRemove);
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      showToast(context,
+                                          title: "Something went wrong.",
+                                          toastType: ToastType.error,
+                                          description: e.toString());
+                                    }
                                   }
-                                }
-                              },
-                              reading: readings[index],
+                                },
+                                reading: readings[index],
+                              ),
                             ),
                           ),
-                        ),
-                        const Gap(300),
-                      ]),
-                    );
-                  },
-                ),
-              ],
+                          const Gap(300),
+                        ]),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
