@@ -125,109 +125,104 @@ class _TankDetailsState extends State<TankDetails> {
                       Tank? currentTank = state.tanks
                           .firstWhereOrNull((test) => test.id == _tank.id);
 
-                      return SliverList(
-                        delegate: SliverChildListDelegate(
-                          [
-                            Row(
-                              spacing: 8,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: CounterWidget(
-                                    heading: "Current Streak",
-                                    counter: currentTank?.streak ?? 0,
-                                    loading: streakLoading,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CounterWidget(
-                                      heading: "Inhabitants",
-                                      onTap: () async {
-                                        navPush(context,
-                                            TankInhabitants(tank: _tank));
-                                      },
-                                      counter: currentTank == null
-                                          ? 0
-                                          : currentTank.inhabitants.fold(
-                                              0,
-                                              (previousValue, element) =>
-                                                  previousValue +
-                                                  (element.count ?? 0))),
-                                ),
-                                Expanded(
-                                  child: CounterWidget(
-                                    heading: "Achievements",
-                                    counter:
-                                        currentTank?.achievementIds.length ?? 0,
-                                    onTap: () => navPush(
-                                        context, Achievements(tank: _tank)),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Gap(8),
-                            if (appCubit.state.settings.parameters.isNotEmpty)
-                              Animate(
-                                  effects: [
-                                    FadeEffect(
-                                      curve: Curves.ease,
-                                      delay: 100.ms,
-                                    )
-                                  ],
-                                  child: SizedBox(
-                                    child: LineGraphMain(
-                                        data: readings.reversed.toList()),
-                                  ).asGlass(
-                                      tintColor: isDarkMode(context)
-                                          ? const Color.fromARGB(
-                                              255, 50, 50, 50)
-                                          : Colors.white,
-                                      clipBorderRadius:
-                                          BorderRadius.circular(16))),
-                            Gap(20),
-                            if (loading)
-                              for (var i = 0; i < 4; i++)
-                                Skeletonizer(
-                                    effect: isDarkMode(context)
-                                        ? kDarkModeShimmer
-                                        : kLightModeShimmer,
-                                    child: TankReadingListItem(
-                                        onDismissed: () {},
-                                        reading: TankReading(
-                                            id: "aaa",
-                                            ownerId: "bleh",
-                                            type: TankReadingType.measurement,
-                                            tankId: _tank.id,
-                                            createdAt:
-                                                DateTime.now().toString(),
-                                            note: "Some Dummy Info"))),
-                            ListView.builder(
-                              physics: ClampingScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: readings.length,
-                              itemBuilder: (context, index) =>
-                                  TankReadingListItem(
-                                onDismissed: () {
-                                  try {
-                                    final readingToRemove = readings[index];
-                                    readings.removeAt(index);
-                                    tanksCubit
-                                        .deleteTankReading(readingToRemove);
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      showToast(context,
-                                          title: "Something went wrong.",
-                                          toastType: ToastType.error,
-                                          description: e.toString());
-                                    }
-                                  }
-                                },
-                                reading: readings[index],
+                      List<Widget> widgets = [
+                        Row(
+                          spacing: 8,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: CounterWidget(
+                                heading: "Current Streak",
+                                counter: currentTank?.streak ?? 0,
+                                loading: streakLoading,
                               ),
                             ),
-                            const Gap(300),
+                            Expanded(
+                              child: CounterWidget(
+                                  heading: "Inhabitants",
+                                  onTap: () async {
+                                    navPush(
+                                        context, TankInhabitants(tank: _tank));
+                                  },
+                                  counter: currentTank == null
+                                      ? 0
+                                      : currentTank.inhabitants.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.count ?? 0))),
+                            ),
+                            Expanded(
+                              child: CounterWidget(
+                                heading: "Achievements",
+                                counter:
+                                    currentTank?.achievementIds.length ?? 0,
+                                onTap: () =>
+                                    navPush(context, Achievements(tank: _tank)),
+                              ),
+                            )
                           ],
                         ),
+                        Gap(8),
+                        if (appCubit.state.settings.parameters.isNotEmpty)
+                          Animate(
+                              effects: [
+                                FadeEffect(
+                                  curve: Curves.ease,
+                                  delay: 100.ms,
+                                )
+                              ],
+                              child: SizedBox(
+                                child: LineGraphMain(
+                                    data: readings.reversed.toList()),
+                              ).asGlass(
+                                  tintColor: isDarkMode(context)
+                                      ? const Color.fromARGB(255, 50, 50, 50)
+                                      : Colors.white,
+                                  clipBorderRadius: BorderRadius.circular(16))),
+                        Gap(20),
+                        if (loading)
+                          for (var i = 0; i < 4; i++)
+                            Skeletonizer(
+                                effect: isDarkMode(context)
+                                    ? kDarkModeShimmer
+                                    : kLightModeShimmer,
+                                child: TankReadingListItem(
+                                    onDismissed: () {},
+                                    reading: TankReading(
+                                        id: "aaa",
+                                        ownerId: "bleh",
+                                        type: TankReadingType.measurement,
+                                        tankId: _tank.id,
+                                        createdAt: DateTime.now().toString(),
+                                        note: "Some Dummy Info"))),
+                        ...List.generate(
+                          readings.length,
+                          (readingsIndex) => TankReadingListItem(
+                            onDismissed: () {
+                              try {
+                                final readingToRemove = readings[readingsIndex];
+                                readings.removeAt(readingsIndex);
+                                tanksCubit.deleteTankReading(readingToRemove);
+                              } catch (e) {
+                                if (context.mounted) {
+                                  showToast(context,
+                                      title: "Something went wrong.",
+                                      toastType: ToastType.error,
+                                      description: e.toString());
+                                }
+                              }
+                            },
+                            reading: readings[readingsIndex],
+                          ),
+                        ),
+                        const Gap(300),
+                      ];
+
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                            childCount: widgets.length,
+                            (context, index) => widgets[index]),
                       );
                     },
                   ),
