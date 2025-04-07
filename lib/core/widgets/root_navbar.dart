@@ -13,6 +13,8 @@ class RootNavbar extends StatelessWidget {
 
   final int currentIndex;
 
+  static Color unselectedColor = Colors.white;
+
   final List<BottomNavigationBarItem> _navbarItems = [
     BottomNavigationBarItem(
       activeIcon: Padding(
@@ -26,7 +28,7 @@ class RootNavbar extends StatelessWidget {
         padding: EdgeInsets.only(bottom: 10),
         child: SvgPicture.asset(
           "assets/icons/home.svg",
-          colorFilter: ColorFilter.mode(Colors.grey.shade400, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(unselectedColor, BlendMode.srcIn),
         ),
       ),
       label: "Home",
@@ -43,8 +45,7 @@ class RootNavbar extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 10),
           child: SvgPicture.asset(
             "assets/icons/chat.svg",
-            colorFilter:
-                ColorFilter.mode(Colors.grey.shade400, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(unselectedColor, BlendMode.srcIn),
           ),
         ),
         label: "The Community Tank"),
@@ -81,7 +82,7 @@ class RootNavbar extends StatelessWidget {
                   ? Colors.black54
                   : Colors.black.withAlpha(50),
               child: BottomNavigationBar(
-                unselectedItemColor: Colors.white.withAlpha(90),
+                unselectedItemColor: Colors.white,
                 selectedItemColor: kPrimaryColor,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -89,8 +90,7 @@ class RootNavbar extends StatelessWidget {
                 items: _navbarItems,
                 useLegacyColorScheme: true,
                 selectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 13),
-                unselectedLabelStyle: kHeadingTextStyle.copyWith(
-                    fontSize: 12, color: Colors.white),
+                unselectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 12),
                 onTap: (index) {
                   if (index != currentIndex) {
                     Navigator.pushReplacement(

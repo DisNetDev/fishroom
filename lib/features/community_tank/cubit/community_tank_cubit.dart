@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/log.dart';
+import 'package:fishroom/features/community_tank/models/ct_report.dart';
 import 'package:fishroom/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -172,6 +175,15 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
 
       emit(state.copyWith(
           posts: state.posts.where((test) => test.id != postId).toList()));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> reportPost(CTReport report) async {
+    try {
+      await supabaseRepository.insert(
+          tableName: "community_tank_reports", json: report.toMap());
     } catch (e) {
       rethrow;
     }
