@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
+import 'package:fishroom/core/widgets/glass.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/achievements/views/achievements.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
@@ -14,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:glass/glass.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants.dart';
@@ -172,14 +172,10 @@ class _TankDetailsState extends State<TankDetails> {
                                   delay: 100.ms,
                                 )
                               ],
-                              child: SizedBox(
+                              child: Glass(
                                 child: LineGraphMain(
                                     data: readings.reversed.toList()),
-                              ).asGlass(
-                                  tintColor: isDarkMode(context)
-                                      ? const Color.fromARGB(255, 50, 50, 50)
-                                      : Colors.white,
-                                  clipBorderRadius: BorderRadius.circular(16))),
+                              )),
                         Gap(20),
                         if (loading)
                           for (var i = 0; i < 4; i++)

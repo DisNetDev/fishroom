@@ -48,7 +48,7 @@ class _TankHistoryChartState extends State<TankHistoryChart> {
               'avg',
               style: TextStyle(
                 fontSize: 12,
-                color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+                color: showAvg ? Colors.white.withAlpha(50) : Colors.white,
               ),
             ),
           ),
@@ -183,9 +183,8 @@ class _TankHistoryChartState extends State<TankHistoryChart> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
-                  .toList(),
+              colors:
+                  gradientColors.map((color) => color.withAlpha(30)).toList(),
             ),
           ),
         ),
@@ -278,10 +277,10 @@ class _TankHistoryChartState extends State<TankHistoryChart> {
               colors: [
                 ColorTween(begin: gradientColors[0], end: gradientColors[1])
                     .lerp(0.2)!
-                    .withOpacity(0.1),
+                    .withAlpha(10),
                 ColorTween(begin: gradientColors[0], end: gradientColors[1])
                     .lerp(0.2)!
-                    .withOpacity(0.1),
+                    .withAlpha(10),
               ],
             ),
           ),

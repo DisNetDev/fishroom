@@ -6,6 +6,8 @@ import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../usecases/is_dark_mode.dart';
+
 class RootNavbar extends StatelessWidget {
   RootNavbar({super.key, required this.currentIndex});
 
@@ -64,10 +66,6 @@ class RootNavbar extends StatelessWidget {
               topLeft: Radius.circular(8),
               topRight: Radius.circular(8),
             ),
-            boxShadow: [
-              BoxShadow(
-                  offset: Offset(0, -1), blurRadius: 6, color: Colors.black12),
-            ],
           ),
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
@@ -79,27 +77,28 @@ class RootNavbar extends StatelessWidget {
             child: BottomAppBar(
               shape: const CircularNotchedRectangle(),
               height: 80,
-              color: Colors.black54,
-              child: Hero(
-                tag: "bottomNavBar",
-                child: BottomNavigationBar(
-                  selectedItemColor: kPrimaryColor,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  currentIndex: currentIndex,
-                  items: _navbarItems,
-                  selectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 13),
-                  unselectedLabelStyle:
-                      kHeadingTextStyle.copyWith(fontSize: 12),
-                  onTap: (index) {
-                    if (index != currentIndex) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => _viewList[index]));
-                    }
-                  },
-                ),
+              color: isDarkMode(context)
+                  ? Colors.black54
+                  : Colors.black.withAlpha(50),
+              child: BottomNavigationBar(
+                unselectedItemColor: Colors.white.withAlpha(90),
+                selectedItemColor: kPrimaryColor,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                currentIndex: currentIndex,
+                items: _navbarItems,
+                useLegacyColorScheme: true,
+                selectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 13),
+                unselectedLabelStyle: kHeadingTextStyle.copyWith(
+                    fontSize: 12, color: Colors.white),
+                onTap: (index) {
+                  if (index != currentIndex) {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => _viewList[index]));
+                  }
+                },
               ),
             ),
           ),
@@ -108,27 +107,3 @@ class RootNavbar extends StatelessWidget {
     );
   }
 }
-
-// class _Item extends StatelessWidget {
-//   const _Item(
-//       {super.key,
-//       required this.selected,
-//       required this.icon,
-//       required this.label});
-
-//   final bool selected;
-//   final IconData icon;
-//   final String label;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisSize: MainAxisSize.min,
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         Icon(icon, color: selected ? kPrimaryColor : null),
-//         Text(label, style: TextStyle(color: selected ? kPrimaryColor : null)),
-//       ],
-//     );
-//   }
-// }
