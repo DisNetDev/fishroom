@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/widgets/glass.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/features/community_tank/cubit/community_tank_cubit.dart';
@@ -155,10 +156,19 @@ class CTPostCard extends StatelessWidget {
           Positioned(
             right: 0,
             child: PopupMenuButton(
+                elevation: 2,
+                shadowColor: isDarkMode(context) ? Colors.white : null,
                 padding: EdgeInsets.zero,
                 onSelected: (value) {
                   if (value == "report_post") {
-                    navPush(context, ReportObject(object: post));
+                    navPush(
+                        context,
+                        ReportObject(
+                          object: post,
+                          onReport: () => context
+                              .read<CommunityTankCubit>()
+                              .removePost(post.id),
+                        ));
                   }
                 },
                 itemBuilder: (context) => [

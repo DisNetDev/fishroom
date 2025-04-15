@@ -137,7 +137,9 @@ class _CTPostDetailsState extends State<CTPostDetails> {
                       if (loadingComments)
                         Center(child: Loader())
                       else
-                        ...comments.map((e) => CTCommentCard(e)),
+                        ...comments.map((e) => CTCommentCard(e,
+                            onRemove: () =>
+                                setState(() => comments.remove(e)))),
                     ],
                   ),
                 ),

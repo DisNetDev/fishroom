@@ -2,9 +2,13 @@ part of 'community_tank_cubit.dart';
 
 class CommunityTankState {
   final List<CTPost> posts;
-  CommunityTankState({this.posts = const []});
+  final List<String> hiddenPostsIds;
+  CommunityTankState({required this.posts, required this.hiddenPostsIds});
 
-  CommunityTankState copyWith({List<CTPost>? posts}) {
-    return CommunityTankState(posts: posts ?? this.posts);
+  CommunityTankState copyWith(
+      {List<CTPost>? posts, List<String>? hiddenPostsIds}) {
+    return CommunityTankState(
+        posts: posts ?? this.posts,
+        hiddenPostsIds: hiddenPostsIds ?? this.hiddenPostsIds);
   }
 }

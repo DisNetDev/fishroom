@@ -1,6 +1,5 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
-import 'package:fishroom/core/widgets/glass.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:material_symbols_icons/symbols.dart';

@@ -111,13 +111,17 @@ class MainApp extends StatelessWidget {
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-          sliderTheme: sliderTheme, dropdownMenuTheme: dropdownThemeDataLight),
+          dividerColor: Colors.transparent,
+          sliderTheme: sliderTheme,
+          dropdownMenuTheme: dropdownThemeDataLight),
       darkTheme: ThemeData.from(
         colorScheme: const ColorScheme.dark(
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-          sliderTheme: sliderTheme, dropdownMenuTheme: dropdownThemeDataDark),
+          dividerColor: Colors.transparent,
+          sliderTheme: sliderTheme,
+          dropdownMenuTheme: dropdownThemeDataDark),
       themeMode: ThemeMode.system,
       home: const SplashScreen(),
     );

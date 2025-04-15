@@ -1,10 +1,8 @@
-import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/features/community_tank/models/ct_report.dart';
 import 'package:fishroom/main.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
@@ -13,11 +11,22 @@ import '../models/ct_post.dart';
 
 part 'community_tank_state.dart';
 
-class CommunityTankCubit extends Cubit<CommunityTankState> {
+class CommunityTankCubit extends HydratedCubit<CommunityTankState> {
   CommunityTankCubit({required this.supabaseRepository})
-      : super(CommunityTankState());
+      : super(CommunityTankState(posts: [], hiddenPostsIds: []));
 
   final SupabaseRepository supabaseRepository;
+
+  @override
+  CommunityTankState? fromJson(Map<String, dynamic> json) {
+    return CommunityTankState(
+        posts: [], hiddenPostsIds: json["hiddenPostsIds"]);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(CommunityTankState state) {
+    return {"hiddenPostsIds": state.hiddenPostsIds};
+  }
 
   Future<void> createPost(CTPost post) async {
     try {
@@ -50,6 +59,7 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
           .eq('upvotes.vote_type', 'upvote')
           .eq('downvotes.vote_type', 'downvote')
           .eq('user_vote.user_id', supabaseRepository.user?.id ?? '')
+          .not('id', 'in', state.hiddenPostsIds)
           .order('created_at', ascending: false)
           .range(initial ? 0 : state.posts.length, 50);
 
@@ -148,7 +158,8 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
       final response = await supabase
           .from(SupabaseTable.communityTankPostComments.tableName)
           .select('*')
-          .eq('post_id', postId);
+          .eq('post_id', postId)
+          .not('id', 'in', state.hiddenPostsIds);
 
       return response.map((e) => CTComment.fromJson(e)).toList();
     } catch (e) {
@@ -180,12 +191,23 @@ class CommunityTankCubit extends Cubit<CommunityTankState> {
     }
   }
 
-  Future<void> reportPost(CTReport report) async {
+  Future<void> report(CTReport report) async {
     try {
       await supabaseRepository.insert(
           tableName: "community_tank_reports", json: report.toMap());
+      if (report.commentId != null || report.postId != null) {
+        emit(state.copyWith(hiddenPostsIds: [
+          ...state.hiddenPostsIds,
+          report.postId ?? report.commentId!,
+        ]));
+      }
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> removePost(String postId) async {
+    emit(state.copyWith(
+        posts: state.posts.where((test) => test.id != postId).toList()));
   }
 }
