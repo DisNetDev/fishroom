@@ -4,11 +4,13 @@ import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
+import 'package:fishroom/features/splash_screen/usecases/send_welcome_email.dart';
 import 'package:fishroom/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../core/usecases/log.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/views/logon_view.dart';
 
@@ -34,6 +36,10 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => LogonView()));
       }
+
+      //Sends welcome email if not sent yet.
+      await sendWelcomeEmail(context);
+      context.read<AppCubit>().logLoginEvent();
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {

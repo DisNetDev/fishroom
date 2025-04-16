@@ -63,22 +63,6 @@ class _FishroomState extends State<Fishroom> {
           MaterialPageRoute(builder: (context) => const CreateTankTankName()));
     }
     context.read<AppCubit>().setAppLoaded(true);
-
-//sends welcome email if it hasn't yet.
-    if (appCubit.state.user?.welcomeEmailSent == false) {
-      try {
-        fishLog("Sending welcome email...");
-        //This is technically the reauthenticate email, but I adjusted it on the server side to be a welcome email. Its dumb but it works.
-        await supabase.auth.reauthenticate();
-        fishLog("Welcome Email Sent. Updating field...");
-        await appCubit.setWelcomeEmailSent(true);
-      } catch (e) {
-        showToast(context,
-            title: "Error Sending Email",
-            toastType: ToastType.error,
-            description: e.toString());
-      }
-    }
   }
 
   @override

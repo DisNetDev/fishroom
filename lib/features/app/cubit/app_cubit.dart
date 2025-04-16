@@ -6,6 +6,7 @@ import '../../../core/repositories/supabase_repository.dart';
 import '../../bug_report/models/bug_report.dart';
 import '../../tank_reading/models/parameter.dart';
 import '../models/fish_user.dart';
+import '../models/login_event.dart';
 
 part 'app_state.dart';
 
@@ -121,6 +122,18 @@ class AppCubit extends HydratedCubit<AppState> {
         }
       }
       emit(state);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> logLoginEvent() async {
+    try {
+      await _supabaseRepository.insert(
+          tableName: "login_events",
+          json: LoginEvent(
+                  uuid: state.user!.uuid, createdAt: DateTime.now().toString())
+              .toMap());
     } catch (e) {
       rethrow;
     }
