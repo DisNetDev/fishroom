@@ -41,35 +41,43 @@ class _TankDetailsState extends State<TankDetails> {
   AppCubit get appCubit => context.read<AppCubit>();
   TanksCubit get tanksCubit => context.read<TanksCubit>();
 
-  late Tank _tank;
+  late Tank? _tank;
 
   Future<void> getTankReadings() async {
-    if (!tanksCubit.state.readings
-        .any((reading) => reading.tankId == _tank.id)) {
-      setState(() => loading = true);
-      await tanksCubit.getReadingsForTank(_tank);
-      setState(() => loading = false);
+    try {
+      if (!tanksCubit.state.readings
+          .any((reading) => reading.tankId == _tank?.id)) {
+        setState(() => loading = true);
+        if (_tank != null) {
+          await tanksCubit.getReadingsForTank(_tank!);
+        }
+        setState(() => loading = false);
+      }
+      setState(() => initialLoad = false);
+    } catch (e) {
+      setState(() => initialLoad = false);
     }
-    setState(() => initialLoad = false);
   }
 
   @override
   void initState() {
-    _tank =
-        tanksCubit.state.tanks.firstWhere((tank) => tank.id == widget.tank.id);
+    _tank = tanksCubit.state.tanks
+        .firstWhereOrNull((tank) => tank.id == widget.tank.id);
     getTankReadings();
     getTankStreakAndCheckForAchievements();
     super.initState();
   }
 
   Future<void> getTankStreakAndCheckForAchievements() async {
-    setState(() => streakLoading = true);
-    await Future.wait([
-      tanksCubit.updateTankStreak(context, _tank.id),
-      Future.delayed(1000.ms, () {}),
-    ]);
-    setState(() => streakLoading = false);
-    checkForAchievement(context, _tank.id);
+    if (_tank != null) {
+      setState(() => streakLoading = true);
+      await Future.wait([
+        tanksCubit.updateTankStreak(context, _tank!.id),
+        Future.delayed(1000.ms, () {}),
+      ]);
+      setState(() => streakLoading = false);
+      checkForAchievement(context, _tank!.id);
+    }
   }
 
   @override
@@ -77,9 +85,20 @@ class _TankDetailsState extends State<TankDetails> {
     return RefreshIndicator(
       edgeOffset: 20,
       onRefresh: () async {
-        await tanksCubit.getReadingsForTank(_tank);
-        setState(() => loading = false);
-        getTankStreakAndCheckForAchievements();
+        if (_tank != null) {
+          try {
+            await tanksCubit.getReadingsForTank(_tank!);
+            setState(() => loading = false);
+            getTankStreakAndCheckForAchievements();
+          } catch (e) {
+            showToast(context,
+                title: "Something went wrong getting readings.",
+                description: e.toString(),
+                toastType: ToastType.error);
+          } finally {
+            setState(() => loading = false);
+          }
+        }
       },
       child: Stack(
         children: [
@@ -89,12 +108,14 @@ class _TankDetailsState extends State<TankDetails> {
             floatingActionButton: FloatingActionButton(
               shape: CircleBorder(),
               onPressed: () {
-                navPush(
-                  context,
-                  SelectReadingType(
-                    tank: _tank,
-                  ),
-                ).then((value) => getTankStreakAndCheckForAchievements());
+                if (_tank != null) {
+                  navPush(
+                    context,
+                    SelectReadingType(
+                      tank: _tank!,
+                    ),
+                  ).then((value) => getTankStreakAndCheckForAchievements());
+                }
               },
               child: const Icon(Icons.add),
             ),
@@ -103,7 +124,7 @@ class _TankDetailsState extends State<TankDetails> {
               child: CustomScrollView(
                 slivers: [
                   RootSliverAppBar(
-                    title: _tank.name ?? "Tank Details",
+                    title: _tank?.name ?? "Tank Details",
                     sliver: true,
                     actions: [
                       IconButton(
@@ -119,11 +140,11 @@ class _TankDetailsState extends State<TankDetails> {
                   BlocBuilder<TanksCubit, TanksState>(
                     builder: (context, state) {
                       List<TankReading> readings = state.readings
-                          .where((reading) => reading.tankId == _tank.id)
+                          .where((reading) => reading.tankId == _tank?.id)
                           .toList();
 
                       Tank? currentTank = state.tanks
-                          .firstWhereOrNull((test) => test.id == _tank.id);
+                          .firstWhereOrNull((test) => test.id == _tank?.id);
 
                       List<Widget> widgets = [
                         Row(
@@ -141,8 +162,10 @@ class _TankDetailsState extends State<TankDetails> {
                               child: CounterWidget(
                                   heading: "Inhabitants",
                                   onTap: () async {
-                                    navPush(
-                                        context, TankInhabitants(tank: _tank));
+                                    if (_tank != null) {
+                                      navPush(context,
+                                          TankInhabitants(tank: _tank!));
+                                    }
                                   },
                                   counter: currentTank == null
                                       ? 0
@@ -157,8 +180,12 @@ class _TankDetailsState extends State<TankDetails> {
                                 heading: "Achievements",
                                 counter:
                                     currentTank?.achievementIds.length ?? 0,
-                                onTap: () =>
-                                    navPush(context, Achievements(tank: _tank)),
+                                onTap: () {
+                                  if (_tank != null) {
+                                    navPush(
+                                        context, Achievements(tank: _tank!));
+                                  }
+                                },
                               ),
                             )
                           ],
@@ -189,7 +216,7 @@ class _TankDetailsState extends State<TankDetails> {
                                         id: "aaa",
                                         ownerId: "bleh",
                                         type: TankReadingType.measurement,
-                                        tankId: _tank.id,
+                                        tankId: _tank?.id ?? "",
                                         createdAt: DateTime.now().toString(),
                                         note: "Some Dummy Info"))),
                         ...List.generate(

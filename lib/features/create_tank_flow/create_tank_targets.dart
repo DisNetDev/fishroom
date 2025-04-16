@@ -81,21 +81,22 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                             () => targets.add(
                               Target(
                                   paramID: parameters
-                                      .firstWhere((parameter) =>
-                                          parameter.id ==
-                                          unselectedParameters[index].id)
-                                      .id,
-                                  minValue: parameters
-                                          .firstWhere((parameter) =>
+                                          .firstWhereOrNull((parameter) =>
                                               parameter.id ==
                                               unselectedParameters[index].id)
-                                          .min ??
+                                          ?.id ??
+                                      "",
+                                  minValue: parameters
+                                          .firstWhereOrNull((parameter) =>
+                                              parameter.id ==
+                                              unselectedParameters[index].id)
+                                          ?.min ??
                                       0,
                                   maxValue: parameters
-                                          .firstWhere((parameter) =>
+                                          .firstWhereOrNull((parameter) =>
                                               parameter.id ==
                                               unselectedParameters[index].id)
-                                          .max ??
+                                          ?.max ??
                                       0),
                             ),
                           );
@@ -110,8 +111,9 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                       onDelete: () {
                         setState(() => targets.removeAt(index));
                       },
-                      parameter: parameters.firstWhere((parameter) =>
-                          parameter.id == targets[index].paramID),
+                      parameter: parameters.firstWhereOrNull((parameter) =>
+                              parameter.id == targets[index].paramID) ??
+                          Parameter(id: ""),
                       initialTarget: targets.firstWhereOrNull(
                           (target) => target.paramID == targets[index].paramID),
                       onTargetSelected: (target) {

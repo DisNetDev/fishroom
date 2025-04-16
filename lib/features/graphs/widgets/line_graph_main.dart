@@ -236,9 +236,9 @@ class _LineGraphMainState extends State<LineGraphMain> {
                   index.toDouble(),
                   filteredData[index]
                           .parameters
-                          .firstWhere(
+                          .firstWhereOrNull(
                               (param) => param.id == parameterFilter?.id)
-                          .value ??
+                          ?.value ??
                       0)),
           isCurved: true,
           gradient: LinearGradient(

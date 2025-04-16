@@ -45,13 +45,16 @@ class _UpgradeToProState extends State<UpgradeToPro> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Expanded(flex: 2, child: SizedBox()),
-                const Logo(horizontal: true),
+                const Logo(horizontal: false),
                 const Expanded(flex: 2, child: SizedBox()),
-                const Text("Upgrade to Pro to get these bonuses:",
-                    style: kHeading1TextStyle),
+                const Text(
+                  "Upgrade to Pro to get these bonuses:",
+                  style: kHeading1TextStyle,
+                  textAlign: TextAlign.center,
+                ),
                 const Expanded(flex: 1, child: SizedBox()),
-                const Text("Unlimited Tanks"),
-                const Text("Attach photos to your tank readings"),
+                _BenefitWidget(title: "Unlimited Tanks"),
+                _BenefitWidget(title: "Attach photos to your tank readings"),
                 const Expanded(flex: 2, child: SizedBox()),
                 CustomButton(
                     loading: isLoading,
@@ -108,6 +111,23 @@ class _UpgradeToProState extends State<UpgradeToPro> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _BenefitWidget extends StatelessWidget {
+  const _BenefitWidget({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(Icons.check, color: kPrimaryColor),
+        const Gap(10),
+        Text(title),
+      ],
     );
   }
 }

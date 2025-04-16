@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/features/achievements/views/congrats.dart';
 import 'package:flutter/material.dart';
@@ -14,23 +15,33 @@ Future<void> checkForAchievement(BuildContext context, String tankId) async {
   List<Achievement> availableAchievements =
       await tanksCubit.getAvailableAchievements();
 
-  Tank tank = tanksCubit.state.tanks.firstWhere((t) => t.id == tankId);
+  Tank? tank = tanksCubit.state.tanks.firstWhereOrNull((t) => t.id == tankId);
 
-  if (tank.streak >= 7) {
-    achievementsToAdd.add(availableAchievements
-        .firstWhere((e) => e.name.toLowerCase() == "average cycler"));
+  if ((tank?.streak ?? 0) >= 7) {
+    Achievement? achievement = availableAchievements
+        .firstWhereOrNull((e) => e.name.toLowerCase() == "average cycler");
+    if (achievement != null) {
+      achievementsToAdd.add(achievement);
+    }
   }
-  if (tank.streak >= 30) {
-    achievementsToAdd.add(availableAchievements
-        .firstWhere((e) => e.name.toLowerCase() == "dedicated"));
+  if ((tank?.streak ?? 0) >= 30) {
+    Achievement? achievement = availableAchievements
+        .firstWhereOrNull((e) => e.name.toLowerCase() == "dedicated");
+    if (achievement != null) {
+      achievementsToAdd.add(achievement);
+    }
   }
-  if (tank.streak >= 365) {
-    achievementsToAdd.add(availableAchievements
-        .firstWhere((e) => e.name.toLowerCase() == "testing machine"));
+  if ((tank?.streak ?? 0) >= 365) {
+    Achievement? achievement = availableAchievements
+        .firstWhereOrNull((e) => e.name.toLowerCase() == "testing machine");
+    if (achievement != null) {
+      achievementsToAdd.add(achievement);
+    }
   }
 
   if (achievementsToAdd.isNotEmpty) {
-    achievementsToAdd.removeWhere((e) => tank.achievementIds.contains(e.id));
+    achievementsToAdd
+        .removeWhere((e) => (tank?.achievementIds.contains(e.id) ?? false));
   }
 
   if (achievementsToAdd.isNotEmpty) {

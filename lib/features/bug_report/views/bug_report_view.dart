@@ -76,7 +76,7 @@ class _BugReportViewState extends State<BugReportView> {
                       style: kPlainTextStyle),
                   FishTextBox(
                     initialValue: bugReport.description,
-                    hintText: "Describe the bug in detail.",
+                    hintText: "Describe the bug in detail",
                     onChanged: (value) => setState(
                       () => bugReport = bugReport.copyWith(description: value),
                     ),
@@ -85,7 +85,7 @@ class _BugReportViewState extends State<BugReportView> {
                   if (image == null)
                     CustomButton(
                       primary: false,
-                      text: "Add a Screenshot.",
+                      text: "Add a Screenshot",
                       onPressed: () async {
                         image = await pickImage(context);
                         setState(() {});
@@ -103,13 +103,21 @@ class _BugReportViewState extends State<BugReportView> {
                     primary: true,
                     text: "Submit",
                     onPressed: () async {
+                      if (bugReport.description.trim().isEmpty) {
+                        showToast(context,
+                            title: "Please enter a report.",
+                            toastType: ToastType.info);
+                        return;
+                      }
                       setState(() => loading = true);
+
                       try {
                         if (image != null) {
                           bugReport = bugReport.copyWith(
                               screenshotUrl:
                                   await uploadImage(context, image!));
                         }
+
                         await context
                             .read<AppCubit>()
                             .submitBugReport(bugReport);

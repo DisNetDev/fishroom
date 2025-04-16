@@ -1,9 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
+import 'package:fishroom/features/community_tank/models/ct_post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -60,9 +62,9 @@ class _CTPostDetailsState extends State<CTPostDetails> {
       builder: (context, state) {
         bool isMyPost = false;
 
-        final post =
-            state.posts.firstWhere((element) => element.id == widget.postId);
-        if (post.authorID == appCubit.state.user!.uuid) {
+        final post = state.posts
+            .firstWhereOrNull((element) => element.id == widget.postId);
+        if (post?.authorID == appCubit.state.user!.uuid) {
           isMyPost = true;
         }
         return Stack(
@@ -118,7 +120,7 @@ class _CTPostDetailsState extends State<CTPostDetails> {
                     ? [
                         IconButton(
                             onPressed: () async {
-                              communityTankCubit.deletePost(post.id);
+                              communityTankCubit.deletePost(post?.id ?? "");
                               navPop(context);
                             },
                             icon: Icon(Icons.delete))
@@ -132,7 +134,17 @@ class _CTPostDetailsState extends State<CTPostDetails> {
                     spacing: 5,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      CTPostCard(post: post, isDetailedView: true),
+                      CTPostCard(
+                          post: post ??
+                              CTPost(
+                                  id: "",
+                                  title: "Error Fetching Post",
+                                  content: "Error Fetching Post",
+                                  authorID: "",
+                                  authorName: "",
+                                  createdAt: "",
+                                  images: []),
+                          isDetailedView: true),
                       if (loadingComments) Gap(100),
                       if (loadingComments)
                         Center(child: Loader())
