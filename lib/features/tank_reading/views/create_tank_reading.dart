@@ -187,6 +187,8 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         loading: loading,
                         text: "Save",
                         onPressed: () async {
+                          setState(() => tankReading = tankReading.copyWith(
+                              note: tankReading.note?.trim()));
                           if (tankReading.parameters.isEmpty) {
                             showToast(context,
                                 title: "Please select at least one parameter.",

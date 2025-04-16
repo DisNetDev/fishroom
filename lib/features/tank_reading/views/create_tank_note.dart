@@ -143,6 +143,15 @@ class _CreateTankNoteState extends State<CreateTankNote> {
                         loading: loading,
                         text: "Save",
                         onPressed: () async {
+                          setState(() => tankReading = tankReading.copyWith(
+                              note: tankReading.note?.trim()));
+                          if (tankReading.note == null ||
+                              tankReading.note!.isEmpty) {
+                            showToast(context,
+                                title: "Please add a note.",
+                                toastType: ToastType.info);
+                            return;
+                          }
                           setState(() => loading = true);
                           try {
                             await context.read<TanksCubit>().createTankReading(
