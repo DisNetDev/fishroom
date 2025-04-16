@@ -15,7 +15,6 @@ import '../../core/widgets/custom_button.dart';
 import '../fishroom/cubit/tanks_cubit.dart';
 import '../fishroom/widgets/target_selector.dart';
 import '../tank_reading/models/parameter.dart';
-import 'create_tank_upload_photo.dart';
 
 class CreateTankTargets extends StatefulWidget {
   const CreateTankTargets({super.key, required this.tank});
@@ -43,7 +42,13 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
 
   @override
   void initState() {
-    tank = widget.tank.copyWith();
+    tank = context
+            .read<TanksCubit>()
+            .state
+            .tanks
+            .firstWhereOrNull((t) => t.id == widget.tank.id)
+            ?.copyWith() ??
+        widget.tank.copyWith();
     targets.addAll(tank.targets);
     super.initState();
   }
