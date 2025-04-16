@@ -128,11 +128,16 @@ class SupabaseRepository {
   Future<PostgrestList?> fetch(
       {required String tableName,
       required String conditionalColumn,
-      required String condition}) async {
+      required String condition,
+      int? limit,
+      int? offset}) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     try {
-      final data = await _retryOperation(() =>
-          supabase.from(tableName).select().eq(conditionalColumn, condition));
+      final data = await _retryOperation(() => supabase
+          .from(tableName)
+          .select()
+          .eq(conditionalColumn, condition)
+          .range(offset ?? 0, limit ?? 100));
       stopwatch.stop();
       fishLog("Fetch took ${stopwatch.elapsedMilliseconds}ms");
 
@@ -143,14 +148,13 @@ class SupabaseRepository {
     }
   }
 
-  Future<PostgrestList?> fetchAll({
-    required String tableName,
-  }) async {
+  Future<PostgrestList?> fetchAll(
+      {required String tableName, int? limit, int? offset}) async {
     final Stopwatch stopwatch = Stopwatch()..start();
 
     try {
-      final data =
-          await _retryOperation(() => supabase.from(tableName).select());
+      final data = await _retryOperation(() =>
+          supabase.from(tableName).select().range(offset ?? 0, limit ?? 100));
       stopwatch.stop();
       fishLog("Fetch took ${stopwatch.elapsedMilliseconds}ms");
 
@@ -224,8 +228,12 @@ class SupabaseRepository {
 
   Future<dynamic> runFunction(
       String functionName, Map<String, dynamic> params) async {
-    final data = await supabase.rpc(functionName, params: params);
-    return data;
+    try {
+      final data = await supabase.rpc(functionName, params: params);
+      return data;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<UserSession> nativeGoogleSignIn() async {

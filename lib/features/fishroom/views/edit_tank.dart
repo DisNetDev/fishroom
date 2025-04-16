@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_element
 
 import 'dart:io';
 
@@ -265,7 +265,6 @@ class _EditTankState extends State<EditTank> {
                     }
                   },
                 ),
-                
                 const Gap(40),
               ],
             ),

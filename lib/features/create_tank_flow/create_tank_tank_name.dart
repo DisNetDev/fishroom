@@ -146,7 +146,7 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
     );
   }
 
-  void onComplete() {
+  void onComplete() async {
     if (tank.name?.isEmpty ?? true) {
       showToast(context,
           title: "Your tank needs a name!",
@@ -156,6 +156,8 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
       return;
     }
     nameFocusNode.unfocus();
+
+    await Future.delayed(const Duration(milliseconds: 400), () {});
 
     Navigator.push(
         context,

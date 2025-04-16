@@ -1,66 +1,105 @@
-import 'package:fishroom/features/community/views/community_view.dart';
+import 'dart:ui';
+
+import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/features/community_tank/views/community_tank_view.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:flutter_svg/svg.dart';
+
+import '../usecases/is_dark_mode.dart';
 
 class RootNavbar extends StatelessWidget {
   RootNavbar({super.key, required this.currentIndex});
 
   final int currentIndex;
 
+  static Color unselectedColor = Colors.white;
+
   final List<BottomNavigationBarItem> _navbarItems = [
     BottomNavigationBarItem(
-        icon: Icon(
-          Symbols.home,
+      activeIcon: Padding(
+        padding: EdgeInsets.only(bottom: 10),
+        child: SvgPicture.asset(
+          "assets/icons/home.svg",
+          colorFilter: ColorFilter.mode(kPrimaryColor, BlendMode.srcIn),
         ),
-        label: "Home"),
+      ),
+      icon: Padding(
+        padding: EdgeInsets.only(bottom: 10),
+        child: SvgPicture.asset(
+          "assets/icons/home.svg",
+          colorFilter: ColorFilter.mode(unselectedColor, BlendMode.srcIn),
+        ),
+      ),
+      label: "Home",
+    ),
     BottomNavigationBarItem(
-        icon: Icon(Symbols.communities), label: "The Community Tank"),
+        activeIcon: Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: SvgPicture.asset(
+            "assets/icons/chat.svg",
+            colorFilter: ColorFilter.mode(kPrimaryColor, BlendMode.srcIn),
+          ),
+        ),
+        icon: Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: SvgPicture.asset(
+            "assets/icons/chat.svg",
+            colorFilter: ColorFilter.mode(unselectedColor, BlendMode.srcIn),
+          ),
+        ),
+        label: "The Community Tank"),
   ];
 
   final List<Widget> _viewList = const [
     Fishroom(),
-    CommunityView(),
+    CommunityTankView(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
-        boxShadow: [
-          BoxShadow(
-              offset: Offset(0, -1), blurRadius: 6, color: Colors.black12),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-          bottomLeft: Radius.circular(10),
-          bottomRight: Radius.circular(10),
-        ),
-        child: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          height: 80,
-          child: Hero(
-            tag: "bottomNavBar",
-            child: BottomNavigationBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              currentIndex: currentIndex,
-              items: _navbarItems,
-              onTap: (index) {
-                if (index != currentIndex) {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => _viewList[index]));
-                }
-              },
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+            child: BottomAppBar(
+              shape: const CircularNotchedRectangle(),
+              height: 80,
+              color: isDarkMode(context)
+                  ? Colors.black54
+                  : Colors.black.withAlpha(50),
+              child: BottomNavigationBar(
+                unselectedItemColor: Colors.white,
+                selectedItemColor: kPrimaryColor,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                currentIndex: currentIndex,
+                items: _navbarItems,
+                useLegacyColorScheme: true,
+                selectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 13),
+                unselectedLabelStyle: kHeadingTextStyle.copyWith(fontSize: 12),
+                onTap: (index) {
+                  if (index != currentIndex) {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => _viewList[index]));
+                  }
+                },
+              ),
             ),
           ),
         ),
@@ -68,27 +107,3 @@ class RootNavbar extends StatelessWidget {
     );
   }
 }
-
-// class _Item extends StatelessWidget {
-//   const _Item(
-//       {super.key,
-//       required this.selected,
-//       required this.icon,
-//       required this.label});
-
-//   final bool selected;
-//   final IconData icon;
-//   final String label;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisSize: MainAxisSize.min,
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         Icon(icon, color: selected ? kPrimaryColor : null),
-//         Text(label, style: TextStyle(color: selected ? kPrimaryColor : null)),
-//       ],
-//     );
-//   }
-// }

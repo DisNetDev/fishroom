@@ -6,6 +6,7 @@ import '../../../core/repositories/supabase_repository.dart';
 import '../../bug_report/models/bug_report.dart';
 import '../../tank_reading/models/parameter.dart';
 import '../models/fish_user.dart';
+import '../models/login_event.dart';
 
 part 'app_state.dart';
 
@@ -126,8 +127,24 @@ class AppCubit extends HydratedCubit<AppState> {
     }
   }
 
+  Future<void> logLoginEvent() async {
+    try {
+      await _supabaseRepository.insert(
+          tableName: "login_events",
+          json: LoginEvent(
+                  uuid: state.user!.uuid, createdAt: DateTime.now().toString())
+              .toMap());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> checkIfEmailExists(String email) async {
-    return _supabaseRepository.checkIfEmailExists(email);
+    try {
+      return _supabaseRepository.checkIfEmailExists(email);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   void clearCubit() {
@@ -233,6 +250,43 @@ class AppCubit extends HydratedCubit<AppState> {
       await _supabaseRepository.insert(
           tableName: SupabaseTable.bugReports.tableName,
           json: bugReport.toJson());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> checkUsernameExists(String username) async {
+    try {
+      final data = await _supabaseRepository
+          .runFunction("check_username_existence", {"p_username": username});
+      fishLog("Username '$username' exists: ${data.toString()}");
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> createUsername(String username) async {
+    try {
+      await _supabaseRepository.update(
+          tableName: SupabaseTable.users.tableName,
+          json: {SupabaseTable.users.username: username},
+          conditionalColumn: SupabaseTable.users.id,
+          condition: state.user!.uuid);
+      emit(state.copyWith(user: state.user!.copyWith(username: username)));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> setWelcomeEmailSent(bool value) async {
+    try {
+      await _supabaseRepository.update(
+          tableName: SupabaseTable.users.tableName,
+          json: {"welcome_email_sent": value},
+          conditionalColumn: SupabaseTable.users.id,
+          condition: state.user!.uuid);
+      emit(state.copyWith(user: state.user!.copyWith(welcomeEmailSent: value)));
     } catch (e) {
       rethrow;
     }

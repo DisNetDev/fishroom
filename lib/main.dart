@@ -15,6 +15,7 @@ import 'package:toastification/toastification.dart';
 import 'core/repositories/supabase_repository.dart';
 import 'features/app/cubit/app_cubit.dart';
 import 'features/app/usecases/my_secure_storage.dart';
+import 'features/community_tank/cubit/community_tank_cubit.dart';
 import 'features/fishroom/cubit/tanks_cubit.dart';
 import 'features/tank_inhabitants/cubit/inhabitants_cubit.dart';
 
@@ -71,6 +72,9 @@ void main() async {
               BlocProvider(
                   create: (context) =>
                       InhabitantsCubit(context.read<SupabaseRepository>())),
+              BlocProvider(
+                  create: (context) => CommunityTankCubit(
+                      supabaseRepository: context.read<SupabaseRepository>())),
             ],
             child: ToastificationWrapper(
                 child: KeyboardVisibilityProvider(child: MainApp())),
@@ -107,14 +111,17 @@ class MainApp extends StatelessWidget {
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-          sliderTheme: sliderTheme, dropdownMenuTheme: dropdownThemeData),
+          dividerColor: Colors.transparent,
+          sliderTheme: sliderTheme,
+          dropdownMenuTheme: dropdownThemeDataLight),
       darkTheme: ThemeData.from(
         colorScheme: const ColorScheme.dark(
           primary: Color.fromARGB(255, 33, 138, 243),
         ),
       ).copyWith(
-        sliderTheme: sliderTheme,
-      ),
+          dividerColor: Colors.transparent,
+          sliderTheme: sliderTheme,
+          dropdownMenuTheme: dropdownThemeDataDark),
       themeMode: ThemeMode.system,
       home: const SplashScreen(),
     );

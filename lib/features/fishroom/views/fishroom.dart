@@ -1,11 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
+import 'package:fishroom/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +32,7 @@ class Fishroom extends StatefulWidget {
 }
 
 class _FishroomState extends State<Fishroom> {
+  AppCubit get appCubit => context.read<AppCubit>();
   bool loading = false;
 
   init() async {

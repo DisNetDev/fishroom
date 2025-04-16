@@ -24,7 +24,8 @@ class TextInput extends StatefulWidget {
       this.prefixIcon,
       this.onTap,
       this.controller,
-      this.validator});
+      this.validator,
+      this.isMultiline = false});
 
   final String? hintText;
   final int? characterLimit;
@@ -44,6 +45,7 @@ class TextInput extends StatefulWidget {
   final TextEditingController? controller;
   final FormFieldValidator? validator;
   final Function()? onTap;
+  final bool? isMultiline;
 
   @override
   State<TextInput> createState() => _TextInputState();
@@ -59,14 +61,12 @@ class _TextInputState extends State<TextInput> {
       curve: Curves.bounceIn,
       margin: widget.margin,
       height: widget.height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(1000),
-      ),
       child: Align(
         alignment: Alignment.center,
         child: Column(
           children: [
             TextFormField(
+              maxLines: widget.isMultiline ?? false ? 10 : 1,
               onTap: widget.onTap,
               validator: widget.validator,
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -125,7 +125,7 @@ class _TextInputState extends State<TextInput> {
   }
 
   GradientOutlineInputBorder get _focusedBorder => GradientOutlineInputBorder(
-      borderRadius: BorderRadius.circular(50),
+      borderRadius: BorderRadius.circular(30),
       gradient: LinearGradient(colors: [
         isDarkMode(context) ? kSecondaryColor : kPrimaryColor,
         Colors.grey,
@@ -133,7 +133,7 @@ class _TextInputState extends State<TextInput> {
       ]));
 
   GradientOutlineInputBorder get _enabledBorder => GradientOutlineInputBorder(
-      borderRadius: BorderRadius.circular(50),
+      borderRadius: BorderRadius.circular(30),
       gradient: LinearGradient(colors: [
         Colors.grey.shade300,
         Colors.grey,
@@ -141,7 +141,7 @@ class _TextInputState extends State<TextInput> {
       ]));
 
   GradientOutlineInputBorder get _errorGradient => GradientOutlineInputBorder(
-      borderRadius: BorderRadius.circular(50),
+      borderRadius: BorderRadius.circular(30),
       gradient: LinearGradient(colors: [
         Colors.red,
         Colors.grey,

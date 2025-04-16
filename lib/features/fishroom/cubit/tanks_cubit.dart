@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/log.dart';
@@ -88,7 +89,6 @@ class TanksCubit extends HydratedCubit<TanksState> {
           tableName: SupabaseTable.tanks.tableName,
           conditionalColumn: SupabaseTable.tanks.ownerId,
           condition: supabaseRepository.user!.id);
-      fishLog(data.toString());
 
       if (data != null) {
         List<Tank> tanks = [];
@@ -234,17 +234,18 @@ class TanksCubit extends HydratedCubit<TanksState> {
   }
 
   Future<void> updateTankStreak(BuildContext context, String tankId) async {
-    Tank tank = state.tanks.firstWhere((tank) => tank.id == tankId).copyWith();
-    int oldTankStreak = tank.streak;
+    Tank? tank =
+        state.tanks.firstWhereOrNull((tank) => tank.id == tankId)?.copyWith();
+    int oldTankStreak = tank?.streak ?? 0;
 
     try {
-      fishLog("Getting tank streak for tank ${tank.id}");
+      fishLog("Getting tank streak for tank ${tank?.id}");
       final data = await supabaseRepository
-          .runFunction("get_streak", {"input_tank_id": tank.id});
+          .runFunction("get_streak", {"input_tank_id": tank?.id});
 
-      tank.streak = int.tryParse(data.toString()) ?? 0;
+      tank?.streak = int.tryParse(data.toString()) ?? 0;
 
-      if (tank.streak != oldTankStreak) {
+      if (tank?.streak != oldTankStreak && tank != null) {
         await updateTank(tank, null);
       }
     } catch (e) {
@@ -255,9 +256,10 @@ class TanksCubit extends HydratedCubit<TanksState> {
   Future<void> updateTankInhabitants(
       String tankId, List<Inhabitant> inhabitants) async {
     try {
-      Tank tank = state.tanks
-          .firstWhere((tank) => tank.id == tankId)
-          .copyWith(inhabitants: inhabitants);
+      Tank? tank = state.tanks
+          .firstWhereOrNull((tank) => tank.id == tankId)
+          ?.copyWith(inhabitants: inhabitants);
+      if (tank == null) throw "Tank not Found";
       await updateTank(tank, null);
     } catch (e) {
       rethrow;
@@ -267,9 +269,10 @@ class TanksCubit extends HydratedCubit<TanksState> {
   Future<void> updateTankLocalImagePath(
       String tankId, String localImagePath) async {
     try {
-      Tank tank = state.tanks
-          .firstWhere((tank) => tank.id == tankId)
-          .copyWith(imageLocalPath: localImagePath);
+      Tank? tank = state.tanks
+          .firstWhereOrNull((tank) => tank.id == tankId)
+          ?.copyWith(imageLocalPath: localImagePath);
+      if (tank == null) throw "Tank not Found";
       await updateTank(tank, null);
     } catch (e) {
       rethrow;
@@ -279,10 +282,11 @@ class TanksCubit extends HydratedCubit<TanksState> {
   Future<void> updateTankAchievements(
       String tankId, List<Achievement> achievements) async {
     try {
-      Tank tank =
-          state.tanks.firstWhere((tank) => tank.id == tankId).copyWith();
-      tank.achievementIds =
+      Tank? tank =
+          state.tanks.firstWhereOrNull((tank) => tank.id == tankId)?.copyWith();
+      tank?.achievementIds =
           achievements.map((achievement) => achievement.id).toList();
+      if (tank == null) throw "Tank not Found";
       await updateTank(tank, null);
     } catch (e) {
       rethrow;

@@ -64,12 +64,15 @@ class _FertilizerModalState extends State<FertilizerModal> {
             ),
           ),
           Gap(40),
+          Text("Recommended Dosage:"),
+          Gap(20),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                   child: TextInput(
                 controller: dosageController,
-                label: Text("Recommended Dosage"),
+                label: Text("Dosage"),
                 exampleText: "eg: 5ml",
                 keyboardType: TextInputType.number,
                 onChanged: (value) => setState(() => fertilizer =
@@ -103,7 +106,9 @@ class _FertilizerModalState extends State<FertilizerModal> {
           ),
           Gap(40),
           Text("Per Volume of Water:"),
+          Gap(20),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                   child: TextInput(

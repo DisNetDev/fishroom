@@ -27,7 +27,7 @@ class TankEntryGraph extends StatelessWidget {
         .read<TanksCubit>()
         .state
         .tanks
-        .firstWhere((element) => element.id == tankReading.tankId);
+        .firstWhereOrNull((element) => element.id == tankReading.tankId);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +35,7 @@ class TankEntryGraph extends StatelessWidget {
         Gap(16),
         ...tankReading.parameters.map((e) => _BottomBar(
             parameter: e,
-            target: tank.targets
+            target: tank?.targets
                 .firstWhereOrNull((element) => element.paramID == e.id))),
         BorderBar(),
       ],
@@ -59,7 +59,7 @@ class _BottomBar extends StatelessWidget {
     }
 
     LinearGradient gradient = LinearGradient(colors: [
-      isDarkMode(context) ? darkmodeBackgroundColor : lightmodeBackgroundColor,
+      isDarkMode(context) ? Colors.transparent : Colors.white.withAlpha(0),
       isDarkMode(context) ? kSecondaryColor : kPrimaryColor.withAlpha(120)
     ], begin: Alignment.centerLeft, end: Alignment.centerRight);
 

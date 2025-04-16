@@ -1,7 +1,7 @@
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/gradient_borders.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -53,9 +53,6 @@ class _TankReadingListItemState extends State<TankReadingListItem> {
           },
           direction: DismissDirection.endToStart,
           background: Container(
-            decoration: BoxDecoration(
-                border: const GradientBoxBorder(
-                    width: 0.5, gradient: kErrorGradient)),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -94,108 +91,119 @@ class _ReadingWidgetState extends State<ReadingWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color.fromARGB(74, 158, 158, 158)),
-        ),
-      ),
-      child: ClipRRect(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: ShaderMask(
-          blendMode: BlendMode.dstIn,
-          shaderCallback: (rect) {
-            return LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: open
-                  ? [Colors.white, Colors.white]
-                  : [
-                      Colors.white,
-                      Colors.transparent,
-                    ],
-              stops: [0.5, 1],
-            ).createShader(rect);
-          },
-          child: AnimatedSize(
-            alignment: Alignment.topCenter,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.ease,
-            child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: isDarkMode(context)
+                ? Colors.white.withAlpha(10)
+                : Colors.black.withAlpha(10)),
+        margin: const EdgeInsets.only(bottom: 10),
+        child: ClipRRect(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: ShaderMask(
+            blendMode: BlendMode.dstIn,
+            shaderCallback: (rect) {
+              return LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: open
+                    ? [Colors.white, Colors.white]
+                    : [
+                        Colors.white,
+                        Colors.transparent,
+                      ],
+                stops: [0.5, 1],
+              ).createShader(rect);
+            },
+            child: AnimatedSize(
               alignment: Alignment.topCenter,
-              height: open ? null : 70,
-              child: InkWell(
-                splashColor:
-                    const Color.fromARGB(255, 0, 82, 105).withAlpha(128),
-                radius: 50,
-                onTap: () => setState(() => open = !open),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(
-                          left: 15, top: 10, right: 10, bottom: 0),
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  getIconForType(widget.reading.type),
-                                  Gap(10),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.ease,
+              child: Container(
+                alignment: Alignment.topCenter,
+                height: open ? null : 70,
+                child: InkWell(
+                  splashColor:
+                      const Color.fromARGB(255, 0, 82, 105).withAlpha(128),
+                  radius: 50,
+                  onTap: () => setState(() => open = !open),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(
+                            left: 15, top: 10, right: 10, bottom: 0),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    getIconForType(widget.reading.type),
+                                    Gap(10),
+                                    Text(
+                                      widget.reading.type.label,
+                                      style: kHeading1TextStyle,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                                const Gap(5),
+                                if (widget.reading.dosages.isNotEmpty)
+                                  for (Dosage dosages in widget.reading.dosages)
+                                    Text(
+                                      "${dosages.fertilizer.name} - ${dosages.amount}${dosages.fertilizer.dosageUnit}",
+                                      style: kHeading2TextStyle,
+                                    ),
+                                if (widget.reading.waterChangePercentage !=
+                                    null)
                                   Text(
-                                    widget.reading.type.label,
-                                    style: kHeading1TextStyle,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                              const Gap(5),
-                              if (widget.reading.dosages.isNotEmpty)
-                                for (Dosage dosages in widget.reading.dosages)
-                                  Text(
-                                    "${dosages.fertilizer.name} - ${dosages.amount}${dosages.fertilizer.dosageUnit}",
+                                    "${widget.reading.waterChangePercentage.toString()}%",
                                     style: kHeading2TextStyle,
                                   ),
-                              if (widget.reading.waterChangePercentage != null)
-                                Text(
-                                  "${widget.reading.waterChangePercentage.toString()}%",
-                                  style: kHeading2TextStyle,
-                                ),
-                              if (widget.reading.note != "" &&
-                                  widget.reading.note != null)
-                                Text(
-                                  widget.reading.note!,
-                                  style: kPlainTextStyle,
-                                ),
-                              if (widget.reading.parameters.isNotEmpty)
-                                SmallEntryGraph(tankReading: widget.reading),
-                              if (widget.reading.imageUrl != null)
-                                const Gap(20),
-                              if (widget.reading.imageUrl != null)
-                                Image.network(
-                                  widget.reading.imageUrl!,
-                                ),
-                            ],
-                          ),
-                          const Gap(15),
-                        ],
+                                if (widget.reading.note != "" &&
+                                    widget.reading.note != null)
+                                  Text(
+                                    widget.reading.note!,
+                                    style: kPlainTextStyle,
+                                  ),
+                                if (widget.reading.parameters.isNotEmpty)
+                                  SmallEntryGraph(tankReading: widget.reading),
+                                if (widget.reading.imageUrl != null)
+                                  const Gap(20),
+                                if (widget.reading.imageUrl != null)
+                                  Image.network(
+                                    widget.reading.imageUrl!,
+                                  ),
+                              ],
+                            ),
+                            const Gap(15),
+                          ],
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 20,
-                      child: DateTimeText(dateTime: widget.reading.createdAt),
-                    ),
-                  ],
+                      Positioned(
+                        top: 10,
+                        right: 20,
+                        child: DateTimeText(dateTime: widget.reading.createdAt),
+                      ),
+                      Positioned(
+                          bottom: 2,
+                          right: 5,
+                          child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 10),
+                            child: open
+                                ? Icon(Icons.keyboard_arrow_up)
+                                : Icon(Icons.keyboard_arrow_down),
+                          ))
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 

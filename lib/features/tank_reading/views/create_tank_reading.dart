@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/models/tank_reading.dart';
 import 'package:fishroom/core/usecases/is_pro_user.dart';
@@ -111,10 +112,10 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                                     valueSelected: (value) {
                                       setState(() {
                                         tankReading.parameters
-                                            .firstWhere((test) =>
+                                            .firstWhereOrNull((test) =>
                                                 test.name ==
                                                 parameters[index].name)
-                                            .value = value;
+                                            ?.value = value;
                                       });
                                     },
                                     parameter: parameters[index])));
@@ -186,6 +187,8 @@ class _CreateTankReadingState extends State<CreateTankReading> {
                         loading: loading,
                         text: "Save",
                         onPressed: () async {
+                          setState(() => tankReading = tankReading.copyWith(
+                              note: tankReading.note?.trim()));
                           if (tankReading.parameters.isEmpty) {
                             showToast(context,
                                 title: "Please select at least one parameter.",
