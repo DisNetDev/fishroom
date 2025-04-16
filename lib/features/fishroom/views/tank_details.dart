@@ -15,12 +15,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/models/tank_reading.dart';
 import '../../../core/usecases/is_dark_mode.dart';
+import '../../create_tank_flow/create_tank_targets.dart';
 import '../../graphs/widgets/line_graph_main.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_reading_list_item.dart';
@@ -127,6 +129,13 @@ class _TankDetailsState extends State<TankDetails> {
                     title: _tank?.name ?? "Tank Details",
                     sliver: true,
                     actions: [
+                      IconButton(
+                          onPressed: () {
+                            if (_tank != null) {
+                              navPush(context, CreateTankTargets(tank: _tank!));
+                            }
+                          },
+                          icon: Icon(Symbols.bar_chart)),
                       IconButton(
                         onPressed: () {
                           navPush(context, CreateTankTankName(tank: _tank));

@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:fishroom/core/models/tank.dart';
+import 'package:fishroom/core/usecases/nav_push.dart';
+import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:flutter/material.dart';
@@ -10,23 +12,22 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../core/constants.dart';
 import '../../core/usecases/is_dark_mode.dart';
 import '../../core/widgets/custom_button.dart';
+import '../fishroom/cubit/tanks_cubit.dart';
 import '../fishroom/widgets/target_selector.dart';
 import '../tank_reading/models/parameter.dart';
 import 'create_tank_upload_photo.dart';
 
 class CreateTankTargets extends StatefulWidget {
-  const CreateTankTargets(
-      {super.key, required this.tank, this.editTank = false});
+  const CreateTankTargets({super.key, required this.tank});
 
   final Tank tank;
-  final bool editTank;
 
   @override
   State<CreateTankTargets> createState() => _CreateTankTargetsState();
 }
 
 class _CreateTankTargetsState extends State<CreateTankTargets> {
-  Tank get tank => widget.tank;
+  late Tank tank;
 
   List<Parameter> get parameters =>
       context.read<AppCubit>().state.settings.parameters;
@@ -38,8 +39,11 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
 
   List<Target> targets = [];
 
+  bool loading = false;
+
   @override
   void initState() {
+    tank = widget.tank.copyWith();
     targets.addAll(tank.targets);
     super.initState();
   }
@@ -127,6 +131,7 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 50),
                       child: CustomButton(
+                          loading: loading,
                           text: targets.isEmpty ? "Skip" : "Continue",
                           onPressed: () => onComplete())),
                 ],
@@ -138,13 +143,20 @@ class _CreateTankTargetsState extends State<CreateTankTargets> {
     );
   }
 
-  void onComplete() {
+  void onComplete() async {
     tank.targets = targets;
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                CreateTankUploadPhoto(tank: tank, editTank: widget.editTank)));
+    try {
+      setState(() => loading = true);
+      await context.read<TanksCubit>().updateTank(tank, null);
+      setState(() => loading = false);
+      navPop(context);
+    } catch (e) {
+      showToast(context,
+          title: "There was a problem updating your tank.",
+          description: e.toString(),
+          toastType: ToastType.error);
+      setState(() => loading = false);
+    }
   }
 }
 
