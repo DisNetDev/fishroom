@@ -44,19 +44,6 @@ class RootDrawer extends StatelessWidget {
                 ),
 
                 ListTile(
-                  enabled: canAddTank(context),
-                  leading: const Icon(Icons.add),
-                  title: const Text("Create a Tank"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CreateTankTankName()));
-                  },
-                ),
-
-                ListTile(
                   title: const Text("Tank Parameters"),
                   subtitle: const Text("Adjust your tank parameters"),
                   subtitleTextStyle:
