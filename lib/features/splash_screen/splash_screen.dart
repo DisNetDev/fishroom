@@ -13,6 +13,7 @@ import 'package:lottie/lottie.dart';
 import '../../core/usecases/log.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/views/logon_view.dart';
+import 'usecases/request_notification_permission.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -36,6 +37,9 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => LogonView()));
       }
+
+      //Request notification permission
+      await requestNotificationPermission();
 
       //Sends welcome email if not sent yet.
       await sendWelcomeEmail(context);
