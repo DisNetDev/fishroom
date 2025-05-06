@@ -114,7 +114,7 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
                     child: Text("Add Fertilizer"),
                   ),
                 ),
-                Gap(40),
+                Gap(100),
               ],
             ),
           ),
