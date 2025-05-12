@@ -2,13 +2,13 @@ import 'package:collection/collection.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
-import 'package:fishroom/core/widgets/glass.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/achievements/views/achievements.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/fishroom/usecases/check_for_achievements.dart';
 import 'package:fishroom/features/fishroom/widgets/counter_widget.dart';
+import 'package:fishroom/features/fishroom/widgets/tank_details_overview.dart';
 import 'package:fishroom/features/tank_inhabitants/views/tank_inhabitants.dart';
 import 'package:fishroom/features/tank_reading/views/select_reading_type.dart';
 import 'package:flutter/material.dart';
@@ -121,145 +121,141 @@ class _TankDetailsState extends State<TankDetails> {
               },
               child: const Icon(Icons.add),
             ),
-            body: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: CustomScrollView(
-                slivers: [
-                  RootSliverAppBar(
-                    title: _tank?.name ?? "Tank Details",
-                    sliver: true,
-                    actions: [
-                      IconButton(
-                          onPressed: () {
-                            if (_tank != null) {
-                              navPush(context, CreateTankTargets(tank: _tank!));
-                            }
-                          },
-                          icon: Icon(Symbols.bar_chart)),
-                      IconButton(
+            body: CustomScrollView(
+              clipBehavior: Clip.none,
+              slivers: [
+                RootSliverAppBar(
+                  title: _tank?.name ?? "Tank Details",
+                  sliver: true,
+                  actions: [
+                    IconButton(
                         onPressed: () {
-                          navPush(context, CreateTankTankName(tank: _tank));
+                          if (_tank != null) {
+                            navPush(context, CreateTankTargets(tank: _tank!));
+                          }
                         },
-                        icon: const Icon(
-                          Icons.edit,
-                        ),
-                      )
-                    ],
-                  ),
-                  BlocBuilder<TanksCubit, TanksState>(
-                    builder: (context, state) {
-                      List<TankReading> readings = state.readings
-                          .where((reading) => reading.tankId == _tank?.id)
-                          .toList();
+                        icon: Icon(Symbols.bar_chart)),
+                    IconButton(
+                      onPressed: () {
+                        navPush(context, CreateTankTankName(tank: _tank));
+                      },
+                      icon: const Icon(
+                        Icons.edit,
+                      ),
+                    )
+                  ],
+                ),
+                BlocBuilder<TanksCubit, TanksState>(
+                  builder: (context, state) {
+                    List<TankReading> readings = state.readings
+                        .where((reading) => reading.tankId == _tank?.id)
+                        .toList();
 
-                      Tank? currentTank = state.tanks
-                          .firstWhereOrNull((test) => test.id == _tank?.id);
+                    Tank? currentTank = state.tanks
+                        .firstWhereOrNull((test) => test.id == _tank?.id);
 
-                      List<Widget> widgets = [
-                        Row(
-                          spacing: 8,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: CounterWidget(
-                                heading: "Current Streak",
-                                counter: currentTank?.streak ?? 0,
-                                loading: streakLoading,
-                              ),
+                    List<Widget> widgets = [
+                      TankDetailsOverview(tank: _tank!),
+                      Row(
+                        spacing: 8,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Gap(1),
+                          Expanded(
+                            child: CounterWidget(
+                              heading: "Current Streak",
+                              counter: currentTank?.streak ?? 0,
+                              loading: streakLoading,
                             ),
-                            Expanded(
-                              child: CounterWidget(
-                                  heading: "Inhabitants",
-                                  onTap: () async {
-                                    if (_tank != null) {
-                                      navPush(context,
-                                          TankInhabitants(tank: _tank!));
-                                    }
-                                  },
-                                  counter: currentTank == null
-                                      ? 0
-                                      : currentTank.inhabitants.fold(
-                                          0,
-                                          (previousValue, element) =>
-                                              previousValue +
-                                              (element.count ?? 0))),
-                            ),
-                            Expanded(
-                              child: CounterWidget(
-                                heading: "Achievements",
-                                counter:
-                                    currentTank?.achievementIds.length ?? 0,
-                                onTap: () {
+                          ),
+                          Expanded(
+                            child: CounterWidget(
+                                heading: "Inhabitants",
+                                onTap: () async {
                                   if (_tank != null) {
                                     navPush(
-                                        context, Achievements(tank: _tank!));
+                                        context, TankInhabitants(tank: _tank!));
                                   }
                                 },
-                              ),
-                            )
-                          ],
-                        ),
-                        Gap(8),
-                        if (appCubit.state.settings.parameters.isNotEmpty)
-                          Animate(
-                              effects: [
-                                FadeEffect(
-                                  curve: Curves.ease,
-                                  delay: 100.ms,
-                                )
-                              ],
-                              child: Glass(
-                                child: LineGraphMain(
-                                    data: readings.reversed.toList()),
-                              )),
-                        Gap(20),
-                        if (loading)
-                          for (var i = 0; i < 4; i++)
-                            Skeletonizer(
-                                effect: isDarkMode(context)
-                                    ? kDarkModeShimmer
-                                    : kLightModeShimmer,
-                                child: TankReadingListItem(
-                                    onDismissed: () {},
-                                    reading: TankReading(
-                                        id: "aaa",
-                                        ownerId: "bleh",
-                                        type: TankReadingType.measurement,
-                                        tankId: _tank?.id ?? "",
-                                        createdAt: DateTime.now().toString(),
-                                        note: "Some Dummy Info"))),
-                        ...List.generate(
-                          readings.length,
-                          (readingsIndex) => TankReadingListItem(
-                            onDismissed: () {
-                              try {
-                                final readingToRemove = readings[readingsIndex];
-                                readings.removeAt(readingsIndex);
-                                tanksCubit.deleteTankReading(readingToRemove);
-                              } catch (e) {
-                                if (context.mounted) {
-                                  showToast(context,
-                                      title: "Something went wrong.",
-                                      toastType: ToastType.error,
-                                      description: e.toString());
-                                }
-                              }
-                            },
-                            reading: readings[readingsIndex],
+                                counter: currentTank == null
+                                    ? 0
+                                    : currentTank.inhabitants.fold(
+                                        0,
+                                        (previousValue, element) =>
+                                            previousValue +
+                                            (element.count ?? 0))),
                           ),
+                          Expanded(
+                            child: CounterWidget(
+                              heading: "Achievements",
+                              counter: currentTank?.achievementIds.length ?? 0,
+                              onTap: () {
+                                if (_tank != null) {
+                                  navPush(context, Achievements(tank: _tank!));
+                                }
+                              },
+                            ),
+                          ),
+                          Gap(1),
+                        ],
+                      ),
+                      Gap(8),
+                      if (appCubit.state.settings.parameters.isNotEmpty)
+                        Animate(
+                            effects: [
+                              FadeEffect(
+                                curve: Curves.ease,
+                                delay: 100.ms,
+                              )
+                            ],
+                            child: LineGraphMain(
+                                data: readings.reversed.toList())),
+                      Gap(20),
+                      if (loading)
+                        for (var i = 0; i < 4; i++)
+                          Skeletonizer(
+                              effect: isDarkMode(context)
+                                  ? kDarkModeShimmer
+                                  : kLightModeShimmer,
+                              child: TankReadingListItem(
+                                  onDismissed: () {},
+                                  reading: TankReading(
+                                      id: "aaa",
+                                      ownerId: "bleh",
+                                      type: TankReadingType.measurement,
+                                      tankId: _tank?.id ?? "",
+                                      createdAt: DateTime.now().toString(),
+                                      note: "Some Dummy Info"))),
+                      ...List.generate(
+                        readings.length,
+                        (readingsIndex) => TankReadingListItem(
+                          onDismissed: () {
+                            try {
+                              final readingToRemove = readings[readingsIndex];
+                              readings.removeAt(readingsIndex);
+                              tanksCubit.deleteTankReading(readingToRemove);
+                            } catch (e) {
+                              if (context.mounted) {
+                                showToast(context,
+                                    title: "Something went wrong.",
+                                    toastType: ToastType.error,
+                                    description: e.toString());
+                              }
+                            }
+                          },
+                          reading: readings[readingsIndex],
                         ),
-                        const Gap(300),
-                      ];
+                      ),
+                      const Gap(300),
+                    ];
 
-                      return SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                            childCount: widgets.length,
-                            (context, index) => widgets[index]),
-                      );
-                    },
-                  ),
-                ],
-              ),
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                          (context, index) => widgets[index]),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],

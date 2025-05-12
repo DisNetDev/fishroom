@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/datetime_format.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,60 +66,65 @@ class _LineGraphMainState extends State<LineGraphMain> {
       hasData = false;
     }
 
-    return Stack(
-      children: [
-        Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: NeoBruteBorder(
+        child: Stack(
           children: [
-            AspectRatio(
-              aspectRatio: 1.70,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  right: 18,
-                  left: 12,
-                  top: 24,
-                  bottom: 12,
-                ),
-                child: hasData
-                    ? LineChart(
-                        mainData(),
-                      )
-                    : Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Text("No Data"),
-                          Opacity(
-                            opacity: 0.2,
-                            child: LineChart(placeholderData()),
+            Column(
+              children: [
+                AspectRatio(
+                  aspectRatio: 1.70,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      right: 18,
+                      left: 12,
+                      top: 24,
+                      bottom: 12,
+                    ),
+                    child: hasData
+                        ? LineChart(
+                            mainData(),
+                          )
+                        : Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text("No Data"),
+                              Opacity(
+                                opacity: 0.2,
+                                child: LineChart(placeholderData()),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Wrap(
-                children: [
-                  for (Parameter parameter
-                      in context.read<AppCubit>().state.settings.parameters)
-                    _SelectedFilter(
-                      parameter: parameter,
-                      onSelected: (param) {
-                        if (param.id == parameterFilter?.id) return;
-                        setState(
-                          () {
-                            parameterFilter = param;
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Wrap(
+                    children: [
+                      for (Parameter parameter
+                          in context.read<AppCubit>().state.settings.parameters)
+                        _SelectedFilter(
+                          parameter: parameter,
+                          onSelected: (param) {
+                            if (param.id == parameterFilter?.id) return;
+                            setState(
+                              () {
+                                parameterFilter = param;
+                              },
+                            );
                           },
-                        );
-                      },
-                      isSelected: parameterFilter?.id == parameter.id,
-                    )
-                ],
-              ),
+                          isSelected: parameterFilter?.id == parameter.id,
+                        )
+                    ],
+                  ),
+                ),
+                Gap(8)
+              ],
             ),
-            Gap(8)
           ],
         ),
-      ],
+      ),
     );
   }
 

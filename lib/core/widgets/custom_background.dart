@@ -1,5 +1,6 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../usecases/is_dark_mode.dart';
 
@@ -15,24 +16,16 @@ class CustomBackground extends StatelessWidget {
         color: isDarkMode(context)
             ? darkmodeBackgroundColor
             : lightmodeBackgroundColor,
-        // gradient: LinearGradient(
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        //   colors: [
-        //     Colors.black,
-        //     Color.fromARGB(255, 32, 32, 32),
-        //   ],
-        // ),
       ),
-      // child: Opacity(
-      //   opacity: isDarkMode(context) ? 0.3 : 0.5,
-      //   child: SvgPicture.asset(
-      //     isDarkMode(context)
-      //         ? "assets/background_dark.svg"
-      //         : "assets/background_light.svg",
-      //     fit: BoxFit.cover,
-      //   ),
-      // ),
+      child: Opacity(
+        opacity: isDarkMode(context) ? 0.3 : 0.1,
+        child: SvgPicture.asset(
+          isDarkMode(context)
+              ? "assets/background_dark.svg"
+              : "assets/background_light.svg",
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/widgets/glass.dart';
 import 'package:fishroom/features/community_tank/models/ct_comment.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -14,42 +13,40 @@ class CTCommentCard extends StatelessWidget {
   final VoidCallback onRemove;
   @override
   Widget build(BuildContext context) {
-    return Glass(
-      child: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${comment.username} said:",
-                  style: kDateTimeTextStyle.copyWith(color: Colors.grey),
-                ),
-                Gap(5),
-                Text(comment.content),
-              ],
-            ),
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${comment.username} said:",
+                style: kDateTimeTextStyle.copyWith(color: Colors.grey),
+              ),
+              Gap(5),
+              Text(comment.content),
+            ],
           ),
-          Positioned(
-            right: 0,
-            child: PopupMenuButton(
-                elevation: 2,
-                shadowColor: isDarkMode(context) ? Colors.white : null,
-                padding: EdgeInsets.zero,
-                onSelected: (value) {
-                  if (value == "report_post") {
-                    navPush(context,
-                        ReportObject(object: comment, onReport: onRemove));
-                  }
-                },
-                itemBuilder: (context) => [
-                      PopupMenuItem(
-                          value: "report_post", child: Text("Report Comment"))
-                    ]),
-          )
-        ],
-      ),
+        ),
+        Positioned(
+          right: 0,
+          child: PopupMenuButton(
+              elevation: 2,
+              shadowColor: isDarkMode(context) ? Colors.white : null,
+              padding: EdgeInsets.zero,
+              onSelected: (value) {
+                if (value == "report_post") {
+                  navPush(context,
+                      ReportObject(object: comment, onReport: onRemove));
+                }
+              },
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                        value: "report_post", child: Text("Report Comment"))
+                  ]),
+        )
+      ],
     );
   }
 }

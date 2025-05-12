@@ -1,5 +1,5 @@
-import 'package:fishroom/core/widgets/glass.dart';
 import 'package:fishroom/core/widgets/loader.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -23,11 +23,9 @@ class CounterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: onTap,
-        child: Glass(
+        child: NeoBruteBorder(
+          showShadow: false,
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-            ),
             padding: EdgeInsets.all(10),
             child: Column(
               children: [

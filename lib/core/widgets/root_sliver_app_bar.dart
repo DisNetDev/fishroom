@@ -26,8 +26,7 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             systemOverlayStyle: isDarkMode(context)
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
-            backgroundColor: Colors
-                .transparent, //isDarkMode(context) ? Colors.black : Colors.white,
+            backgroundColor: isDarkMode(context) ? Colors.black : Colors.white,
             centerTitle: false,
             automaticallyImplyLeading: implyLeading,
             actions: actions,
@@ -42,7 +41,7 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             systemOverlayStyle: isDarkMode(context)
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
-            backgroundColor: Colors.transparent,
+            backgroundColor: isDarkMode(context) ? Colors.black : Colors.white,
             automaticallyImplyLeading: implyLeading,
             centerTitle: false,
             title: Text(

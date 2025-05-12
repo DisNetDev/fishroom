@@ -1,5 +1,5 @@
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -91,29 +91,11 @@ class _ReadingWidgetState extends State<ReadingWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: isDarkMode(context)
-                ? Colors.white.withAlpha(10)
-                : Colors.black.withAlpha(10)),
-        margin: const EdgeInsets.only(bottom: 10),
-        child: ClipRRect(
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          child: ShaderMask(
-            blendMode: BlendMode.dstIn,
-            shaderCallback: (rect) {
-              return LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: open
-                    ? [Colors.white, Colors.white]
-                    : [
-                        Colors.white,
-                        Colors.transparent,
-                      ],
-                stops: [0.5, 1],
-              ).createShader(rect);
-            },
+        margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+        child: NeoBruteBorder(
+          showShadow: false,
+          child: ClipRRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: AnimatedSize(
               alignment: Alignment.topCenter,
               duration: const Duration(milliseconds: 300),
@@ -132,7 +114,7 @@ class _ReadingWidgetState extends State<ReadingWidget> {
                     children: [
                       Container(
                         padding: const EdgeInsets.only(
-                            left: 15, top: 10, right: 10, bottom: 0),
+                            left: 8, top: 10, right: 8, bottom: 0),
                         width: MediaQuery.of(context).size.width,
                         child: Column(
                           children: [
@@ -150,33 +132,55 @@ class _ReadingWidgetState extends State<ReadingWidget> {
                                     ),
                                   ],
                                 ),
-                                const Gap(5),
-                                if (widget.reading.dosages.isNotEmpty)
-                                  for (Dosage dosages in widget.reading.dosages)
-                                    Text(
-                                      "${dosages.fertilizer.name} - ${dosages.amount}${dosages.fertilizer.dosageUnit}",
-                                      style: kHeading2TextStyle,
-                                    ),
-                                if (widget.reading.waterChangePercentage !=
-                                    null)
-                                  Text(
-                                    "${widget.reading.waterChangePercentage.toString()}%",
-                                    style: kHeading2TextStyle,
-                                  ),
+                                Gap(5),
                                 if (widget.reading.note != "" &&
                                     widget.reading.note != null)
-                                  Text(
-                                    widget.reading.note!,
-                                    style: kPlainTextStyle,
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          widget.reading.note!,
+                                          maxLines: open ? null : 1,
+                                          overflow: open
+                                              ? null
+                                              : TextOverflow.ellipsis,
+                                          style: kPlainTextStyle,
+                                        ),
+                                      ),
+                                      Gap(20)
+                                    ],
                                   ),
-                                if (widget.reading.parameters.isNotEmpty)
-                                  SmallEntryGraph(tankReading: widget.reading),
-                                if (widget.reading.imageUrl != null)
-                                  const Gap(20),
-                                if (widget.reading.imageUrl != null)
-                                  Image.network(
-                                    widget.reading.imageUrl!,
-                                  ),
+                                if (open)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Gap(5),
+                                      if (widget.reading.dosages.isNotEmpty)
+                                        for (Dosage dosages
+                                            in widget.reading.dosages)
+                                          Text(
+                                            "${dosages.fertilizer.name} - ${dosages.amount}${dosages.fertilizer.dosageUnit}",
+                                            style: kHeading2TextStyle,
+                                          ),
+                                      if (widget
+                                              .reading.waterChangePercentage !=
+                                          null)
+                                        Text(
+                                          "${widget.reading.waterChangePercentage.toString()}%",
+                                          style: kHeading2TextStyle,
+                                        ),
+                                      if (widget.reading.parameters.isNotEmpty)
+                                        SmallEntryGraph(
+                                            tankReading: widget.reading),
+                                      if (widget.reading.imageUrl != null)
+                                        const Gap(20),
+                                      if (widget.reading.imageUrl != null)
+                                        Image.network(
+                                          widget.reading.imageUrl!,
+                                        ),
+                                    ],
+                                  )
                               ],
                             ),
                             const Gap(15),
