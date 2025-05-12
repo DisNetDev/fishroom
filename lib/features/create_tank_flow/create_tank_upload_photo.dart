@@ -95,11 +95,10 @@ class CreateTankUploadPhotoState extends State<CreateTankUploadPhoto> {
         await context.read<TanksCubit>().updateTank(tank, _image);
       }
       setState(() => loading = false);
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+
+      while (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
     } catch (e) {
       setState(() => loading = false);
       showToast(context,

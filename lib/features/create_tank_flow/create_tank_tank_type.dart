@@ -8,7 +8,6 @@ import '../../core/constants.dart';
 import '../../core/usecases/show_toast.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/text_input.dart';
-import 'create_tank_targets.dart';
 
 class CreateTankTankType extends StatefulWidget {
   const CreateTankTankType(

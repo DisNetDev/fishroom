@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../core/usecases/log.dart';
 import '../app/cubit/app_cubit.dart';
 import '../app/views/logon_view.dart';
 
