@@ -37,10 +37,10 @@ class _LineGraphMainState extends State<LineGraphMain> {
   Target? get target => tank?.targets
       .firstWhereOrNull((test) => test.paramID == parameterFilter?.id);
 
-  List<Color> lineGradientColors = [kPrimaryColor, kSecondaryColor];
+  List<Color> lineGradientColors = [kTertiaryColor, kSecondaryColor];
   List<Color> gradientColors = [
-    kPrimaryColor.withValues(alpha: 1),
-    kSecondaryColor.withValues(alpha: 0.01),
+    kTertiaryColor,
+    const Color.fromARGB(0, 0, 21, 63),
   ];
 
   bool showAvg = false;
@@ -182,13 +182,13 @@ class _LineGraphMainState extends State<LineGraphMain> {
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: isDarkMode(context) ? kPrimaryColor : kSecondaryColor,
+            color: isDarkMode(context) ? kTertiaryColor : kSecondaryColor,
             strokeWidth: 0.3,
           );
         },
         getDrawingVerticalLine: (value) {
           return FlLine(
-            color: isDarkMode(context) ? kPrimaryColor : kSecondaryColor,
+            color: isDarkMode(context) ? kTertiaryColor : kSecondaryColor,
             strokeWidth: 0.3,
           );
         },
@@ -221,7 +221,7 @@ class _LineGraphMainState extends State<LineGraphMain> {
       borderData: FlBorderData(
         show: true,
         border: Border.all(
-          color: !isDarkMode(context) ? kPrimaryColor : kSecondaryColor,
+          color: !isDarkMode(context) ? kTertiaryColor : kSecondaryColor,
           width: 0.5,
         ),
       ),

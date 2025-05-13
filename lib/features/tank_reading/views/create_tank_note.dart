@@ -69,114 +69,127 @@ class _CreateTankNoteState extends State<CreateTankNote> {
       children: [
         const CustomBackground(),
         Scaffold(
-          appBar: const RootSliverAppBar(title: "Add a Tank Reading"),
           backgroundColor: Colors.transparent,
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Gap(20),
-                  FishTextBox(
-                    hintText: "Note",
-                    onChanged: (value) => setState(
-                      () => tankReading = tankReading.copyWith(note: value),
-                    ),
-                    initialValue: tankReading.note ?? "",
-                  ),
-                  const Gap(20),
-                  if (isProUser(context) && _image == null)
-                    Column(
+          body: CustomScrollView(
+            slivers: [
+              RootSliverAppBar(
+                title: "Create Note",
+                sliver: true,
+              ),
+              SliverToBoxAdapter(
+                child: SafeArea(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        CustomButton(
-                            primary: false,
-                            text: "Attach a Photo",
-                            onPressed: () async {
-                              _image = await pickImage(context);
-                              setState(() {});
-                            }),
+                        FishTextBox(
+                          hintText: "Note",
+                          onChanged: (value) => setState(
+                            () =>
+                                tankReading = tankReading.copyWith(note: value),
+                          ),
+                          initialValue: tankReading.note ?? "",
+                        ),
                         const Gap(20),
-                        Text(
-                          "Disclaimer, although we do compress images, minimal damage is made to the image quality. However, you should always backup your high quality original photos.",
-                          textAlign: TextAlign.center,
-                          style: kHintTextStyle.copyWith(
-                              fontStyle: FontStyle.italic),
+                        if (isProUser(context) && _image == null)
+                          Column(
+                            children: [
+                              CustomButton(
+                                  primary: false,
+                                  text: "Attach a Photo",
+                                  onPressed: () async {
+                                    _image = await pickImage(context);
+                                    setState(() {});
+                                  }),
+                              const Gap(20),
+                              Text(
+                                "Disclaimer, although we do compress images, minimal damage is made to the image quality. However, you should always backup your high quality original photos.",
+                                textAlign: TextAlign.center,
+                                style: kHintTextStyle.copyWith(
+                                    fontStyle: FontStyle.italic),
+                              ),
+                            ],
+                          )
+                        else if (!isProUser(context) && _image == null)
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: isDarkMode(context)
+                                        ? Colors.grey
+                                        : Colors.black),
+                                borderRadius: BorderRadius.circular(1000)),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Symbols.lock,
+                                  color: Colors.grey,
+                                ),
+                                Gap(20),
+                                Text(
+                                  "Upgrade to Pro to upload a photo.",
+                                  style: kHintTextStyle,
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          ImageUploadWidget(
+                            image: _image,
+                            unlockAspectRatio: true,
+                            onImagePicked: (image) =>
+                                setState(() => _image = image),
+                          ),
+                        const Gap(100),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 30, horizontal: 16),
+                          child: CustomButton(
+                              loading: loading,
+                              text: "Save",
+                              onPressed: () async {
+                                setState(() => tankReading = tankReading
+                                    .copyWith(note: tankReading.note?.trim()));
+                                if (tankReading.note == null ||
+                                    tankReading.note!.isEmpty) {
+                                  showToast(context,
+                                      title: "Please add a note.",
+                                      toastType: ToastType.info);
+                                  return;
+                                }
+                                setState(() => loading = true);
+                                try {
+                                  await context
+                                      .read<TanksCubit>()
+                                      .createTankReading(
+                                        tankReading,
+                                        _image,
+                                      );
+                                  setState(() => loading = false);
+                                  if (context.mounted) {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    showToast(context,
+                                        title: "Something went wrong.",
+                                        description: e.toString(),
+                                        toastType: ToastType.error);
+                                    setState(() => loading = false);
+                                  }
+                                }
+                              }),
                         ),
                       ],
-                    )
-                  else if (!isProUser(context) && _image == null)
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: isDarkMode(context)
-                                  ? Colors.grey
-                                  : Colors.black),
-                          borderRadius: BorderRadius.circular(1000)),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Symbols.lock,
-                            color: Colors.grey,
-                          ),
-                          Gap(20),
-                          Text(
-                            "Upgrade to Pro to upload a photo.",
-                            style: kHintTextStyle,
-                          ),
-                        ],
-                      ),
-                    )
-                  else
-                    ImageUploadWidget(
-                      image: _image,
-                      unlockAspectRatio: true,
-                      onImagePicked: (image) => setState(() => _image = image),
                     ),
-                  const Gap(100),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 30, horizontal: 16),
-                    child: CustomButton(
-                        loading: loading,
-                        text: "Save",
-                        onPressed: () async {
-                          setState(() => tankReading = tankReading.copyWith(
-                              note: tankReading.note?.trim()));
-                          if (tankReading.note == null ||
-                              tankReading.note!.isEmpty) {
-                            showToast(context,
-                                title: "Please add a note.",
-                                toastType: ToastType.info);
-                            return;
-                          }
-                          setState(() => loading = true);
-                          try {
-                            await context.read<TanksCubit>().createTankReading(
-                                  tankReading,
-                                  _image,
-                                );
-                            setState(() => loading = false);
-                            if (context.mounted) {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              showToast(context,
-                                  title: "Something went wrong.",
-                                  description: e.toString(),
-                                  toastType: ToastType.error);
-                              setState(() => loading = false);
-                            }
-                          }
-                        }),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ],

@@ -87,9 +87,11 @@ class _FishroomState extends State<Fishroom> {
               extendBody: true,
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              bottomNavigationBar: RootNavbar(currentIndex: 0),
+              bottomNavigationBar:
+                  Hero(tag: "navbar", child: RootNavbar(currentIndex: 0)),
               backgroundColor: Colors.transparent,
               floatingActionButton: FloatingActionButton(
+                elevation: 0,
                 backgroundColor: canAddTank(context) ? null : Colors.grey,
                 shape: CircleBorder(),
                 onPressed: () {

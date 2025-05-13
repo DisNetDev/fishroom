@@ -83,9 +83,11 @@ class _TankParametersSettingsState extends State<TankParametersSettings> {
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: SingleChildScrollView(
+                clipBehavior: Clip.none,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
+                    spacing: 5,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Gap(80),

@@ -91,7 +91,7 @@ class _ReadingWidgetState extends State<ReadingWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+        margin: const EdgeInsets.only(bottom: 10, left: 8, right: 8),
         child: NeoBruteBorder(
           showShadow: false,
           child: ClipRRect(
@@ -102,7 +102,11 @@ class _ReadingWidgetState extends State<ReadingWidget> {
               curve: Curves.ease,
               child: Container(
                 alignment: Alignment.topCenter,
-                height: open ? null : 70,
+                height: open
+                    ? null
+                    : widget.reading.note != null
+                        ? 75
+                        : 45,
                 child: InkWell(
                   splashColor:
                       const Color.fromARGB(255, 0, 82, 105).withAlpha(128),

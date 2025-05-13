@@ -9,7 +9,6 @@ DropdownMenuThemeData dropdownThemeDataLight = DropdownMenuThemeData(
     errorBorder: _errorGradient,
     focusedErrorBorder: _errorGradient,
     border: GradientOutlineInputBorder(
-      borderRadius: BorderRadius.circular(50),
       gradient: LinearGradient(
         colors: [
           Colors.grey.shade300,
@@ -33,33 +32,37 @@ DropdownMenuThemeData dropdownThemeDataDark = DropdownMenuThemeData(
 
 GradientOutlineInputBorder get _focusedBorderLight =>
     GradientOutlineInputBorder(
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(8),
+        width: 2,
         gradient: LinearGradient(colors: [
-          kPrimaryColor,
-          Colors.grey,
-          kPrimaryColor,
+          kTertiaryColor,
+          kSecondaryColor,
+          kTertiaryColor,
         ]));
 
 GradientOutlineInputBorder get _focusedBorderDark => GradientOutlineInputBorder(
-    borderRadius: BorderRadius.circular(50),
+    borderRadius: BorderRadius.circular(8),
+    width: 2,
     gradient: LinearGradient(colors: [
+      kTertiaryColor,
       kSecondaryColor,
-      Colors.grey,
-      kSecondaryColor,
+      kTertiaryColor,
     ]));
 
 GradientOutlineInputBorder get _enabledBorder => GradientOutlineInputBorder(
-    borderRadius: BorderRadius.circular(50),
+    borderRadius: BorderRadius.circular(8),
+    width: 2,
     gradient: LinearGradient(colors: [
-      Colors.grey.shade300,
       Colors.grey,
-      Colors.grey.shade300,
+      Colors.white,
+      Colors.grey,
     ]));
 
 GradientOutlineInputBorder get _errorGradient => GradientOutlineInputBorder(
-    borderRadius: BorderRadius.circular(50),
+    borderRadius: BorderRadius.circular(8),
+    width: 2,
     gradient: LinearGradient(colors: [
       Colors.red,
-      Colors.grey,
+      kTertiaryColor,
       Colors.red,
     ]));

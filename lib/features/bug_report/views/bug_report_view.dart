@@ -60,79 +60,82 @@ class _BugReportViewState extends State<BugReportView> {
             implyLeading: true,
           ),
           backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                spacing: 20,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Gap(20),
-                  Text("Found a bug? Tell us about it!",
-                      textAlign: TextAlign.center, style: kHeadingTextStyle),
-                  Text(
-                      "Describe the bug in detail.\nThe more details, the better!\n\nAn example of a good bug report includes:\n- Steps to Reproduce\n- Expected Result\n- Actual Result\n- Screenshot of the bug if possible. \nAlternatively, you can type a message below and we will get back to you as soon as possible.",
-                      textAlign: TextAlign.center,
-                      style: kPlainTextStyle),
-                  FishTextBox(
-                    initialValue: bugReport.description,
-                    hintText: "Describe the bug in detail",
-                    onChanged: (value) => setState(
-                      () => bugReport = bugReport.copyWith(description: value),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Column(
+                  spacing: 20,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Gap(20),
+                    Text("Found a bug? Tell us about it!",
+                        textAlign: TextAlign.center, style: kHeadingTextStyle),
+                    Text(
+                        "Describe the bug in detail.\nThe more details, the better!\n\nAn example of a good bug report includes:\n- Steps to Reproduce\n- Expected Result\n- Actual Result\n- Screenshot of the bug if possible. \nAlternatively, you can type a message below and we will get back to you as soon as possible.",
+                        textAlign: TextAlign.center,
+                        style: kPlainTextStyle),
+                    FishTextBox(
+                      initialValue: bugReport.description,
+                      hintText: "Describe the bug in detail",
+                      onChanged: (value) => setState(
+                        () =>
+                            bugReport = bugReport.copyWith(description: value),
+                      ),
                     ),
-                  ),
-                  Gap(20),
-                  if (image == null)
+                    Gap(20),
+                    if (image == null)
+                      CustomButton(
+                        primary: false,
+                        text: "Add a Screenshot",
+                        onPressed: () async {
+                          image = await pickImage(context);
+                          setState(() {});
+                        },
+                      ),
+                    if (image != null)
+                      ImageUploadWidget(
+                        image: image,
+                        unlockAspectRatio: true,
+                        onImagePicked: (value) => setState(() => image = value),
+                      ),
+                    Gap(20),
                     CustomButton(
-                      primary: false,
-                      text: "Add a Screenshot",
+                      loading: loading,
+                      primary: true,
+                      text: "Submit",
                       onPressed: () async {
-                        image = await pickImage(context);
-                        setState(() {});
+                        if (bugReport.description.trim().isEmpty) {
+                          showToast(context,
+                              title: "Please enter a report.",
+                              toastType: ToastType.info);
+                          return;
+                        }
+                        setState(() => loading = true);
+
+                        try {
+                          if (image != null) {
+                            bugReport = bugReport.copyWith(
+                                screenshotUrl:
+                                    await uploadImage(context, image!));
+                          }
+
+                          await context
+                              .read<AppCubit>()
+                              .submitBugReport(bugReport);
+                          setState(() => loading = false);
+                          navReplace(context, ThankYou());
+                        } catch (e) {
+                          setState(() => loading = false);
+                          showToast(context,
+                              title: "Failed to submit bug report",
+                              toastType: ToastType.error,
+                              description: e.toString());
+                        }
                       },
                     ),
-                  if (image != null)
-                    ImageUploadWidget(
-                      image: image,
-                      unlockAspectRatio: true,
-                      onImagePicked: (value) => setState(() => image = value),
-                    ),
-                  Gap(20),
-                  CustomButton(
-                    loading: loading,
-                    primary: true,
-                    text: "Submit",
-                    onPressed: () async {
-                      if (bugReport.description.trim().isEmpty) {
-                        showToast(context,
-                            title: "Please enter a report.",
-                            toastType: ToastType.info);
-                        return;
-                      }
-                      setState(() => loading = true);
-
-                      try {
-                        if (image != null) {
-                          bugReport = bugReport.copyWith(
-                              screenshotUrl:
-                                  await uploadImage(context, image!));
-                        }
-
-                        await context
-                            .read<AppCubit>()
-                            .submitBugReport(bugReport);
-                        setState(() => loading = false);
-                        navReplace(context, ThankYou());
-                      } catch (e) {
-                        setState(() => loading = false);
-                        showToast(context,
-                            title: "Failed to submit bug report",
-                            toastType: ToastType.error,
-                            description: e.toString());
-                      }
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

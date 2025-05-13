@@ -1,8 +1,7 @@
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-
-import '../../../core/usecases/is_dark_mode.dart';
 
 class ParameterListWidget extends StatelessWidget {
   const ParameterListWidget(
@@ -16,55 +15,61 @@ class ParameterListWidget extends StatelessWidget {
   final Function() onEdit;
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey(parameter),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) async {
-        final confirm = await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("Confirm"),
-              content: const Text("Are you sure you want to delete?"),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text("Yes"),
-                ),
-              ],
+    return ClipRRect(
+      child: NeoBruteBorder(
+        showShadow: false,
+        child: Dismissible(
+          key: ValueKey(parameter),
+          direction: DismissDirection.endToStart,
+          confirmDismiss: (direction) async {
+            final confirm = await showDialog<bool>(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text("Confirm"),
+                  content: const Text("Are you sure you want to delete?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text("Yes"),
+                    ),
+                  ],
+                );
+              },
             );
-          },
-        );
-        if (confirm == true) {
-          onDismissed();
-        }
+            if (confirm == true) {
+              onDismissed();
+            }
 
-        return confirm == true;
-      },
-      background: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-            Colors.red,
-            isDarkMode(context) ? Colors.transparent : Colors.white
-          ]),
-        ),
-        alignment: Alignment.centerRight,
-        child: Icon(Symbols.delete, color: Colors.orange.shade900),
-      ),
-      child: ListTile(
-        leading: Icon(Symbols.water_drop, fill: 0.8),
-        onTap: () {},
-        title: Text(parameter.shortName ?? "Name Not Found"),
-        subtitle: Text(parameter.name ?? "Description Not Found"),
-        trailing: GestureDetector(
-          onTap: () {
-            onEdit();
+            return confirm == true;
           },
-          child: Icon(Symbols.edit, fill: 0.8),
+          background: Container(
+            padding: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                Colors.deepOrange,
+                const Color.fromARGB(0, 244, 67, 54)
+              ]),
+            ),
+            alignment: Alignment.centerRight,
+            child: Icon(Symbols.delete, color: Colors.deepOrange),
+          ),
+          child: ListTile(
+            leading: Icon(Symbols.water_drop, fill: 0.8),
+            onTap: () {},
+            title: Text(parameter.shortName ?? "Name Not Found"),
+            subtitle: Text(parameter.name ?? "Description Not Found"),
+            trailing: GestureDetector(
+              onTap: () {
+                onEdit();
+              },
+              child: Icon(Symbols.edit, fill: 0.8),
+            ),
+          ),
         ),
       ),
     );

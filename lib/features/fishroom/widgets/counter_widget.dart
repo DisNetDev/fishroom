@@ -24,7 +24,6 @@ class CounterWidget extends StatelessWidget {
     return InkWell(
         onTap: onTap,
         child: NeoBruteBorder(
-          showShadow: false,
           child: Container(
             padding: EdgeInsets.all(10),
             child: Column(
@@ -49,7 +48,7 @@ class CounterWidget extends StatelessWidget {
                   child: loading
                       ? const Center(
                           child: Loader(
-                            height: 26,
+                            height: 24,
                           ),
                         )
                       : Text(

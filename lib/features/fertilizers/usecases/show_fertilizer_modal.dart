@@ -10,11 +10,13 @@ showFertilizerModal(BuildContext context,
     enableDrag: true,
     scrollControlDisabledMaxHeightRatio: 0.8,
     context: context,
-    builder: (context) => FertilizerModal(
-      fertilizer: fertilizer,
-      onAdd: (fertilizer) {
-        onAdd(fertilizer);
-      },
+    builder: (context) => SafeArea(
+      child: FertilizerModal(
+        fertilizer: fertilizer,
+        onAdd: (fertilizer) {
+          onAdd(fertilizer);
+        },
+      ),
     ),
   );
 }

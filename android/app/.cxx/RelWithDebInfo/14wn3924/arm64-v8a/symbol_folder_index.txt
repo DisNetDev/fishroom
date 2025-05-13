@@ -1,0 +1,1 @@
+C:\dev\fishroom\build\app\intermediates\cxx\RelWithDebInfo\14wn3924\obj\arm64-v8a

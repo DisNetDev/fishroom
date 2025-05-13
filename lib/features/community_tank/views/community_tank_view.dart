@@ -9,6 +9,7 @@ import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../../core/widgets/loader.dart';
@@ -83,13 +84,12 @@ class _CommunityTankViewState extends State<CommunityTankView> {
               children: [
                 CustomBackground(),
                 Scaffold(
+                  extendBody: true,
                   backgroundColor: Colors.transparent,
-                  appBar: RootSliverAppBar(
-                    title: "Community Tank",
-                  ),
                   floatingActionButtonLocation:
                       FloatingActionButtonLocation.centerDocked,
                   floatingActionButton: FloatingActionButton(
+                    elevation: 0,
                     shape: CircleBorder(),
                     child: const Icon(Icons.add),
                     onPressed: () => showMaterialModalBottomSheet(
@@ -121,46 +121,61 @@ class _CommunityTankViewState extends State<CommunityTankView> {
                       ),
                     ),
                   ),
-                  bottomNavigationBar: RootNavbar(currentIndex: 1),
-                  body: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: BlocBuilder<CommunityTankCubit, CommunityTankState>(
-                      builder: (context, state) {
-                        if (loadingInitialPosts) {
-                          return Center(child: Loader());
-                        }
-                        return RefreshIndicator(
-                          onRefresh: () async {
-                            await getInitialPosts(showLoading: false);
-                          },
-                          child: SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            child: Column(
-                              spacing: 5,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                if (communityTankCubit.state.posts.isEmpty)
-                                  Center(
-                                    child: Text(
-                                      "Welcome to the Community Tank! \nThe tank seems to be empty. \nCreate a post to get started.",
-                                      style: kHeadingTextStyle,
-                                      textAlign: TextAlign.center,
+                  bottomNavigationBar:
+                      Hero(tag: "navbar", child: RootNavbar(currentIndex: 1)),
+                  body: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      RootSliverAppBar(
+                        title: "Community Tank",
+                        sliver: true,
+                      ),
+                      SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        sliver:
+                            BlocBuilder<CommunityTankCubit, CommunityTankState>(
+                          builder: (context, state) {
+                            if (loadingInitialPosts) {
+                              return SliverFillRemaining(
+                                child: Center(child: Loader()),
+                              );
+                            }
+                            return SliverToBoxAdapter(
+                              child: RefreshIndicator(
+                                onRefresh: () async {
+                                  await getInitialPosts(showLoading: false);
+                                },
+                                child: Column(
+                                  spacing: 10,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    if (communityTankCubit.state.posts.isEmpty)
+                                      Center(
+                                        child: Text(
+                                          "Welcome to the Community Tank! \nThe tank seems to be empty. \nCreate a post to get started.",
+                                          style: kHeadingTextStyle,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ...List.generate(
+                                      state.posts.length,
+                                      (index) => Animate(
+                                        effects: [FadeEffect(duration: 500.ms)],
+                                        child: CTPostCard(
+                                            post: state.posts[index],
+                                            index: index),
+                                      ),
                                     ),
-                                  ),
-                                ...List.generate(
-                                  state.posts.length,
-                                  (index) => Animate(
-                                    effects: [FadeEffect(duration: 500.ms)],
-                                    child: CTPostCard(
-                                        post: state.posts[index], index: index),
-                                  ),
+                                    Gap(200),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

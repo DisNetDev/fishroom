@@ -1,4 +1,5 @@
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -20,47 +21,57 @@ class DosageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Row(
-          children: [
-            Checkbox(
-              value: enabled,
-              onChanged: (_) {},
-              shape: CircleBorder(),
-            ),
-            Gap(10),
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    fertilizer.name,
-                    style: kHeading2TextStyle,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      child: NeoBruteBorder(
+        child: Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: GestureDetector(
+            onTap: onTap,
+            child: Row(
+              children: [
+                Checkbox(
+                  value: enabled,
+                  onChanged: (_) {},
+                  shape: CircleBorder(),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        fertilizer.name,
+                        style: kHeading2TextStyle,
+                      ),
+                      Text(
+                        "${fertilizer.dosage}${fertilizer.dosageUnit} per ${fertilizer.perVolume}${fertilizer.perVolumeUnit}",
+                        style: kDateTimeTextStyle,
+                      ),
+                    ],
                   ),
-                  Text(
-                    "${fertilizer.dosage}${fertilizer.dosageUnit} per ${fertilizer.perVolume}${fertilizer.perVolumeUnit}",
-                    style: kDateTimeTextStyle,
-                  ),
-                ],
-              ),
+                ),
+                Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      textAlign: TextAlign.end,
+                      validator: (value) => double.tryParse(value ?? "") ==
+                                  null &&
+                              value?.isNotEmpty == true
+                          ? "Please enter a valid number. Avoid using commas, use dots instead."
+                          : null,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintFadeDuration: const Duration(milliseconds: 400),
+                        hintText: "Amount",
+                        suffix: Text(fertilizer.dosageUnit),
+                        hintStyle: kHintTextStyle,
+                        border: InputBorder.none,
+                      ),
+                      onChanged: onChanged,
+                    )),
+              ],
             ),
-            Expanded(
-              flex: 1,
-              child: TextInput(
-                suffix: Text(fertilizer.dosageUnit),
-                validator: (value) => double.tryParse(value) == null &&
-                        value.isNotEmpty
-                    ? "Please enter a valid number. Avoid using commas, use dots instead."
-                    : null,
-                onChanged: onChanged,
-                hintText: "Amount",
-                keyboardType: TextInputType.number,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

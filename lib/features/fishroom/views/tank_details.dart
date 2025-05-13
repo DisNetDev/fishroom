@@ -40,21 +40,22 @@ class _TankDetailsState extends State<TankDetails> {
   bool loading = false;
   bool initialLoad = true;
   bool streakLoading = false;
+  bool filterOpen = false;
+  List<String> filters = [];
   AppCubit get appCubit => context.read<AppCubit>();
   TanksCubit get tanksCubit => context.read<TanksCubit>();
 
   late Tank? _tank;
 
-  Future<void> getTankReadings() async {
+  Future<void> getTankReadings({bool showLoading = true}) async {
     try {
-      if (!tanksCubit.state.readings
-          .any((reading) => reading.tankId == _tank?.id)) {
+      if (showLoading) {
         setState(() => loading = true);
-        if (_tank != null) {
-          await tanksCubit.getReadingsForTank(_tank!);
-        }
-        setState(() => loading = false);
       }
+      if (_tank != null) {
+        await tanksCubit.getReadingsForTank(_tank!);
+      }
+      setState(() => loading = false);
       setState(() => initialLoad = false);
     } catch (e) {
       setState(() => initialLoad = false);
@@ -125,7 +126,7 @@ class _TankDetailsState extends State<TankDetails> {
               clipBehavior: Clip.none,
               slivers: [
                 RootSliverAppBar(
-                  title: _tank?.name ?? "Tank Details",
+                  title: "",
                   sliver: true,
                   actions: [
                     IconButton(
@@ -155,49 +156,64 @@ class _TankDetailsState extends State<TankDetails> {
                         .firstWhereOrNull((test) => test.id == _tank?.id);
 
                     List<Widget> widgets = [
-                      TankDetailsOverview(tank: _tank!),
-                      Row(
-                        spacing: 8,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Gap(1),
-                          Expanded(
-                            child: CounterWidget(
-                              heading: "Current Streak",
-                              counter: currentTank?.streak ?? 0,
-                              loading: streakLoading,
+                      Animate(effects: [
+                        FadeEffect(
+                          curve: Curves.ease,
+                          delay: 200.ms,
+                        )
+                      ], child: TankDetailsOverview(tank: _tank!)),
+                      Animate(
+                        effects: [
+                          FadeEffect(
+                            curve: Curves.ease,
+                            delay: 300.ms,
+                          )
+                        ],
+                        child: Row(
+                          spacing: 8,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Gap(1),
+                            Expanded(
+                              child: CounterWidget(
+                                heading: "Current Streak",
+                                counter: currentTank?.streak ?? 0,
+                                loading: streakLoading,
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: CounterWidget(
-                                heading: "Inhabitants",
-                                onTap: () async {
+                            Expanded(
+                              child: CounterWidget(
+                                  heading: "Inhabitants",
+                                  onTap: () async {
+                                    if (_tank != null) {
+                                      navPush(context,
+                                          TankInhabitants(tank: _tank!));
+                                    }
+                                  },
+                                  counter: currentTank == null
+                                      ? 0
+                                      : currentTank.inhabitants.fold(
+                                          0,
+                                          (previousValue, element) =>
+                                              previousValue +
+                                              (element.count ?? 0))),
+                            ),
+                            Expanded(
+                              child: CounterWidget(
+                                heading: "Achievements",
+                                counter:
+                                    currentTank?.achievementIds.length ?? 0,
+                                onTap: () {
                                   if (_tank != null) {
                                     navPush(
-                                        context, TankInhabitants(tank: _tank!));
+                                        context, Achievements(tank: _tank!));
                                   }
                                 },
-                                counter: currentTank == null
-                                    ? 0
-                                    : currentTank.inhabitants.fold(
-                                        0,
-                                        (previousValue, element) =>
-                                            previousValue +
-                                            (element.count ?? 0))),
-                          ),
-                          Expanded(
-                            child: CounterWidget(
-                              heading: "Achievements",
-                              counter: currentTank?.achievementIds.length ?? 0,
-                              onTap: () {
-                                if (_tank != null) {
-                                  navPush(context, Achievements(tank: _tank!));
-                                }
-                              },
+                              ),
                             ),
-                          ),
-                          Gap(1),
-                        ],
+                            Gap(1),
+                          ],
+                        ),
                       ),
                       Gap(8),
                       if (appCubit.state.settings.parameters.isNotEmpty)
@@ -205,7 +221,7 @@ class _TankDetailsState extends State<TankDetails> {
                             effects: [
                               FadeEffect(
                                 curve: Curves.ease,
-                                delay: 100.ms,
+                                delay: 200.ms,
                               )
                             ],
                             child: LineGraphMain(
@@ -226,6 +242,109 @@ class _TankDetailsState extends State<TankDetails> {
                                       tankId: _tank?.id ?? "",
                                       createdAt: DateTime.now().toString(),
                                       note: "Some Dummy Info"))),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Entries",
+                              style: kHeadingTextStyle,
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (filterOpen)
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              _FilterWidget(
+                                name: "Measurement",
+                                selected: filters.contains("Measurement"),
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      if (filters.contains("Measurement")) {
+                                        filters.remove("Measurement");
+                                      } else {
+                                        filters.add("Measurement");
+                                      }
+                                    },
+                                  );
+                                  getTankReadings(showLoading: false);
+                                },
+                              ),
+                              _FilterWidget(
+                                name: "Fertilize",
+                                selected: filters.contains("Fertilize"),
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      if (filters.contains("Fertilize")) {
+                                        filters.remove("Fertilize");
+                                      } else {
+                                        filters.add("Fertilize");
+                                      }
+                                    },
+                                  );
+                                  getTankReadings(showLoading: false);
+                                },
+                              ),
+                              _FilterWidget(
+                                name: "Feed",
+                                selected: filters.contains("Feed"),
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      if (filters.contains("Feed")) {
+                                        filters.remove("Feed");
+                                      } else {
+                                        filters.add("Feed");
+                                      }
+                                    },
+                                  );
+                                  getTankReadings(showLoading: false);
+                                },
+                              ),
+                              _FilterWidget(
+                                name: "Note",
+                                selected: filters.contains("Note"),
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      if (filters.contains("Note")) {
+                                        filters.remove("Note");
+                                      } else {
+                                        filters.add("Note");
+                                      }
+                                    },
+                                  );
+                                  getTankReadings(showLoading: false);
+                                },
+                              ),
+                              _FilterWidget(
+                                name: "Water Change",
+                                selected: filters.contains("Water Change"),
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      if (filters.contains("Water Change")) {
+                                        filters.remove("Water Change");
+                                      } else {
+                                        filters.add("Water Change");
+                                      }
+                                    },
+                                  );
+                                  getTankReadings(showLoading: false);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      Gap(16),
                       ...List.generate(
                         readings.length,
                         (readingsIndex) => TankReadingListItem(
@@ -251,6 +370,7 @@ class _TankDetailsState extends State<TankDetails> {
 
                     return SliverList(
                       delegate: SliverChildBuilderDelegate(
+                          childCount: widgets.length,
                           (context, index) => widgets[index]),
                     );
                   },
@@ -259,6 +379,33 @@ class _TankDetailsState extends State<TankDetails> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FilterWidget extends StatelessWidget {
+  const _FilterWidget(
+      {required this.name, required this.selected, required this.onTap});
+
+  final String name;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+        decoration: BoxDecoration(
+          border: Border.all(color: kTertiaryColor),
+          color: selected ? kTertiaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Text(name,
+            style: kDateTimeTextStyle.copyWith(
+                color: !selected ? null : Colors.white)),
       ),
     );
   }

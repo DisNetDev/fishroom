@@ -1,6 +1,7 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/fertilizers/usecases/are_fertilizers_edited.dart';
 import 'package:fishroom/features/fertilizers/widgets/fertilizer_settings_widget.dart';
@@ -74,48 +75,49 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
                   },
                 ),
           backgroundColor: Colors.transparent,
-          appBar: RootSliverAppBar(
-            implyLeading: true,
-            title: "Fertilizer Settings",
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Gap(40),
-                Text("Set your fertilizers and dosages.",
-                    style: kHeadingTextStyle, textAlign: TextAlign.center),
-                Gap(40),
-                for (Fertilizer fertilizer in fertilizers)
-                  FertilizerSettingsWidget(
-                    fertilizer: fertilizer,
-                    onTap: () => showFertilizerModal(
-                      context,
-                      fertilizer: fertilizer,
-                      onAdd: _onAddFertilizer,
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: SingleChildScrollView(
+                clipBehavior: Clip.none,
+                child: Column(
+                  spacing: 5,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Gap(40),
+                    Text("Set your fertilizers and dosages.",
+                        style: kHeadingTextStyle, textAlign: TextAlign.center),
+                    Gap(40),
+                    for (Fertilizer fertilizer in fertilizers)
+                      FertilizerSettingsWidget(
+                        fertilizer: fertilizer,
+                        onTap: () => showFertilizerModal(
+                          context,
+                          fertilizer: fertilizer,
+                          onAdd: _onAddFertilizer,
+                        ),
+                        onDismissed: () => _onRemovedFertilizer(fertilizer),
+                      ),
+                    Gap(40),
+                    GestureDetector(
+                      onTap: () {
+                        showFertilizerModal(
+                          context,
+                          onAdd: _onAddFertilizer,
+                        );
+                      },
+                      child: NeoBruteBorder(
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(8),
+                          child: Text("Add Fertilizer"),
+                        ),
+                      ),
                     ),
-                    onDismissed: () => _onRemovedFertilizer(fertilizer),
-                  ),
-                Gap(40),
-                GestureDetector(
-                  onTap: () {
-                    showFertilizerModal(
-                      context,
-                      onAdd: _onAddFertilizer,
-                    );
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: GradientBoxBorder(gradient: kPrimaryGradient)),
-                    child: Text("Add Fertilizer"),
-                  ),
+                    Gap(100),
+                  ],
                 ),
-                Gap(100),
-              ],
+              ),
             ),
           ),
         ),

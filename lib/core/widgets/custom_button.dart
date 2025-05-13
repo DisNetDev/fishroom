@@ -1,5 +1,6 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 
@@ -49,49 +50,46 @@ class CustomButton extends StatelessWidget {
           }
         }
       },
-      child: Container(
-        constraints: autoPad
-            ? const BoxConstraints(minHeight: 50, maxHeight: 50, minWidth: 100)
-            : BoxConstraints(
-                minHeight: 50,
-                maxHeight: 50,
-              ),
-        margin: margin,
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-        decoration: BoxDecoration(
-          border: primary
-              ? null
-              : gradient != null
-                  ? GradientBoxBorder(gradient: gradient!)
-                  : Border.all(
-                      color: isDarkMode(context) ? Colors.white : Colors.black,
-                    ),
-          gradient: primary
-              ? LinearGradient(
-                  colors: [
-                    kPrimaryColor,
-                    kSecondaryColor,
-                  ],
-                )
-              : null,
-          borderRadius: BorderRadius.circular(2000),
-        ),
-        child: Center(
-          child: loading
-              ? loader
-              : Text(
-                  text,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: textColor ??
-                        (primary
-                            ? Colors.white
-                            : isDarkMode(context)
-                                ? Colors.white
-                                : Colors.black),
-                  ),
-                  textAlign: TextAlign.center,
+      child: NeoBruteBorder(
+        child: Container(
+          constraints: autoPad
+              ? const BoxConstraints(
+                  minHeight: 50, maxHeight: 50, minWidth: 100)
+              : BoxConstraints(
+                  minHeight: 50,
+                  maxHeight: 50,
                 ),
+          margin: margin,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            gradient: gradient ??
+                (primary
+                    ? LinearGradient(
+                        colors: [
+                          kPrimaryColor,
+                          kSecondaryColor,
+                        ],
+                      )
+                    : null),
+          ),
+          child: Center(
+            child: loading
+                ? loader
+                : Text(
+                    text,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: textColor ??
+                          (primary
+                              ? Colors.white
+                              : isDarkMode(context)
+                                  ? Colors.white
+                                  : Colors.black),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+          ),
         ),
       ),
     );

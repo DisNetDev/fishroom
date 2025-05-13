@@ -4,12 +4,12 @@ import 'package:animations/animations.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/fish_text_box.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:fishroom/features/tank_reading/usecases/calculate_values_for_parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
@@ -27,20 +27,22 @@ class AddTankParameter extends StatefulWidget {
 class _AddTankParameterState extends State<AddTankParameter> {
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
-        transitionType: ContainerTransitionType.fadeThrough,
-        closedColor: isDarkMode(context) ? Colors.transparent : Colors.white,
-        openColor: isDarkMode(context) ? Colors.black : Colors.white,
-        closedBuilder: (BuildContext context, action) => Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: const GradientBoxBorder(gradient: kPrimaryGradient),
+    return NeoBruteBorder(
+      showShadow: false,
+      child: OpenContainer(
+          transitionType: ContainerTransitionType.fadeThrough,
+          closedColor: isDarkMode(context) ? Colors.transparent : Colors.white,
+          openColor: isDarkMode(context) ? Colors.black : Colors.white,
+          closedBuilder: (BuildContext context, action) => Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(Symbols.add),
               ),
-              child: const Icon(Symbols.add),
-            ),
-        openBuilder: (BuildContext context, action) =>
-            EditParameter(onParameterAdded: widget.onParameterAdded));
+          openBuilder: (BuildContext context, action) =>
+              EditParameter(onParameterAdded: widget.onParameterAdded)),
+    );
   }
 }
 
@@ -95,6 +97,7 @@ class _EditParameterState extends State<EditParameter> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: const BoxDecoration(),
             child: SingleChildScrollView(
+              clipBehavior: Clip.none,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

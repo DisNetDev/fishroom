@@ -21,12 +21,15 @@ const TextStyle kHeadingTextStyle = TextStyle(
 
 const Color kPrimaryColor = Color.fromARGB(255, 0, 199, 253);
 const Color kSecondaryColor = Color.fromARGB(255, 32, 61, 224);
-const Color kTertiaryColor = Color.fromARGB(255, 0, 34, 100);
+const Color kTertiaryColor = Color.fromARGB(255, 0, 21, 63);
 
 const LinearGradient kPrimaryGradient = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,
-  colors: [kSecondaryColor, Color.fromARGB(78, 155, 154, 154)],
+  colors: [
+    Color.fromARGB(78, 155, 154, 154),
+    kTertiaryColor,
+  ],
 );
 
 const LinearGradient kDisabledGradient = LinearGradient(

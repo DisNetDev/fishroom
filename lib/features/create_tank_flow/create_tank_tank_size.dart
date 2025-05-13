@@ -1,5 +1,6 @@
 import 'package:fishroom/core/models/tank.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_type.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -21,76 +22,99 @@ class CreateTankTankSize extends StatefulWidget {
 }
 
 class _CreateTankTankSizeState extends State<CreateTankTankSize> {
+  @override
+  initState() {
+    if (widget.tank.measurementUnit == null) {
+      widget.tank.measurementUnit = "Liters";
+    }
+    super.initState();
+  }
+
   FocusNode measurementFocusNode = FocusNode();
   FocusNode sizeFocusNode = FocusNode();
   Tank get tank => widget.tank;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(alignment: Alignment.bottomCenter, children: [
+    return Stack(
+      children: [
         CustomBackground(),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "What size is your tank?",
-                style: kHeadingTextStyle,
-                textAlign: TextAlign.center,
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Stack(alignment: Alignment.bottomCenter, children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "What size is your tank?",
+                      style: kHeadingTextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    Gap(50),
+                    Text(
+                      "What will you be measuring in?",
+                      style: kHeading2TextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const Gap(20),
+                    Align(
+                      alignment: Alignment.center,
+                      child: NeoBruteBorder(
+                        showBorder: false,
+                        child: DropdownMenu(
+                            label: Text("Unit"),
+                            onSelected: (value) =>
+                                setState(() => tank.measurementUnit = value),
+                            dropdownMenuEntries: [
+                              DropdownMenuEntry(
+                                  value: "Liters", label: "Liters"),
+                              DropdownMenuEntry(
+                                  value: "Gallons", label: "Gallons"),
+                              DropdownMenuEntry(value: "Feet", label: "Feet"),
+                              DropdownMenuEntry(value: "Cm", label: "Cm"),
+                              DropdownMenuEntry(
+                                  value: "Inches", label: "Inches"),
+                              DropdownMenuEntry(value: "P", label: "P"),
+                            ],
+                            initialSelection: tank.measurementUnit ?? "Liters"),
+                      ),
+                    ),
+                    // TextInput(
+                    //     initialValue: tank.measurementUnit,
+                    //     hintText: "Gallons, Litres, Feet, Cm's, etc.",
+                    //     focusNode: measurementFocusNode,
+                    //     onEditingComplete: () => sizeFocusNode.requestFocus(),
+                    //     onChanged: (p0) => setState(() => tank.measurementUnit = p0)),
+                    Gap(50),
+                    Text(
+                      "How many ${tank.measurementUnit == "" || tank.measurementUnit == null ? "_______" : tank.measurementUnit} is your tank?",
+                      style: kHeading2TextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const Gap(20),
+                    TextInput(
+                        initialValue:
+                            tank.size != null ? tank.size.toString() : "",
+                        focusNode: sizeFocusNode,
+                        keyboardType: TextInputType.number,
+                        onEditingComplete: () => onComplete(),
+                        onChanged: (p0) =>
+                            setState(() => tank.size = int.tryParse(p0))),
+                  ],
+                ),
               ),
-              Gap(50),
-              Text(
-                "What will you be measuring in?",
-                style: kHeading2TextStyle,
-                textAlign: TextAlign.center,
-              ),
-              const Gap(20),
-              Align(
-                alignment: Alignment.center,
-                child: DropdownMenu(
-                    label: Text("Unit"),
-                    onSelected: (value) =>
-                        setState(() => tank.measurementUnit = value),
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(value: "Liters", label: "Liters"),
-                      DropdownMenuEntry(value: "Gallons", label: "Gallons"),
-                      DropdownMenuEntry(value: "Feet", label: "Feet"),
-                      DropdownMenuEntry(value: "Cm", label: "Cm"),
-                      DropdownMenuEntry(value: "Inches", label: "Inches"),
-                      DropdownMenuEntry(value: "P", label: "P"),
-                    ],
-                    initialSelection: tank.measurementUnit ?? "Liters"),
-              ),
-              // TextInput(
-              //     initialValue: tank.measurementUnit,
-              //     hintText: "Gallons, Litres, Feet, Cm's, etc.",
-              //     focusNode: measurementFocusNode,
-              //     onEditingComplete: () => sizeFocusNode.requestFocus(),
-              //     onChanged: (p0) => setState(() => tank.measurementUnit = p0)),
-              Gap(50),
-              Text(
-                "How many ${tank.measurementUnit == "" || tank.measurementUnit == null ? "_______" : tank.measurementUnit} is your tank?",
-                style: kHeading2TextStyle,
-                textAlign: TextAlign.center,
-              ),
-              const Gap(20),
-              TextInput(
-                  initialValue: tank.size != null ? tank.size.toString() : "",
-                  focusNode: sizeFocusNode,
-                  keyboardType: TextInputType.number,
-                  onEditingComplete: () => onComplete(),
-                  onChanged: (p0) =>
-                      setState(() => tank.size = int.tryParse(p0))),
-            ],
+              Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                  child: CustomButton(
+                      text: "Continue", onPressed: () => onComplete())),
+            ]),
           ),
         ),
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-            child:
-                CustomButton(text: "Continue", onPressed: () => onComplete())),
-      ]),
+      ],
     );
   }
 

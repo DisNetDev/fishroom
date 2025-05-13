@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/features/tank_reading/models/parameter.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -41,82 +42,76 @@ class _ParameterWheelState extends State<ParameterWheel> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: Row(
-        children: [
-          Expanded(
-              child: InkWell(
-            borderRadius: BorderRadius.circular(10),
-            splashColor: kPrimaryColor.withValues(alpha: 0.2),
-            onTap: () {
-              setState(() {
-                widget.onTap();
-              });
-            },
-            child: Row(
-              children: [
-                Checkbox(
-                  activeColor: kPrimaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20), // Make the checkbox round
-                  ),
-                  value: widget.enabled,
-                  onChanged: (value) {
-                    widget.onTap();
-                  },
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.parameter.shortName ?? "N/A",
-                      style: kHeading1TextStyle,
-                      textScaler: TextScaler.noScaling,
+      child: NeoBruteBorder(
+        showShadow: false,
+        child: Row(
+          children: [
+            Expanded(
+                child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              splashColor: kPrimaryColor.withValues(alpha: 0.2),
+              onTap: () {
+                setState(() {
+                  widget.onTap();
+                });
+              },
+              child: Row(
+                children: [
+                  Checkbox(
+                    activeColor: kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(20), // Make the checkbox round
                     ),
-                    Text(
-                      "${widget.parameter.name} ${widget.parameter.unit != "" ? "(${widget.parameter.unit})" : ""}",
-                      style: kHintTextStyle.copyWith(
-                          fontStyle: FontStyle.italic, fontSize: 10),
-                      textScaler: TextScaler.noScaling,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )),
-          Expanded(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 10),
-                  width: 1,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      border: GradientBoxBorder(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                        widget.enabled ? kPrimaryColor : Colors.grey,
-                        Colors.transparent,
-                        Colors.transparent,
-                        Colors.transparent,
-                        Colors.transparent,
-                        Colors.transparent,
-                        widget.enabled ? kPrimaryColor : Colors.grey,
-                      ]))),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: GradientBoxBorder(
-                        gradient: widget.enabled
-                            ? kPrimaryGradient
-                            : kDisabledGradient),
+                    value: widget.enabled,
+                    onChanged: (value) {
+                      widget.onTap();
+                    },
                   ),
-                  child: ShaderMask(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.parameter.shortName ?? "N/A",
+                        style: kHeading1TextStyle,
+                        textScaler: TextScaler.noScaling,
+                      ),
+                      Text(
+                        "${widget.parameter.name} ${widget.parameter.unit != "" ? "(${widget.parameter.unit})" : ""}",
+                        style: kHintTextStyle.copyWith(
+                            fontStyle: FontStyle.italic, fontSize: 10),
+                        textScaler: TextScaler.noScaling,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )),
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    width: 1,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        border: GradientBoxBorder(
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                          widget.enabled ? kPrimaryColor : Colors.grey,
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.transparent,
+                          widget.enabled ? kPrimaryColor : Colors.grey,
+                        ]))),
+                  ),
+                  ShaderMask(
                     shaderCallback: (Rect bounds) {
                       return const LinearGradient(
                         begin: Alignment.centerLeft,
@@ -174,11 +169,11 @@ class _ParameterWheelState extends State<ParameterWheel> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
