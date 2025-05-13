@@ -20,7 +20,7 @@ class TankDetailsOverview extends StatelessWidget {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: 10,
+                height: 5,
                 decoration: BoxDecoration(color: kTertiaryColor),
               ),
               Container(
