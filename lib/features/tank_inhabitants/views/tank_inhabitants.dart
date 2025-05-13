@@ -36,6 +36,7 @@ class _TankInhabitantsState extends State<TankInhabitants> {
         CustomBackground(),
         Scaffold(
             floatingActionButton: FloatingActionButton(
+              shape: const CircleBorder(),
               onPressed: () {
                 navPush(
                     context,

@@ -6,6 +6,7 @@ import 'package:fishroom/core/usecases/get_filename_from_url.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/widgets/loader.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -60,100 +61,106 @@ class _TankTileCompactState extends State<TankTileCompact> {
       tankTypeNonNullable = "Tank Type";
     }
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TankDetails(tank: widget.tank)));
-      },
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        children: [
-          if (widget.tank.imageUrl != null)
-            MaterialContainer(
-              width: double.infinity,
-              height: 75,
-              margin: const EdgeInsets.symmetric(vertical: 5),
-              decoration: BoxDecoration(
-                color: !isDarkMode(context)
-                    ? const Color.fromARGB(255, 255, 255, 255)
-                    : Colors.black,
-              ),
-              child: Skeletonizer(
-                enabled: loadingImage,
-                child: Skeleton.replace(
-                  child: widget.tank.imageLocalPath != null &&
-                          File(widget.tank.imageLocalPath!)
-                              .existsSync() // Check if the local image path is valid
-                      ? Image(
-                          image: FileImage(File(widget.tank.imageLocalPath!)),
-                          fit: BoxFit.cover,
-                        )
-                      : CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: widget.tank.imageUrl ?? "",
-                          errorWidget: (context, url, error) {
-                            return const Center(child: SizedBox());
-                          },
-                          placeholder: (context, url) =>
-                              const Center(child: Loader()),
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+      child: NeoBruteBorder(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TankDetails(tank: widget.tank)));
+          },
+          child: Stack(
+            alignment: Alignment.centerLeft,
+            children: [
+              if (widget.tank.imageUrl != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: MaterialContainer(
+                    width: double.infinity,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      color: !isDarkMode(context)
+                          ? const Color.fromARGB(255, 255, 255, 255)
+                          : Colors.black,
+                    ),
+                    child: Skeletonizer(
+                      enabled: loadingImage,
+                      child: Skeleton.replace(
+                        child: widget.tank.imageLocalPath != null &&
+                                File(widget.tank.imageLocalPath!)
+                                    .existsSync() // Check if the local image path is valid
+                            ? Image(
+                                image: FileImage(
+                                    File(widget.tank.imageLocalPath!)),
+                                fit: BoxFit.cover,
+                              )
+                            : CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: widget.tank.imageUrl ?? "",
+                                errorWidget: (context, url, error) {
+                                  return const Center(child: SizedBox());
+                                },
+                                placeholder: (context, url) =>
+                                    const Center(child: Loader()),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              Skeleton.replace(
+                child: Container(
+                  height: 75,
+                  padding:
+                      const EdgeInsets.only(right: 20, bottom: 10, top: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    gradient: widget.tank.imageUrl != null
+                        ? const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [Colors.transparent, Colors.black],
+                          )
+                        : kPrimaryGradient,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Material(
+                        color: Colors.transparent,
+                        child: Text(
+                          widget.tank.name ?? "Tank Name",
+                          textAlign: TextAlign.end,
+                          textScaler: TextScaler.noScaling,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: Text(
+                          "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""} ${widget.tank.measurementUnit ?? ""}",
+                          textAlign: TextAlign.end,
+                          textScaler: TextScaler.noScaling,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          Skeleton.replace(
-            child: Container(
-              height: 75,
-              margin: const EdgeInsets.symmetric(vertical: 5),
-              padding: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
-              decoration: BoxDecoration(
-                border: widget.tank.imageUrl != null
-                    ? null
-                    : const GradientBoxBorder(gradient: kPrimaryGradient),
-                gradient: widget.tank.imageUrl != null
-                    ? const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [Colors.transparent, Colors.black],
-                      )
-                    : kPrimaryGradient,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Material(
-                    color: Colors.transparent,
-                    child: Text(
-                      widget.tank.name ?? "Tank Name",
-                      textAlign: TextAlign.end,
-                      textScaler: TextScaler.noScaling,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Material(
-                    color: Colors.transparent,
-                    child: Text(
-                      "$tankTypeNonNullable ${widget.tank.size != null && widget.tank.measurementUnit != null ? "-" : ""} ${widget.tank.size ?? ""} ${widget.tank.measurementUnit ?? ""}",
-                      textAlign: TextAlign.end,
-                      textScaler: TextScaler.noScaling,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

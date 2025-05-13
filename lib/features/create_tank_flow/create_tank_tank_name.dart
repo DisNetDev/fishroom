@@ -47,65 +47,72 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          const CustomBackground(),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      children: [
+        CustomBackground(),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
               children: [
-                Text(
-                  editTank
-                      ? "Editing your tank? Great!"
-                      : context.read<TanksCubit>().state.tanks.isEmpty
-                          ? "Welcome to Fishroom!\nLet's create your first tank!"
-                          : "Woah! Another tank!\nLet's give it a name!",
-                  style: kHeadingTextStyle,
-                  textAlign: TextAlign.center,
-                ),
-                const Gap(50),
-                const Text(
-                  "What would you like to name your new tank?",
-                  style: kHeading2TextStyle,
-                  textAlign: TextAlign.center,
-                ),
-                const Gap(20),
-                TextInput(
-                    initialValue: tank.name,
-                    focusNode: nameFocusNode,
-                    onEditingComplete: () => onComplete(),
-                    onChanged: (p0) => setState(() => tank.name = p0)),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomButton(text: "Continue", onPressed: () => onComplete()),
-                Gap(20),
-                if (editTank)
-                  CustomButton(
-                    text: "Delete Tank",
-                    onPressed: () {
-                      _showDeleteConfirmationDialog(context);
-                    },
-                    loading: loading,
-                    primary: false,
-                    gradient: kErrorGradient,
-                    textColor: const Color.fromARGB(255, 255, 17, 0),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        editTank
+                            ? "Editing your tank? Great!"
+                            : context.read<TanksCubit>().state.tanks.isEmpty
+                                ? "Welcome to Fishroom!\nLet's create your first tank!"
+                                : "Woah! Another tank!\nLet's give it a name!",
+                        style: kHeadingTextStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      const Gap(50),
+                      const Text(
+                        "What would you like to name your new tank?",
+                        style: kHeading2TextStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      const Gap(20),
+                      TextInput(
+                          initialValue: tank.name,
+                          focusNode: nameFocusNode,
+                          onEditingComplete: () => onComplete(),
+                          onChanged: (p0) => setState(() => tank.name = p0)),
+                    ],
                   ),
-                Gap(50)
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomButton(
+                          text: "Continue", onPressed: () => onComplete()),
+                      Gap(20),
+                      if (editTank)
+                        CustomButton(
+                          text: "Delete Tank",
+                          onPressed: () {
+                            _showDeleteConfirmationDialog(context);
+                          },
+                          loading: loading,
+                          primary: false,
+                          gradient: kErrorGradient,
+                        ),
+                      Gap(50)
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

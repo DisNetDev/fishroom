@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
-import 'package:fishroom/core/widgets/glass.dart';
 import 'package:fishroom/core/widgets/loader.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/features/community_tank/cubit/community_tank_cubit.dart';
 import 'package:fishroom/features/community_tank/models/ct_post.dart';
 import 'package:fishroom/features/community_tank/views/report_object.dart';
@@ -32,7 +32,7 @@ class CTPostCard extends StatelessWidget {
     final CommunityTankCubit communityTankCubit =
         context.read<CommunityTankCubit>();
 
-    return Glass(
+    return NeoBruteBorder(
       child: Stack(
         children: [
           Container(

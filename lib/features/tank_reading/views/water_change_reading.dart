@@ -35,80 +35,83 @@ class _WaterChangeReadingState extends State<WaterChangeReading> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: RootSliverAppBar(
-        title: "Water Change",
-        implyLeading: true,
-      ),
-      body: Stack(
-        children: [
-          CustomBackground(),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Gap(20),
-                Text(
-                  "What size water change did you make?",
-                  textAlign: TextAlign.center,
-                  style: kHeadingTextStyle,
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "${(tankReading.waterChangePercentage ?? 0).toString()}%",
-                      style: kHeadingTextStyle.copyWith(fontSize: 80),
+    return Stack(
+      children: [
+        const CustomBackground(),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: RootSliverAppBar(
+            title: "Water Change",
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Gap(20),
+                  Text(
+                    "What size water change did you make?",
+                    textAlign: TextAlign.center,
+                    style: kHeadingTextStyle,
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        "${(tankReading.waterChangePercentage ?? 0).toString()}%",
+                        style: kHeadingTextStyle.copyWith(fontSize: 80),
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  "      Slide to select a value >>>",
-                  style: kPlainTextStyle,
-                ),
-                Slider(
-                    min: 0,
-                    max: 100,
-                    divisions: 20,
-                    inactiveColor: Colors.grey,
-                    value: (tankReading.waterChangePercentage ?? 0).toDouble(),
-                    onChanged: (value) {
-                      setState(() {
-                        tankReading = tankReading.copyWith(
-                            waterChangePercentage: value.toInt());
-                      });
-                    }),
-                Gap(50),
-                CustomButton(
-                    text: "Save Water Change",
-                    loading: loading,
-                    onPressed: () async {
-                      setState(() => loading = true);
-                      try {
-                        await context.read<TanksCubit>().createTankReading(
-                              tankReading,
-                              null,
-                            );
-                        setState(() => loading = false);
-                        if (context.mounted) {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
-                        }
-                      } on Exception catch (e) {
-                        if (context.mounted) {
-                          showToast(context,
-                              title: "Something went wrong.",
-                              description: e.toString(),
-                              toastType: ToastType.error);
+                  Text(
+                    "      Slide to select a value >>>",
+                    style: kPlainTextStyle,
+                  ),
+                  Slider(
+                      min: 0,
+                      max: 100,
+                      divisions: 20,
+                      inactiveColor: Colors.grey,
+                      value:
+                          (tankReading.waterChangePercentage ?? 0).toDouble(),
+                      onChanged: (value) {
+                        setState(() {
+                          tankReading = tankReading.copyWith(
+                              waterChangePercentage: value.toInt());
+                        });
+                      }),
+                  Gap(50),
+                  CustomButton(
+                      text: "Save Water Change",
+                      loading: loading,
+                      onPressed: () async {
+                        setState(() => loading = true);
+                        try {
+                          await context.read<TanksCubit>().createTankReading(
+                                tankReading,
+                                null,
+                              );
                           setState(() => loading = false);
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          }
+                        } on Exception catch (e) {
+                          if (context.mounted) {
+                            showToast(context,
+                                title: "Something went wrong.",
+                                description: e.toString(),
+                                toastType: ToastType.error);
+                            setState(() => loading = false);
+                          }
                         }
-                      }
-                    })
-              ],
+                      })
+                ],
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

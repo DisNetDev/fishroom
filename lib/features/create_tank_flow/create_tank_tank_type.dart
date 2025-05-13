@@ -24,39 +24,47 @@ class _CreateTankTankTypeState extends State<CreateTankTankType> {
   Tank get tank => widget.tank;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(alignment: Alignment.bottomCenter, children: [
+    return Stack(
+      children: [
         CustomBackground(),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "What type of tank do you have?",
-                style: kHeadingTextStyle,
-                textAlign: TextAlign.center,
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Stack(alignment: Alignment.bottomCenter, children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "What type of tank do you have?",
+                      style: kHeadingTextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    Gap(50),
+                    Text(
+                      "Eg. Freshwater, Saltwater, Brackish...\nCan be a certain Biotope...\nAmazonian, Tanganyikan.\n\nYour imagination is the limit!",
+                      style: kHeading2TextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const Gap(20),
+                    TextInput(
+                        initialValue: tank.type,
+                        onEditingComplete: () => onComplete(),
+                        onChanged: (p0) => setState(() => tank.type = p0)),
+                  ],
+                ),
               ),
-              Gap(50),
-              Text(
-                "Eg. Freshwater, Saltwater, Brackish...\nCan be a certain Biotope...\nAmazonian, Tanganyikan.\n\nYour imagination is the limit!",
-                style: kHeading2TextStyle,
-                textAlign: TextAlign.center,
-              ),
-              const Gap(20),
-              TextInput(
-                  initialValue: tank.type,
-                  onEditingComplete: () => onComplete(),
-                  onChanged: (p0) => setState(() => tank.type = p0)),
-            ],
+              Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                  child: CustomButton(
+                      text: "Continue", onPressed: () => onComplete())),
+            ]),
           ),
         ),
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-            child:
-                CustomButton(text: "Continue", onPressed: () => onComplete())),
-      ]),
+      ],
     );
   }
 

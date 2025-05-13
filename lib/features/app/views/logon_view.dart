@@ -77,102 +77,116 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Gap(30),
-            const Hero(tag: "logo", child: Logo()),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                  child: TextInput(
-                    keyboardType: TextInputType.emailAddress,
-                    onEditingComplete: onEditingComplete,
-                    initialValue: emailAddress,
-                    focusNode: focusNodeEmail,
-                    onChanged: (email) => setState(() {
-                      emailAddress = email;
-                      userShouldLogIn = null;
-                      showPassword1 = false;
-                      showPassword2 = false;
-                    }),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
-                    label: const Text("Email"),
+                const Gap(30),
+                const Hero(tag: "logo", child: Logo()),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                      child: TextInput(
+                        keyboardType: TextInputType.emailAddress,
+                        onEditingComplete: onEditingComplete,
+                        initialValue: emailAddress,
+                        focusNode: focusNodeEmail,
+                        onChanged: (email) => setState(() {
+                          emailAddress = email;
+                          userShouldLogIn = null;
+                          showPassword1 = false;
+                          showPassword2 = false;
+                        }),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        label: const Text("Email"),
+                      ),
+                    ),
+                    AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        height: showPassword1 ? 1 : 0),
+                    TextInput(
+                      onEditingComplete: onEditingComplete,
+                      height: showPassword1 ? 50 : 0,
+                      focusNode: focusNodePassword1,
+                      obscureText: true,
+                      onChanged: (password) =>
+                          setState(() => password1 = password),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      label: const Text("Password"),
+                    ),
+                    Gap(20),
+                    TextInput(
+                      onEditingComplete: onEditingComplete,
+                      height: showPassword2 ? 50 : 0,
+                      focusNode: focusNodePassword2,
+                      obscureText: true,
+                      onChanged: (password) =>
+                          setState(() => password2 = password),
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      label: const Text("Confirm Password"),
+                    ),
+                  ],
+                ),
+                Gap(40),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: CustomButton(
+                    primary: true,
+                    loading: loading,
+                    text: userShouldLogIn == null
+                        ? "Continue"
+                        : userShouldLogIn!
+                            ? "Login"
+                            : "Sign Up",
+                    onPressed: onEditingComplete,
                   ),
                 ),
-                AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    height: showPassword1 ? 1 : 0),
-                TextInput(
-                  onEditingComplete: onEditingComplete,
-                  height: showPassword1 ? 50 : 0,
-                  focusNode: focusNodePassword1,
-                  obscureText: true,
-                  onChanged: (password) => setState(() => password1 = password),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  label: const Text("Password"),
+                // Container(
+                //   padding: const EdgeInsets.symmetric(horizontal: 50),
+                //   child: SupaSocialsAuth(
+                //     socialProviders: [OAuthProvider.google],
+                //     onSuccess: (user) {
+                //       print(user);
+                //     },
+                //   ),
+                // ),
+                Gap(20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: CustomButton(
+                    text: "Sign in with Google",
+                    loading: googleLoading,
+                    primary: false,
+                    onPressed: () async {
+                      login(google: true);
+                    },
+                  ),
                 ),
-                TextInput(
-                  onEditingComplete: onEditingComplete,
-                  height: showPassword2 ? 50 : 0,
-                  focusNode: focusNodePassword2,
-                  obscureText: true,
-                  onChanged: (password) => setState(() => password2 = password),
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  label: const Text("Confirm Password"),
+                const Gap(30),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  child: showPassword1 && !showPassword2
+                      ? TextButton(
+                          onPressed: () {
+                            supabase.auth.resetPasswordForEmail(emailAddress);
+                            navPush(context,
+                                PasswordReset(emailAddress: emailAddress));
+                          },
+                          child: const Text("Forgot Password"),
+                        )
+                      : const SizedBox(),
                 ),
               ],
             ),
-            CustomButton(
-              primary: true,
-              loading: loading,
-              text: userShouldLogIn == null
-                  ? "Continue"
-                  : userShouldLogIn!
-                      ? "Login"
-                      : "Sign Up",
-              onPressed: onEditingComplete,
-              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 80),
-            ),
-            // Container(
-            //   padding: const EdgeInsets.symmetric(horizontal: 50),
-            //   child: SupaSocialsAuth(
-            //     socialProviders: [OAuthProvider.google],
-            //     onSuccess: (user) {
-            //       print(user);
-            //     },
-            //   ),
-            // ),
-            CustomButton(
-              text: "Sign in with Google",
-              loading: googleLoading,
-              primary: false,
-              onPressed: () async {
-                login(google: true);
-              },
-              margin: const EdgeInsets.symmetric(horizontal: 80),
-            ),
-            const Gap(30),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              child: showPassword1 && !showPassword2
-                  ? TextButton(
-                      onPressed: () {
-                        supabase.auth.resetPasswordForEmail(emailAddress);
-                        navPush(
-                            context, PasswordReset(emailAddress: emailAddress));
-                      },
-                      child: const Text("Forgot Password"),
-                    )
-                  : const SizedBox(),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -12,6 +12,7 @@
     "ferts",
     "Fishroom",
     "flutterlocalnotifications",
+    "lightmode",
     "LTRB",
     "LTWH",
     "magiclink",
@@ -51,5 +52,25 @@
     "fs",
     "http",
     "net"
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#000056",
+    "activityBar.background": "#000056",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#9f0000",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#000056",
+    "statusBar.background": "#000023",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#000056",
+    "statusBarItem.remoteBackground": "#000023",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#000023",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#00002399",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#000023"
 }

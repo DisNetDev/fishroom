@@ -71,157 +71,170 @@ class _CreateTankReadingState extends State<CreateTankReading> {
       children: [
         const CustomBackground(),
         Scaffold(
-          appBar: const RootSliverAppBar(title: "Add a Tank Reading"),
           backgroundColor: Colors.transparent,
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Gap(20),
-                  if (tankReading.type == TankReadingType.measurement)
-                    BlocBuilder<AppCubit, AppState>(
-                      builder: (context, state) {
-                        return Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: List.generate(
-                                parameters.length,
-                                (index) => ParameterWheel(
-                                    enabled: tankReading.parameters.any(
-                                        (element) =>
-                                            element.name ==
-                                            parameters[index].name),
-                                    onTap: () {
-                                      setState(() {
-                                        if (tankReading.parameters.any(
+          body: SafeArea(
+            child: CustomScrollView(
+              clipBehavior: Clip.none,
+              slivers: [
+                const RootSliverAppBar(
+                  title: "Add a Tank Reading",
+                  sliver: true,
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      const Gap(20),
+                      if (tankReading.type == TankReadingType.measurement)
+                        BlocBuilder<AppCubit, AppState>(
+                          builder: (context, state) {
+                            return Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: List.generate(
+                                    parameters.length,
+                                    (index) => ParameterWheel(
+                                        enabled: tankReading.parameters.any(
                                             (element) =>
                                                 element.name ==
-                                                parameters[index].name)) {
-                                          tankReading.parameters.removeWhere(
-                                              (test) =>
-                                                  test.name ==
-                                                  parameters[index].name);
-                                        } else {
-                                          tankReading.parameters.add(
-                                              Parameter.from(parameters[index],
-                                                  parameters[index].min));
-                                        }
-                                      });
-                                    },
-                                    valueSelected: (value) {
-                                      setState(() {
-                                        tankReading.parameters
-                                            .firstWhereOrNull((test) =>
-                                                test.name ==
-                                                parameters[index].name)
-                                            ?.value = value;
-                                      });
-                                    },
-                                    parameter: parameters[index])));
-                      },
-                    ),
-                  const Gap(20),
-                  FishTextBox(
-                    hintText: "Note",
-                    onChanged: (value) => setState(
-                      () => tankReading = tankReading.copyWith(note: value),
-                    ),
-                    initialValue: tankReading.note ?? "",
-                  ),
-                  const Gap(20),
-                  if (isProUser(context) && _image == null)
-                    Column(
-                      children: [
-                        CustomButton(
-                            primary: false,
-                            text: "Attach a Photo",
-                            onPressed: () async {
-                              _image = await pickImage(context);
-                              setState(() {});
-                            }),
-                        const Gap(20),
-                        Text(
-                          "Disclaimer, although we do compress images, minimal damage is made to the image quality. However, you should always backup your high quality original photos.",
-                          textAlign: TextAlign.center,
-                          style: kHintTextStyle.copyWith(
-                              fontStyle: FontStyle.italic),
+                                                parameters[index].name),
+                                        onTap: () {
+                                          setState(() {
+                                            if (tankReading.parameters.any(
+                                                (element) =>
+                                                    element.name ==
+                                                    parameters[index].name)) {
+                                              tankReading.parameters
+                                                  .removeWhere((test) =>
+                                                      test.name ==
+                                                      parameters[index].name);
+                                            } else {
+                                              tankReading.parameters.add(
+                                                  Parameter.from(
+                                                      parameters[index],
+                                                      parameters[index].min));
+                                            }
+                                          });
+                                        },
+                                        valueSelected: (value) {
+                                          setState(() {
+                                            tankReading.parameters
+                                                .firstWhereOrNull((test) =>
+                                                    test.name ==
+                                                    parameters[index].name)
+                                                ?.value = value;
+                                          });
+                                        },
+                                        parameter: parameters[index])));
+                          },
                         ),
-                      ],
-                    )
-                  else if (!isProUser(context) && _image == null)
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: isDarkMode(context)
-                                  ? Colors.grey
-                                  : Colors.black),
-                          borderRadius: BorderRadius.circular(1000)),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Symbols.lock,
-                            color: Colors.grey,
-                          ),
-                          Gap(20),
-                          Text(
-                            "Upgrade to Pro to upload a photo.",
-                            style: kHintTextStyle,
-                          ),
-                        ],
+                      const Gap(20),
+                      FishTextBox(
+                        hintText: "Note",
+                        onChanged: (value) => setState(
+                          () => tankReading = tankReading.copyWith(note: value),
+                        ),
+                        initialValue: tankReading.note ?? "",
                       ),
-                    )
-                  else
-                    ImageUploadWidget(
-                      image: _image,
-                      unlockAspectRatio: true,
-                      onImagePicked: (image) => setState(() => _image = image),
-                    ),
-                  const Gap(100),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 30, horizontal: 16),
-                    child: CustomButton(
-                        loading: loading,
-                        text: "Save",
-                        onPressed: () async {
-                          setState(() => tankReading = tankReading.copyWith(
-                              note: tankReading.note?.trim()));
-                          if (tankReading.parameters.isEmpty) {
-                            showToast(context,
-                                title: "Please select at least one parameter.",
-                                description:
-                                    "If you do not have any parameters measured, rather log a note on the previous page.",
-                                toastType: ToastType.error);
+                      const Gap(20),
+                      if (isProUser(context) && _image == null)
+                        Column(
+                          children: [
+                            CustomButton(
+                                primary: false,
+                                text: "Attach a Photo",
+                                onPressed: () async {
+                                  _image = await pickImage(context);
+                                  setState(() {});
+                                }),
+                            const Gap(20),
+                            Text(
+                              "Disclaimer, although we do compress images, minimal damage is made to the image quality. However, you should always backup your high quality original photos.",
+                              textAlign: TextAlign.center,
+                              style: kHintTextStyle.copyWith(
+                                  fontStyle: FontStyle.italic),
+                            ),
+                          ],
+                        )
+                      else if (!isProUser(context) && _image == null)
+                        Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: isDarkMode(context)
+                                      ? Colors.grey
+                                      : Colors.black),
+                              borderRadius: BorderRadius.circular(1000)),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Symbols.lock,
+                                color: Colors.grey,
+                              ),
+                              Gap(20),
+                              Text(
+                                "Upgrade to Pro to upload a photo.",
+                                style: kHintTextStyle,
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        ImageUploadWidget(
+                          image: _image,
+                          unlockAspectRatio: true,
+                          onImagePicked: (image) =>
+                              setState(() => _image = image),
+                        ),
+                      const Gap(100),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 30, horizontal: 16),
+                        child: CustomButton(
+                            loading: loading,
+                            text: "Save",
+                            onPressed: () async {
+                              setState(() => tankReading = tankReading.copyWith(
+                                  note: tankReading.note?.trim()));
+                              if (tankReading.parameters.isEmpty) {
+                                showToast(context,
+                                    title:
+                                        "Please select at least one parameter.",
+                                    description:
+                                        "If you do not have any parameters measured, rather log a note on the previous page.",
+                                    toastType: ToastType.error);
 
-                            return;
-                          }
-                          setState(() => loading = true);
-                          try {
-                            await context.read<TanksCubit>().createTankReading(
-                                  tankReading,
-                                  _image,
-                                );
-                            setState(() => loading = false);
-                            if (context.mounted) {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                            }
-                          } on Exception catch (e) {
-                            if (context.mounted) {
-                              showToast(context,
-                                  title: "Something went wrong.",
-                                  description: e.toString(),
-                                  toastType: ToastType.error);
-                              setState(() => loading = false);
-                            }
-                          }
-                        }),
+                                return;
+                              }
+                              setState(() => loading = true);
+                              try {
+                                await context
+                                    .read<TanksCubit>()
+                                    .createTankReading(
+                                      tankReading,
+                                      _image,
+                                    );
+                                setState(() => loading = false);
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                }
+                              } on Exception catch (e) {
+                                if (context.mounted) {
+                                  showToast(context,
+                                      title: "Something went wrong.",
+                                      description: e.toString(),
+                                      toastType: ToastType.error);
+                                  setState(() => loading = false);
+                                }
+                              }
+                            }),
+                      ),
+                    ]),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

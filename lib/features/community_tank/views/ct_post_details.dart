@@ -127,32 +127,34 @@ class _CTPostDetailsState extends State<CTPostDetails> {
                       ]
                     : [],
               ),
-              body: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    spacing: 5,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      CTPostCard(
-                          post: post ??
-                              CTPost(
-                                  id: "",
-                                  title: "Error Fetching Post",
-                                  content: "Error Fetching Post",
-                                  authorID: "",
-                                  authorName: "",
-                                  createdAt: "",
-                                  images: []),
-                          isDetailedView: true),
-                      if (loadingComments) Gap(100),
-                      if (loadingComments)
-                        Center(child: Loader())
-                      else
-                        ...comments.map((e) => CTCommentCard(e,
-                            onRemove: () =>
-                                setState(() => comments.remove(e)))),
-                    ],
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      spacing: 10,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CTPostCard(
+                            post: post ??
+                                CTPost(
+                                    id: "",
+                                    title: "Error Fetching Post",
+                                    content: "Error Fetching Post",
+                                    authorID: "",
+                                    authorName: "",
+                                    createdAt: "",
+                                    images: []),
+                            isDetailedView: true),
+                        if (loadingComments) Gap(100),
+                        if (loadingComments)
+                          Center(child: Loader())
+                        else
+                          ...comments.map((e) => CTCommentCard(e,
+                              onRemove: () =>
+                                  setState(() => comments.remove(e)))),
+                      ],
+                    ),
                   ),
                 ),
               ),

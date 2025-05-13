@@ -43,114 +43,124 @@ class _FertilizerReadingState extends State<FertilizerReading> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        CustomBackground(),
+        const CustomBackground(),
         Scaffold(
-          appBar: RootSliverAppBar(
-            title: "Fertilizer Dose",
-            implyLeading: true,
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Give those plants some food! Add a fertilizer dose.",
-                    style: kHeadingTextStyle,
-                    textAlign: TextAlign.center,
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                RootSliverAppBar(
+                  title: "Fertilizer Dose",
+                  sliver: true,
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Give those plants some food! Add a fertilizer dose.",
+                      style: kHeadingTextStyle,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-                Gap(20),
-                for (Fertilizer fertilizer in fertilizers)
-                  DosageWidget(
-                    onTap: () {
-                      setState(() {
-                        if (reading.dosages.any(
-                            (test) => test.fertilizer.id == fertilizer.id)) {
-                          reading.dosages.removeWhere(
+                SliverToBoxAdapter(child: Gap(20)),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index >= fertilizers.length) return null;
+                      final fertilizer = fertilizers[index];
+                      return DosageWidget(
+                        onTap: () {
+                          setState(() {
+                            if (reading.dosages.any((test) =>
+                                test.fertilizer.id == fertilizer.id)) {
+                              reading.dosages.removeWhere((test) =>
+                                  test.fertilizer.id == fertilizer.id);
+                            } else {
+                              reading.dosages.add(
+                                Dosage(
+                                  amount: null,
+                                  fertilizer: fertilizer,
+                                ),
+                              );
+                            }
+                          });
+                        },
+                        fertilizer: fertilizer,
+                        enabled: reading.dosages
+                            .any((test) => test.fertilizer.id == fertilizer.id),
+                        onChanged: (p0) => setState(() {
+                          if (p0.isEmpty) {
+                            reading.dosages.removeWhere(
+                                (test) => test.fertilizer.id == fertilizer.id);
+                            return;
+                          }
+                          int indexOf = reading.dosages.indexWhere(
                               (test) => test.fertilizer.id == fertilizer.id);
-                        } else {
-                          reading.dosages.add(
-                            Dosage(
-                              amount: null,
-                              fertilizer: fertilizer,
-                            ),
-                          );
-                        }
-                      });
+                          if (indexOf == -1) {
+                            reading.dosages.add(
+                              Dosage(
+                                amount: double.tryParse(p0),
+                                fertilizer: fertilizer,
+                              ),
+                            );
+                          } else {
+                            reading.dosages[indexOf] = reading.dosages[indexOf]
+                                .copyWith(amount: double.tryParse(p0));
+                          }
+                        }),
+                      );
                     },
-                    fertilizer: fertilizer,
-                    enabled: reading.dosages
-                        .any((test) => test.fertilizer.id == fertilizer.id),
-                    onChanged: (p0) => setState(
-                      () {
-                        if (p0.isEmpty) {
-                          reading.dosages.removeWhere(
-                              (test) => test.fertilizer.id == fertilizer.id);
+                    childCount: fertilizers.length,
+                  ),
+                ),
+                SliverToBoxAdapter(child: Gap(40)),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: CustomButton(
+                      text: "Create Fertilizer Dose",
+                      loading: loading,
+                      onPressed: () async {
+                        if (reading.dosages.isEmpty) {
+                          showToast(context,
+                              title: "No dosages added",
+                              description:
+                                  "Please add at least one dosage to continue.",
+                              toastType: ToastType.error);
 
                           return;
                         }
-                        int indexOf = reading.dosages.indexWhere(
-                            (test) => test.fertilizer.id == fertilizer.id);
-                        if (indexOf == -1) {
-                          reading.dosages.add(
-                            Dosage(
-                              amount: double.tryParse(p0),
-                              fertilizer: fertilizer,
-                            ),
-                          );
-                        } else {
-                          reading.dosages[indexOf] = reading.dosages[indexOf]
-                              .copyWith(amount: double.tryParse(p0));
+                        if (reading.dosages.any((test) =>
+                            test.amount == null || test.amount! <= 0)) {
+                          showToast(context,
+                              title: "Invalid dosage",
+                              description:
+                                  "Please enter a valid number for all dosages.",
+                              toastType: ToastType.error);
+
+                          return;
+                        }
+                        try {
+                          setState(() => loading = true);
+                          await context
+                              .read<TanksCubit>()
+                              .createTankReading(reading, null);
+                          setState(() => loading = false);
+
+                          navPop(context);
+                          navPop(context);
+                        } catch (e) {
+                          setState(() => loading = false);
+                          showToast(context,
+                              title: "Something went wrong",
+                              description: e.toString(),
+                              toastType: ToastType.error);
                         }
                       },
                     ),
                   ),
-                Gap(40),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: CustomButton(
-                    text: "Create Reading",
-                    loading: loading,
-                    onPressed: () async {
-                      if (reading.dosages.isEmpty) {
-                        showToast(context,
-                            title: "No dosages added",
-                            description:
-                                "Please add at least one dosage to continue.",
-                            toastType: ToastType.error);
-
-                        return;
-                      }
-                      if (reading.dosages.any(
-                          (test) => test.amount == null || test.amount! <= 0)) {
-                        showToast(context,
-                            title: "Invalid dosage",
-                            description:
-                                "Please enter a valid number for all dosages.",
-                            toastType: ToastType.error);
-
-                        return;
-                      }
-                      try {
-                        setState(() => loading = true);
-                        await context
-                            .read<TanksCubit>()
-                            .createTankReading(reading, null);
-                        setState(() => loading = false);
-
-                        navPop(context);
-                        navPop(context);
-                      } catch (e) {
-                        setState(() => loading = false);
-                        showToast(context,
-                            title: "Something went wrong",
-                            description: e.toString(),
-                            toastType: ToastType.error);
-                      }
-                    },
-                  ),
-                )
+                ),
               ],
             ),
           ),

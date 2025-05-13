@@ -46,43 +46,51 @@ class CreateTankUploadPhotoState extends State<CreateTankUploadPhoto> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(alignment: Alignment.bottomCenter, children: [
+    return Stack(
+      children: [
         CustomBackground(),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Upload a photo for your tank!",
-                style: kHeadingTextStyle,
-                textAlign: TextAlign.center,
-              ),
-              Gap(50),
-              Text(
-                "Tip: To get the best looking thumbnail, \nthe image should be landscape, \n16:9 ratio and the tank should fill the whole photo.",
-                style: kHeading2TextStyle,
-                textAlign: TextAlign.center,
-              ),
-              Gap(20),
-              ImageUploadWidget(
-                image: _image,
-                onImagePicked: (image) => setState(
-                  () => _image = image,
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Stack(alignment: Alignment.bottomCenter, children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Upload a photo for your tank!",
+                      style: kHeadingTextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    Gap(50),
+                    Text(
+                      "Tip: To get the best looking thumbnail, \nthe image should be landscape, \n16:9 ratio and the tank should fill the whole photo.",
+                      style: kHeading2TextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    Gap(20),
+                    ImageUploadWidget(
+                      image: _image,
+                      onImagePicked: (image) => setState(
+                        () => _image = image,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+              Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                  child: CustomButton(
+                      loading: loading,
+                      text: "Continue",
+                      onPressed: () => onComplete())),
+            ]),
           ),
         ),
-        Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-            child: CustomButton(
-                loading: loading,
-                text: "Continue",
-                onPressed: () => onComplete())),
-      ]),
+      ],
     );
   }
 

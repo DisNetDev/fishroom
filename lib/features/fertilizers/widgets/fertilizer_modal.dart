@@ -1,5 +1,6 @@
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -86,21 +87,24 @@ class _FertilizerModalState extends State<FertilizerModal> {
                     ? "Please enter a valid number, avoid commas, use dots"
                     : null,
               )),
-              DropdownMenu(
-                initialSelection: fertilizer.dosageUnit == ""
-                    ? dosageUnits.first
-                    : fertilizer.dosageUnit,
-                label: Text("Unit"),
-                onSelected: (value) => setState(
-                    () => fertilizer = fertilizer.copyWith(dosageUnit: value)),
-                dropdownMenuEntries: dosageUnits
-                    .map(
-                      (e) => DropdownMenuEntry(
-                        label: e,
-                        value: e,
-                      ),
-                    )
-                    .toList(),
+              NeoBruteBorder(
+                showBorder: false,
+                child: DropdownMenu(
+                  initialSelection: fertilizer.dosageUnit == ""
+                      ? dosageUnits.first
+                      : fertilizer.dosageUnit,
+                  label: Text("Unit"),
+                  onSelected: (value) => setState(() =>
+                      fertilizer = fertilizer.copyWith(dosageUnit: value)),
+                  dropdownMenuEntries: dosageUnits
+                      .map(
+                        (e) => DropdownMenuEntry(
+                          label: e,
+                          value: e,
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             ],
           ),
@@ -127,21 +131,24 @@ class _FertilizerModalState extends State<FertilizerModal> {
                     ? "Please enter a valid number, avoid commas, use dots"
                     : null,
               )),
-              DropdownMenu(
-                initialSelection: fertilizer.perVolumeUnit == ""
-                    ? perVolumeUnits.first
-                    : fertilizer.perVolumeUnit,
-                label: Text("Unit"),
-                onSelected: (value) => setState(() =>
-                    fertilizer = fertilizer.copyWith(perVolumeUnit: value)),
-                dropdownMenuEntries: perVolumeUnits
-                    .map(
-                      (e) => DropdownMenuEntry(
-                        label: e,
-                        value: e,
-                      ),
-                    )
-                    .toList(),
+              NeoBruteBorder(
+                showBorder: false,
+                child: DropdownMenu(
+                  initialSelection: fertilizer.perVolumeUnit == ""
+                      ? perVolumeUnits.first
+                      : fertilizer.perVolumeUnit,
+                  label: Text("Unit"),
+                  onSelected: (value) => setState(() =>
+                      fertilizer = fertilizer.copyWith(perVolumeUnit: value)),
+                  dropdownMenuEntries: perVolumeUnits
+                      .map(
+                        (e) => DropdownMenuEntry(
+                          label: e,
+                          value: e,
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             ],
           ),

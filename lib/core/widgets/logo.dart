@@ -21,9 +21,10 @@ class Logo extends StatelessWidget {
           'Fishroom',
           textAlign: TextAlign.center,
           style: TextStyle(
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-              fontFamily: "CheesyCats"),
+            fontSize: 50,
+            fontWeight: FontWeight.w900,
+            fontFamily: "CheesyCats",
+          ),
         ),
       ),
     ];

@@ -12,70 +12,74 @@ Future<File?> pickImage(BuildContext context) async {
   await showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
-      return Container(
-        padding: const EdgeInsets.only(top: 20, bottom: 40),
-        height: MediaQuery.of(context).size.height / 4,
-        child: Column(
-          children: [
-            const Text(
-              "Pick an Image",
-              style: kHeading1TextStyle,
-            ),
-            const Expanded(child: SizedBox()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        XFile? pickedImage =
-                            await _pickAndCompress(ImageSource.gallery);
-                        if (pickedImage != null && context.mounted) {
-                          filePicked = File(pickedImage.path);
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(10),
-                        padding: const EdgeInsets.all(20),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: GradientBoxBorder(gradient: kPrimaryGradient),
+      return SafeArea(
+        child: Container(
+          padding: const EdgeInsets.only(top: 20, bottom: 40),
+          height: MediaQuery.of(context).size.height / 4,
+          child: Column(
+            children: [
+              const Text(
+                "Pick an Image",
+                style: kHeading1TextStyle,
+              ),
+              const Expanded(child: SizedBox()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          XFile? pickedImage =
+                              await _pickAndCompress(ImageSource.gallery);
+                          if (pickedImage != null && context.mounted) {
+                            filePicked = File(pickedImage.path);
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(20),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            border:
+                                GradientBoxBorder(gradient: kPrimaryGradient),
+                          ),
+                          child: const Icon(Icons.photo),
                         ),
-                        child: const Icon(Icons.photo),
                       ),
-                    ),
-                    const Text("Pick from Gallery")
-                  ],
-                ),
-                Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        XFile? pickedImage =
-                            await _pickAndCompress(ImageSource.camera);
-                        if (pickedImage != null && context.mounted) {
-                          filePicked = File(pickedImage.path);
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(10),
-                        padding: const EdgeInsets.all(20),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: GradientBoxBorder(gradient: kPrimaryGradient),
+                      const Text("Pick from Gallery")
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          XFile? pickedImage =
+                              await _pickAndCompress(ImageSource.camera);
+                          if (pickedImage != null && context.mounted) {
+                            filePicked = File(pickedImage.path);
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(20),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            border:
+                                GradientBoxBorder(gradient: kPrimaryGradient),
+                          ),
+                          child: const Icon(Icons.camera_alt),
                         ),
-                        child: const Icon(Icons.camera_alt),
                       ),
-                    ),
-                    const Text("Take a photo")
-                  ],
-                )
-              ],
-            ),
-          ],
+                      const Text("Take a photo")
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
       );
     },

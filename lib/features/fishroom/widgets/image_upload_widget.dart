@@ -1,9 +1,8 @@
 import 'dart:io';
 
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_borders/gradient_borders.dart';
 
-import '../../../core/constants.dart';
 import '../../../core/usecases/pick_image.dart';
 
 class ImageUploadWidget extends StatelessWidget {
@@ -39,28 +38,24 @@ class ImageUploadWidget extends StatelessWidget {
   }
 
   Widget _buildImage(Color color) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 600),
-      decoration: BoxDecoration(
-        color: color,
-        border: const GradientBoxBorder(
-          gradient: LinearGradient(
-            colors: [kPrimaryColor, kSecondaryColor],
-          ),
+    return NeoBruteBorder(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 600),
+        decoration: BoxDecoration(
+          color: color,
         ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: image == null
-          ? const Center(
-              child: Text("Optional: Upload an Image"),
-            )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.file(
-                image!,
-                fit: BoxFit.cover,
+        child: image == null
+            ? const Center(
+                child: Text("Optional: Upload an Image"),
+              )
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  image!,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
+      ),
     );
   }
 }

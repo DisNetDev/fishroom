@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:fishroom/core/repositories/supabase_repository.dart';
 import 'package:fishroom/core/usecases/cache_image.dart';
 import 'package:fishroom/core/usecases/log.dart';
+import 'package:fishroom/main.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../core/models/database_tables.dart';
@@ -128,24 +129,21 @@ class TanksCubit extends HydratedCubit<TanksState> {
     try {
       fishLog("Getting Tank Readings...");
 
-      final data = await supabaseRepository.fetch(
-          tableName: SupabaseTable.tankReadings.tableName,
-          conditionalColumn: SupabaseTable.tankReadings.tankId,
-          condition: tank.id);
+      final data = await supabase
+          .from(SupabaseTable.tankReadings.tableName)
+          .select("*")
+          .eq(SupabaseTable.tankReadings.tankId, tank.id);
 
-      if (data != null) {
-        List<TankReading> readings = [];
-        readings.addAll(state.readings);
-        for (Map<String, dynamic> json in data) {
-          TankReading reading = TankReading.fromJson(json);
-          if (!readings
-              .any((readingInState) => readingInState.id == reading.id)) {
-            readings.add(reading);
-          }
+      List<TankReading> readings = [];
+      for (Map<String, dynamic> json in data) {
+        TankReading reading = TankReading.fromJson(json);
+        if (!readings
+            .any((readingInState) => readingInState.id == reading.id)) {
+          readings.add(reading);
         }
-        readings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        emit(state.copyWith(readings: readings));
       }
+      readings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      emit(state.copyWith(readings: readings));
     } catch (e) {
       rethrow;
     }

@@ -1,5 +1,6 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/capitalize_each_word.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/features/tank_inhabitants/widgets/inhabitant_details.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -19,52 +20,54 @@ class InhabitantWidget extends StatelessWidget {
   final void Function(Inhabitant) onAdd;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => showDialog(
-        context: context,
-        builder: (context) => InhabitantDetails(
-          inhabitant: inhabitant,
-          onAdd: (inhabitant) => onAdd(inhabitant),
+    return Padding(
+      padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
+      child: GestureDetector(
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => InhabitantDetails(
+            inhabitant: inhabitant,
+            onAdd: (inhabitant) => onAdd(inhabitant),
+          ),
         ),
-      ),
-      child: Skeletonizer(
-        enabled: loading,
-        child: Container(
-          padding: EdgeInsets.only(left: 20, right: 10, top: 10, bottom: 10),
-          decoration: BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(color: Colors.grey, width: 0.5))),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (inhabitant.commonName != null &&
-                        inhabitant.commonName!.isNotEmpty)
-                      Text(
-                        capitalizeEachWord(inhabitant.commonName ?? ""),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    Text(
-                      capitalizeEachWord(inhabitant.scientificName),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: (inhabitant.commonName != null &&
-                              inhabitant.commonName!.isNotEmpty)
-                          ? kDateTimeTextStyle
-                          : null,
+        child: NeoBruteBorder(
+          child: Skeletonizer(
+            enabled: loading,
+            child: Container(
+              padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (inhabitant.commonName != null &&
+                            inhabitant.commonName!.isNotEmpty)
+                          Text(
+                            capitalizeEachWord(inhabitant.commonName ?? ""),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        Text(
+                          capitalizeEachWord(inhabitant.scientificName),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: (inhabitant.commonName != null &&
+                                  inhabitant.commonName!.isNotEmpty)
+                              ? kDateTimeTextStyle
+                              : null,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Gap(20),
+                  if (inhabitant.count != null && inhabitant.count! > 0)
+                    Text(
+                      "x${inhabitant.count}",
+                    )
+                ],
               ),
-              Gap(20),
-              if (inhabitant.count != null && inhabitant.count! > 0)
-                Text(
-                  "x${inhabitant.count}",
-                )
-            ],
+            ),
           ),
         ),
       ),

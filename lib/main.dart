@@ -1,3 +1,4 @@
+import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/theme/dropdown_theme.dart';
 import 'package:fishroom/core/theme/slider_theme.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
@@ -108,7 +109,7 @@ class MainApp extends StatelessWidget {
       },
       theme: ThemeData.from(
         colorScheme: const ColorScheme.light(
-          primary: Color.fromARGB(255, 33, 138, 243),
+          primary: kTertiaryColor,
         ),
       ).copyWith(
           dividerColor: Colors.transparent,
@@ -116,13 +117,13 @@ class MainApp extends StatelessWidget {
           dropdownMenuTheme: dropdownThemeDataLight),
       darkTheme: ThemeData.from(
         colorScheme: const ColorScheme.dark(
-          primary: Color.fromARGB(255, 33, 138, 243),
+          primary: kTertiaryColor,
         ),
       ).copyWith(
           dividerColor: Colors.transparent,
           sliderTheme: sliderTheme,
           dropdownMenuTheme: dropdownThemeDataDark),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       home: const SplashScreen(),
     );
   }

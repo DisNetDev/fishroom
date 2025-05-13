@@ -1,5 +1,5 @@
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/widgets/glass.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/features/community_tank/models/ct_comment.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +14,8 @@ class CTCommentCard extends StatelessWidget {
   final VoidCallback onRemove;
   @override
   Widget build(BuildContext context) {
-    return Glass(
+    return NeoBruteBorder(
+      showShadow: false,
       child: Stack(
         children: [
           Container(
