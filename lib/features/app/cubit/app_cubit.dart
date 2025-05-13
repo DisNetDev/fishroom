@@ -1,6 +1,7 @@
 import 'package:fishroom/features/settings/models/settings.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
 import '../../bug_report/models/bug_report.dart';
@@ -228,17 +229,17 @@ class AppCubit extends HydratedCubit<AppState> {
     }
   }
 
-  Future<void> upgradeUserToPro() async {
+  Future<void> upgradeUserToPro({bool isPro = true}) async {
     try {
       if (state.user != null) {
         await _supabaseRepository.update(
             tableName: SupabaseTable.users.tableName,
-            json: {SupabaseTable.users.premium: true},
+            json: {SupabaseTable.users.premium: isPro},
             conditionalColumn: SupabaseTable.users.id,
             condition: state.user!.uuid);
-        emit(state.copyWith(user: state.user!.copyWith(premium: true)));
+        emit(state.copyWith(user: state.user!.copyWith(premium: isPro)));
       }
-    } on Exception catch (_) {
+    } catch (_) {
       rethrow;
     }
   }
@@ -289,6 +290,24 @@ class AppCubit extends HydratedCubit<AppState> {
       emit(state.copyWith(user: state.user!.copyWith(welcomeEmailSent: value)));
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> checkSub() async {
+    await Purchases.logIn(state.user!.email);
+
+    final CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+
+    final bool isPro = customerInfo.activeSubscriptions.isNotEmpty;
+
+    if (isPro) {
+      if (!state.user!.premium) {
+        upgradeUserToPro(isPro: true);
+      }
+    } else {
+      if (state.user!.premium) {
+        upgradeUserToPro(isPro: false);
+      }
     }
   }
 }
