@@ -98,8 +98,7 @@ class _TextInputState extends State<TextInput> {
                       : InputDecoration(
                           errorMaxLines: 3,
                           errorStyle: kDateTimeTextStyle.copyWith(
-                            color: Colors.deepOrange,
-                          ),
+                              color: Colors.deepOrange, fontSize: 0),
                           alignLabelWithHint: true,
                           labelStyle: kHintTextStyle,
                           label: widget.label,
