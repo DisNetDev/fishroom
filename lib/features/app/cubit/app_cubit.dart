@@ -310,4 +310,11 @@ class AppCubit extends HydratedCubit<AppState> {
       }
     }
   }
+
+  Future<void> getSubscriptions() async {
+    final Offerings offerings = await Purchases.getOfferings();
+    final List<Package> subscriptions =
+        offerings.current?.availablePackages ?? [];
+    emit(state.copyWith(availableSubscriptions: subscriptions));
+  }
 }

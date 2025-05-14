@@ -1,6 +1,7 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/theme/dropdown_theme.dart';
 import 'package:fishroom/core/theme/slider_theme.dart';
+import 'package:fishroom/core/usecases/init_rc.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ void main() async {
       authOptions: FlutterAuthClientOptions(
         localStorage: MySecureStorage(),
       ));
+  await initRC();
 
   await SentryFlutter.init(
     (options) {

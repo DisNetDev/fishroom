@@ -1,18 +1,17 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/constants.dart';
-import 'package:fishroom/core/usecases/is_pro_user.dart';
-import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/logo.dart';
-import 'package:fishroom/features/bug_report/views/thank_you.dart';
+import 'package:fishroom/core/widgets/pricing_option_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
-import '../../IAP/iap_service.dart';
 import '../../app/cubit/app_cubit.dart';
 
 class UpgradeToPro extends StatefulWidget {
@@ -24,12 +23,27 @@ class UpgradeToPro extends StatefulWidget {
 
 class _UpgradeToProState extends State<UpgradeToPro> {
   bool isLoading = false;
-  final IAPService iapService = IAPService.instance;
+  bool canMakePayments = false;
+
+  Future<void> init() async {
+    try {
+      canMakePayments = await Purchases.canMakePayments();
+      setState(() => isLoading = true);
+      await context.read<AppCubit>().getSubscriptions();
+      setState(() => isLoading = false);
+    } catch (e) {
+      setState(() => isLoading = false);
+      showToast(context,
+          title: "Failed to load subscriptions",
+          description: e.toString(),
+          toastType: ToastType.error);
+    }
+  }
 
   @override
   void initState() {
+    init();
     super.initState();
-    iapService.initialize();
   }
 
   @override
@@ -62,47 +76,38 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                     primary: false,
                     onPressed: () => Navigator.of(context).pop()),
                 const Gap(10),
+                BlocBuilder<AppCubit, AppState>(
+                  builder: (context, state) {
+                    return Column(
+                      children: state.availableSubscriptions
+                          .map((e) => PricingOptionCard(
+                              title:
+                                  toBeginningOfSentenceCase(e.packageType.name),
+                              description: e.packageType.name == "annual"
+                                  ? "Renewed Annually.\nGet 2 Months Free."
+                                  : "Renewed every month",
+                              price: e.storeProduct.priceString,
+                              onPressed: () async {
+                                try {
+                                  await Purchases.purchasePackage(e);
+                                  context.read<AppCubit>().upgradeUserToPro();
+                                } catch (e) {
+                                  showToast(context,
+                                      title: "Error purchasing subscription",
+                                      description: e.toString(),
+                                      toastType: ToastType.error);
+                                }
+                              }))
+                          .toList(),
+                    );
+                  },
+                ),
                 CustomButton(
                   loading: isLoading,
                   text: "Upgrade",
                   onPressed: () async {
                     setState(() => isLoading = true);
-                    try {
-                      await iapService.buyPro(
-                        onPurchaseSuccess: () async {
-                          try {
-                            setState(() => isLoading = true);
-                            await context.read<AppCubit>().upgradeUserToPro();
-                            setState(() => isLoading = false);
-                          } catch (e) {
-                            setState(() => isLoading = false);
-                            showToast(context,
-                                title: "Failed to upgrade",
-                                description: e.toString(),
-                                toastType: ToastType.error);
-                            navPop(context);
-                          }
-                          if (isProUser(context)) {
-                            navReplace(context, ThankYou(boughtPro: true));
-                          } else {
-                            showToast(context,
-                                title: "Failed to upgrade",
-                                description:
-                                    "If your payment was successful, please contact support.",
-                                toastType: ToastType.error);
-                            navPop(context);
-                          }
-                        },
-                      );
-                      setState(() => isLoading = false);
-                    } catch (e) {
-                      setState(() => isLoading = false);
-                      showToast(context,
-                          title: "Failed to upgrade",
-                          description:
-                              "${e.toString()} Please contact support.",
-                          toastType: ToastType.error);
-                    }
+                    //
                   },
                 ),
                 const Gap(40),
