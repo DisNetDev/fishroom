@@ -1,3 +1,4 @@
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -20,41 +21,44 @@ class PricingOptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        margin: EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 10,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white,
-            width: 2,
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: kHeading1TextStyle,
-                  ),
-                  Text(
-                    description,
-                    style: kHeading2TextStyle,
-                  ),
+      child: NeoBruteBorder(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  kPrimaryColor,
+                  kTertiaryColor,
                 ],
               ),
             ),
-            Text(price, style: kHeading2TextStyle),
-          ],
+            padding: EdgeInsets.symmetric(
+              vertical: 10,
+              horizontal: 10,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: kHeading1TextStyle.copyWith(color: Colors.white),
+                      ),
+                      Text(
+                        description,
+                        style: kHeading2TextStyle.copyWith(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(price,
+                    style: kHeadingTextStyle.copyWith(color: Colors.white)),
+              ],
+            ),
+          ),
         ),
       ),
     );

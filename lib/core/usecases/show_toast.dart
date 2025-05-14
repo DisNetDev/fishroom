@@ -16,6 +16,13 @@ void showToast(
     autoCloseDuration = Duration(seconds: 15);
   }
 
+  String descriptionToShow = description ?? "";
+
+  if (descriptionToShow.contains("message:")) {
+    descriptionToShow =
+        "${descriptionToShow.split("message: ")[1].split(".")[0]}.";
+  }
+
   // Add a timer to manage the countdown
 
   toastification.showCustom(
@@ -26,7 +33,7 @@ void showToast(
       return CountdownToast(
         duration: autoCloseDuration - Duration(seconds: 1),
         title: title,
-        description: description,
+        description: descriptionToShow,
         toastType: toastType,
       );
     },
@@ -88,54 +95,61 @@ class _CountdownToastState extends State<CountdownToast> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Positioned.fill(
-          bottom: 0,
-          child: LinearProgressIndicator(
-            borderRadius: BorderRadius.circular(borderRadius),
-            value: countdown / duration.inMilliseconds,
-            backgroundColor: Colors.transparent,
-            valueColor: AlwaysStoppedAnimation(toastType.gradient.colors.first),
+    return Padding(
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 10,
+          right: 10),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(
+            bottom: 0,
+            child: LinearProgressIndicator(
+              borderRadius: BorderRadius.circular(borderRadius),
+              value: countdown / duration.inMilliseconds,
+              backgroundColor: Colors.transparent,
+              valueColor:
+                  AlwaysStoppedAnimation(toastType.gradient.colors.first),
+            ),
           ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: Colors.transparent),
-          ),
-          child: Container(
+          Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                  color: isDarkMode(context) ? Colors.black : Colors.white),
+              border: Border.all(color: Colors.transparent),
             ),
             child: Container(
-              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  border: GradientBoxBorder(gradient: toastType.gradient),
-                  color: isDarkMode(context) ? Colors.black : Colors.white),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    title,
-                    style: kHeading1TextStyle,
-                  ),
-                  if (description != null)
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                    color: isDarkMode(context) ? Colors.black : Colors.white),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    border: GradientBoxBorder(gradient: toastType.gradient),
+                    color: isDarkMode(context) ? Colors.black : Colors.white),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                     Text(
-                      description!,
-                      style: kPlainTextStyle,
-                    )
-                ],
+                      title,
+                      style: kHeading1TextStyle,
+                    ),
+                    if (description != null)
+                      Text(
+                        description!,
+                        style: kPlainTextStyle,
+                      )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        // Countdown border
-      ],
+          // Countdown border
+        ],
+      ),
     );
   }
 }

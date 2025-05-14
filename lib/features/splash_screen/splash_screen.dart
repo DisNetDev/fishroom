@@ -21,12 +21,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  AppCubit get appCubit => context.read<AppCubit>();
   void checkLoginStatus() async {
     await Future.delayed(const Duration(seconds: 1));
     if (supabase.auth.currentSession != null) {
       context.read<SupabaseRepository>().setSession();
       try {
-        await context.read<AppCubit>().fetchUser();
+        await appCubit.fetchUser();
+        await appCubit.checkSub();
       } catch (e) {
         showToast(context,
             title: "Something went wrong. Please try again",
@@ -38,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       //Sends welcome email if not sent yet.
       await sendWelcomeEmail(context);
-      context.read<AppCubit>().logLoginEvent();
+      appCubit.logLoginEvent();
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {

@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
@@ -48,74 +49,78 @@ class _UpgradeToProState extends State<UpgradeToPro> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          const CustomBackground(),
-          Container(
-            padding: const EdgeInsets.all(20),
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Expanded(flex: 2, child: SizedBox()),
-                const Logo(horizontal: false),
-                const Expanded(flex: 2, child: SizedBox()),
-                const Text(
-                  "Upgrade to Pro to get these bonuses:",
-                  style: kHeading1TextStyle,
-                  textAlign: TextAlign.center,
-                ),
-                const Expanded(flex: 1, child: SizedBox()),
-                _BenefitWidget(title: "Unlimited Tanks"),
-                _BenefitWidget(title: "Attach photos to your tank readings"),
-                const Expanded(flex: 2, child: SizedBox()),
-                CustomButton(
-                    loading: isLoading,
-                    text: "Later",
-                    primary: false,
-                    onPressed: () => Navigator.of(context).pop()),
-                const Gap(10),
-                BlocBuilder<AppCubit, AppState>(
-                  builder: (context, state) {
-                    return Column(
-                      children: state.availableSubscriptions
-                          .map((e) => PricingOptionCard(
-                              title:
-                                  toBeginningOfSentenceCase(e.packageType.name),
-                              description: e.packageType.name == "annual"
-                                  ? "Renewed Annually.\nGet 2 Months Free."
-                                  : "Renewed every month",
-                              price: e.storeProduct.priceString,
-                              onPressed: () async {
-                                try {
-                                  await Purchases.purchasePackage(e);
-                                  context.read<AppCubit>().upgradeUserToPro();
-                                } catch (e) {
-                                  showToast(context,
-                                      title: "Error purchasing subscription",
-                                      description: e.toString(),
-                                      toastType: ToastType.error);
-                                }
-                              }))
-                          .toList(),
-                    );
-                  },
-                ),
-                CustomButton(
-                  loading: isLoading,
-                  text: "Upgrade",
-                  onPressed: () async {
-                    setState(() => isLoading = true);
-                    //
-                  },
-                ),
-                const Gap(40),
-              ],
+    return Stack(
+      children: [
+        const CustomBackground(),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Expanded(flex: 2, child: SizedBox()),
+                  const Logo(horizontal: false),
+                  const Expanded(flex: 2, child: SizedBox()),
+                  const Text(
+                    "Upgrade to Pro to get these bonuses:",
+                    style: kHeading1TextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const Expanded(flex: 1, child: SizedBox()),
+                  _BenefitWidget(title: "Unlimited Tanks"),
+                  _BenefitWidget(title: "Attach photos to your tank readings"),
+                  const Expanded(flex: 2, child: SizedBox()),
+                  const Gap(10),
+                  BlocBuilder<AppCubit, AppState>(
+                    builder: (context, state) {
+                      return Column(
+                        spacing: 10,
+                        children: state.availableSubscriptions
+                            .map((e) => PricingOptionCard(
+                                title: toBeginningOfSentenceCase(
+                                    e.packageType.name),
+                                description: e.packageType.name == "annual"
+                                    ? "Renewed Annually.\nGet 2 Months Free."
+                                    : "Renewed every month",
+                                price: e.storeProduct.priceString,
+                                onPressed: () async {
+                                  try {
+                                    await Purchases.purchasePackage(e);
+                                    setState(() => isLoading = true);
+                                    await context
+                                        .read<AppCubit>()
+                                        .upgradeUserToPro();
+                                    navPop(context);
+                                  } catch (e) {
+                                    setState(() => isLoading = false);
+                                    if (e.toString().contains("cancelled")) {
+                                      return;
+                                    }
+                                    showToast(context,
+                                        title: "Error purchasing subscription",
+                                        description: e.toString(),
+                                        toastType: ToastType.error);
+                                  }
+                                }))
+                            .toList(),
+                      );
+                    },
+                  ),
+                  Gap(20),
+                  CustomButton(
+                      loading: isLoading,
+                      text: "Later",
+                      primary: false,
+                      onPressed: () => Navigator.of(context).pop()),
+                ],
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
