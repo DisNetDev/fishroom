@@ -294,19 +294,17 @@ class AppCubit extends HydratedCubit<AppState> {
   }
 
   Future<void> checkSub() async {
-    await Purchases.logIn(state.user!.email);
-
     final CustomerInfo customerInfo = await Purchases.getCustomerInfo();
 
     final bool isPro = customerInfo.activeSubscriptions.isNotEmpty;
 
     if (isPro) {
       if (!state.user!.premium) {
-        upgradeUserToPro(isPro: true);
+        await upgradeUserToPro(isPro: true);
       }
     } else {
       if (state.user!.premium) {
-        upgradeUserToPro(isPro: false);
+        await upgradeUserToPro(isPro: false);
       }
     }
   }

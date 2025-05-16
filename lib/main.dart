@@ -2,6 +2,7 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/theme/dropdown_theme.dart';
 import 'package:fishroom/core/theme/slider_theme.dart';
 import 'package:fishroom/core/usecases/init_rc.dart';
+import 'package:fishroom/features/release_notes/cubit/release_notes_cubit.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,6 @@ void main() async {
       authOptions: FlutterAuthClientOptions(
         localStorage: MySecureStorage(),
       ));
-  await initRC();
 
   await SentryFlutter.init(
     (options) {
@@ -66,6 +66,7 @@ void main() async {
           child: MultiBlocProvider(
             providers: [
               //Global Blocs
+              BlocProvider(create: (context) => ReleaseNotesCubit()),
               BlocProvider(
                   create: (context) => TanksCubit(
                       supabaseRepository: context.read<SupabaseRepository>())),

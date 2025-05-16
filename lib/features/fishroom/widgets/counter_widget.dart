@@ -28,14 +28,6 @@ class CounterWidget extends StatelessWidget {
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
-                Text(
-                  heading,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  style: kHeading2TextStyle,
-                ),
-                Gap(5),
                 if (icon != null) icon!,
                 Gap(5),
                 if (loading) Gap(5),
@@ -55,6 +47,13 @@ class CounterWidget extends StatelessWidget {
                           counter.toString(),
                           style: kHeadingTextStyle,
                         ),
+                ),
+                Text(
+                  heading,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: kDateTimeTextStyle,
                 ),
               ],
             ),

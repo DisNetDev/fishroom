@@ -5,6 +5,7 @@ import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
+import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/pricing_option_card.dart';
 import 'package:flutter/material.dart';
@@ -74,41 +75,47 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                   _BenefitWidget(title: "Attach photos to your tank readings"),
                   const Expanded(flex: 2, child: SizedBox()),
                   const Gap(10),
-                  BlocBuilder<AppCubit, AppState>(
-                    builder: (context, state) {
-                      return Column(
-                        spacing: 10,
-                        children: state.availableSubscriptions
-                            .map((e) => PricingOptionCard(
-                                title: toBeginningOfSentenceCase(
-                                    e.packageType.name),
-                                description: e.packageType.name == "annual"
-                                    ? "Renewed Annually.\nGet 2 Months Free."
-                                    : "Renewed every month",
-                                price: e.storeProduct.priceString,
-                                onPressed: () async {
-                                  try {
-                                    await Purchases.purchasePackage(e);
-                                    setState(() => isLoading = true);
-                                    await context
-                                        .read<AppCubit>()
-                                        .upgradeUserToPro();
-                                    navPop(context);
-                                  } catch (e) {
-                                    setState(() => isLoading = false);
-                                    if (e.toString().contains("cancelled")) {
-                                      return;
-                                    }
-                                    showToast(context,
-                                        title: "Error purchasing subscription",
-                                        description: e.toString(),
-                                        toastType: ToastType.error);
-                                  }
-                                }))
-                            .toList(),
-                      );
-                    },
-                  ),
+                  !isLoading
+                      ? BlocBuilder<AppCubit, AppState>(
+                          builder: (context, state) {
+                            return Column(
+                              spacing: 10,
+                              children: state.availableSubscriptions
+                                  .map((e) => PricingOptionCard(
+                                      title: toBeginningOfSentenceCase(
+                                          e.packageType.name),
+                                      description: e.packageType.name ==
+                                              "annual"
+                                          ? "Renewed Annually.\nGet 2 Months Free."
+                                          : "Renewed every month",
+                                      price: e.storeProduct.priceString,
+                                      onPressed: () async {
+                                        try {
+                                          setState(() => isLoading = true);
+                                          await Purchases.purchasePackage(e);
+                                          await context
+                                              .read<AppCubit>()
+                                              .upgradeUserToPro();
+                                          navPop(context);
+                                        } catch (e) {
+                                          setState(() => isLoading = false);
+                                          if (e
+                                              .toString()
+                                              .contains("cancelled")) {
+                                            return;
+                                          }
+                                          showToast(context,
+                                              title:
+                                                  "Error purchasing subscription",
+                                              description: e.toString(),
+                                              toastType: ToastType.error);
+                                        }
+                                      }))
+                                  .toList(),
+                            );
+                          },
+                        )
+                      : Loader(),
                   Gap(20),
                   CustomButton(
                       loading: isLoading,
