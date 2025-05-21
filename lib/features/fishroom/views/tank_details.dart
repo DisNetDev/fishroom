@@ -248,7 +248,7 @@ class _TankDetailsState extends State<TankDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Entries",
+                              "Readings",
                               style: kHeadingTextStyle,
                             ),
                           ],

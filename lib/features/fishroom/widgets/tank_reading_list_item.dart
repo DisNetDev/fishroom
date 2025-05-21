@@ -1,4 +1,5 @@
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/dialog_show.dart';
 import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -22,34 +23,14 @@ class TankReadingListItem extends StatefulWidget {
 }
 
 class _TankReadingListItemState extends State<TankReadingListItem> {
-  bool open = false;
-
   @override
   Widget build(BuildContext context) {
     return Skeleton.shade(
       child: Dismissible(
           confirmDismiss: (direction) async {
-            return await showDialog<bool>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Confirm Deletion'),
-                      content: const Text(
-                          'Are you sure you want to delete this entry?\nThis cannot be undone.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    );
-                  },
-                ) ??
-                false;
+            return await dialogShow(context, "Delete Reading",
+                "Are you sure you want to delete this reading?",
+                falseText: "Cancel", trueText: "Delete");
           },
           direction: DismissDirection.endToStart,
           background: Container(
@@ -102,11 +83,6 @@ class _ReadingWidgetState extends State<ReadingWidget> {
               curve: Curves.ease,
               child: Container(
                 alignment: Alignment.topCenter,
-                height: open
-                    ? null
-                    : widget.reading.note != null
-                        ? 75
-                        : 45,
                 child: InkWell(
                   splashColor:
                       const Color.fromARGB(255, 0, 82, 105).withAlpha(128),
@@ -151,7 +127,7 @@ class _ReadingWidgetState extends State<ReadingWidget> {
                                           style: kPlainTextStyle,
                                         ),
                                       ),
-                                      Gap(20)
+                                      if (!open) Gap(20)
                                     ],
                                   ),
                                 if (open)
@@ -187,7 +163,7 @@ class _ReadingWidgetState extends State<ReadingWidget> {
                                   )
                               ],
                             ),
-                            const Gap(15),
+                            Gap(open ? 15 : 5),
                           ],
                         ),
                       ),
@@ -196,15 +172,17 @@ class _ReadingWidgetState extends State<ReadingWidget> {
                         right: 20,
                         child: DateTimeText(dateTime: widget.reading.createdAt),
                       ),
-                      Positioned(
-                          bottom: 2,
+                      if (widget.reading.type != TankReadingType.feed)
+                        Positioned(
+                          bottom: 0,
                           right: 5,
                           child: AnimatedSwitcher(
-                            duration: Duration(milliseconds: 10),
+                            duration: Duration(milliseconds: 100),
                             child: open
                                 ? Icon(Icons.keyboard_arrow_up)
                                 : Icon(Icons.keyboard_arrow_down),
-                          ))
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -217,6 +195,8 @@ class _ReadingWidgetState extends State<ReadingWidget> {
 
 Icon getIconForType(TankReadingType type) {
   switch (type) {
+    case TankReadingType.feed:
+      return const Icon(Symbols.cookie);
     case TankReadingType.measurement:
       return const Icon(Symbols.trending_up_rounded);
     case TankReadingType.fertilize:

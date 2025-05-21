@@ -78,6 +78,15 @@ class CTPostCard extends StatelessWidget {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 10),
                             child: Text(post.content))
+                      else
+                        Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            child: Text(
+                              post.content,
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                            ))
                     ],
                   ),
                 ),
