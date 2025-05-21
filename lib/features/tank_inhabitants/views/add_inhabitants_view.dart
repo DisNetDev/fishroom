@@ -1,7 +1,9 @@
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
+import 'package:fishroom/features/tank_inhabitants/views/add_unlisted_inhabitant.dart';
 import 'package:fishroom/features/tank_inhabitants/widgets/inhabitant_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -117,12 +119,32 @@ class _AddInhabitantsViewState extends State<AddInhabitantsView> {
                         },
                       );
                     } else {
-                      return const Center(
-                        child: Text("No inhabitants found"),
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: const Center(
+                          child: Text("No inhabitants found"),
+                        ),
                       );
                     }
                   },
                   childCount: 1,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: CustomButton(
+                    text: "Add Unlisted Inhabitant",
+                    onPressed: () {
+                      navPush(context, AddUnlistedInhabitant(
+                        onInhabitantAdded: (inhabitant) {
+                          setState(() {
+                            _filteredInhabitants.add(inhabitant);
+                          });
+                        },
+                      ));
+                    },
+                  ),
                 ),
               )
             ],

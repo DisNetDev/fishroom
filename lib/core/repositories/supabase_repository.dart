@@ -200,21 +200,25 @@ class SupabaseRepository {
     }
   }
 
-  Future<String?> uploadImage(File file) async {
+  Future<String?> uploadImage(File file,
+      {String path = 'tank_images', String? folderName}) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     try {
       return await _retryOperation(() async {
         final String fileName = file.path.split('/').last;
-        await supabase.storage.from('tank_images').upload(
-              '${user!.id}/$fileName',
+        await supabase.storage.from(path).upload(
+              folderName == null
+                  ? '${user!.id}/$fileName'
+                  : '$folderName/$fileName',
               file,
               fileOptions:
                   const FileOptions(cacheControl: '3600', upsert: false),
             );
 
-        final String url = supabase.storage
-            .from('tank_images')
-            .getPublicUrl('${user!.id}/$fileName');
+        final String url = supabase.storage.from(path).getPublicUrl(
+            folderName == null
+                ? '${user!.id}/$fileName'
+                : '$folderName/$fileName');
         stopwatch.stop();
         fishLog("Upload took ${stopwatch.elapsedMilliseconds}ms");
 

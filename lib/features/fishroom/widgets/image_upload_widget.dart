@@ -46,7 +46,7 @@ class ImageUploadWidget extends StatelessWidget {
         ),
         child: image == null
             ? const Center(
-                child: Text("Optional: Upload an Image"),
+                child: Text("Upload an Image"),
               )
             : ClipRRect(
                 borderRadius: BorderRadius.circular(8),

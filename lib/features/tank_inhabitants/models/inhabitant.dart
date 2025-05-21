@@ -28,6 +28,15 @@ class Inhabitant {
     };
   }
 
+  Map<String, dynamic> toJsonUnlisted() {
+    return {
+      'id': id,
+      'common_name': commonName,
+      'scientific_name': scientificName,
+      'image_url': imageUrl,
+    };
+  }
+
   factory Inhabitant.fromJson(Map<String, dynamic> json) {
     try {
       return Inhabitant(

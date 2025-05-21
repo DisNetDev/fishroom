@@ -80,17 +80,16 @@ class _CountdownToastState extends State<CountdownToast> {
 
   @override
   void initState() {
-    super.initState();
     countdown = duration.inMilliseconds;
     Timer.periodic(Duration(milliseconds: 10), (timer) {
       if (countdown <= 0) {
         timer.cancel();
       } else {
-        setState(() {
-          countdown -= 10;
-        });
+        countdown -= 10;
       }
     });
+
+    super.initState();
   }
 
   @override
