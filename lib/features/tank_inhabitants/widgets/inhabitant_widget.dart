@@ -24,6 +24,7 @@ class InhabitantWidget extends StatelessWidget {
       padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
       child: GestureDetector(
         onTap: () => showDialog(
+          barrierDismissible: true,
           context: context,
           builder: (context) => InhabitantDetails(
             inhabitant: inhabitant,
