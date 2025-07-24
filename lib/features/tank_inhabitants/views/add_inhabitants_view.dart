@@ -71,83 +71,88 @@ class _AddInhabitantsViewState extends State<AddInhabitantsView> {
         const CustomBackground(),
         Scaffold(
           backgroundColor: Colors.transparent,
-          body: CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              RootSliverAppBar(
-                title: 'Add Inhabitants to ${widget.tank.name}',
-                sliver: true,
-              ),
-              SliverToBoxAdapter(
-                child: TextInput(
-                  hintText: 'Search',
-                  onChanged: (value) {
-                    _searchInhabitants(value);
-                  },
+          body: SafeArea(
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                RootSliverAppBar(
+                  title: 'Add Inhabitants to ${widget.tank.name}',
+                  sliver: true,
                 ),
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, int index) {
-                    if (_isLoading) {
-                      return Column(
-                        children: [
-                          Gap(20),
-                          ...List.generate(
-                            10,
-                            (index) => InhabitantWidget(
-                              inhabitant: Inhabitant.getPlaceholder(),
-                              loading: true,
-                              onAdd: (_) {},
-                            ),
-                          )
-                        ],
-                      );
-                    } else if (_filteredInhabitants.isNotEmpty) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _filteredInhabitants.length,
-                        itemBuilder: (context, index) {
-                          return InhabitantWidget(
-                            inhabitant: _filteredInhabitants[index],
-                            onAdd: (inhabitant) {
-                              navPop(context);
-                              widget.chosenInhabitant(inhabitant);
-                            },
-                          );
-                        },
-                      );
-                    } else {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: const Center(
-                          child: Text("No inhabitants found"),
-                        ),
-                      );
-                    }
-                  },
-                  childCount: 1,
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: CustomButton(
-                    text: "Add Unlisted Inhabitant",
-                    onPressed: () {
-                      navPush(context, AddUnlistedInhabitant(
-                        onInhabitantAdded: (inhabitant) {
-                          setState(() {
-                            _filteredInhabitants.add(inhabitant);
-                          });
-                        },
-                      ));
+                SliverToBoxAdapter(
+                  child: TextInput(
+                    hintText: 'Search',
+                    onChanged: (value) {
+                      _searchInhabitants(value);
                     },
                   ),
                 ),
-              )
-            ],
+                SliverToBoxAdapter(child: Gap(20)),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, int index) {
+                      if (_isLoading) {
+                        return Column(
+                          children: [
+                            Gap(20),
+                            ...List.generate(
+                              10,
+                              (index) => InhabitantWidget(
+                                inhabitant: Inhabitant.getPlaceholder(),
+                                loading: true,
+                                onAdd: (_) {},
+                              ),
+                            )
+                          ],
+                        );
+                      } else if (_filteredInhabitants.isNotEmpty) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: _filteredInhabitants.length,
+                          itemBuilder: (context, index) {
+                            return InhabitantWidget(
+                              inhabitant: _filteredInhabitants[index],
+                              onAdd: (inhabitant) {
+                                navPop(context);
+                                widget.chosenInhabitant(inhabitant);
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: const Center(
+                            child: Text("No inhabitants found"),
+                          ),
+                        );
+                      }
+                    },
+                    childCount: 1,
+                  ),
+                ),
+                SliverToBoxAdapter(child: Gap(40)),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: CustomButton(
+                      text: "Add Unlisted Inhabitant",
+                      onPressed: () {
+                        navPush(context, AddUnlistedInhabitant(
+                          onInhabitantAdded: (inhabitant) {
+                            setState(() {
+                              _filteredInhabitants.add(inhabitant);
+                            });
+                          },
+                        ));
+                      },
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(child: Gap(40))
+              ],
+            ),
           ),
           floatingActionButton: _showScrollToTopButton
               ? FloatingActionButton.small(

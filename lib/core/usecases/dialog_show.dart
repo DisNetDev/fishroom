@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 Future<bool?> dialogShow(BuildContext context, String title, String message,
-    {String falseText = "Cancel", String trueText = "OK"}) async {
+    {String falseText = "Cancel",
+    String trueText = "OK",
+    bool onlyShowTrue = false}) async {
   return await showDialog<bool>(
     barrierDismissible: true,
     context: context,
@@ -33,14 +35,15 @@ Future<bool?> dialogShow(BuildContext context, String title, String message,
                 Gap(10),
                 Row(
                   children: [
-                    Expanded(
-                      child: _BottomButton(
-                        text: falseText,
-                        onTap: () {
-                          Navigator.pop(context, false);
-                        },
+                    if (!onlyShowTrue)
+                      Expanded(
+                        child: _BottomButton(
+                          text: falseText,
+                          onTap: () {
+                            Navigator.pop(context, false);
+                          },
+                        ),
                       ),
-                    ),
                     Expanded(
                       child: _BottomButton(
                         text: trueText,

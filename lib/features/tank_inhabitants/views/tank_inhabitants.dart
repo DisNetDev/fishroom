@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/fishroom/cubit/tanks_cubit.dart';
+import 'package:fishroom/features/tank_inhabitants/cubit/inhabitants_cubit.dart';
 import 'package:fishroom/features/tank_inhabitants/views/add_inhabitants_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -29,6 +30,47 @@ class _TankInhabitantsState extends State<TankInhabitants> {
           .firstWhereOrNull((test) => test.id == widget.tank.id) ??
       widget.tank;
   TanksCubit get tanksCubit => context.read<TanksCubit>();
+  InhabitantsCubit get inhabitantsCubit => context.read<InhabitantsCubit>();
+
+  bool loading = false;
+
+  updateInfo() async {
+    setState(() => loading = true);
+    List<String> inhabitantsIds = _tank.inhabitants.map((e) => e.id).toList();
+
+    List<Inhabitant> updatedInhabitants =
+        await inhabitantsCubit.fetchInhabitantsByIds(inhabitantsIds);
+
+    // Create a map of updated inhabitants for easier lookup
+    final updatedMap = {
+      for (var inhabitant in updatedInhabitants) inhabitant.id: inhabitant
+    };
+
+    // Update only the inhabitants that have changed
+    final updatedTankInhabitants = _tank.inhabitants.map((tankInhabitant) {
+      final updated = updatedMap[tankInhabitant.id];
+      if (updated != null && !updated.equals(tankInhabitant)) {
+        return updated.copyWith(count: tankInhabitant.count);
+      }
+      return tankInhabitant;
+    }).toList();
+
+    // Only update if there are actual changes
+    if (!const ListEquality()
+        .equals(_tank.inhabitants, updatedTankInhabitants)) {
+      await tanksCubit.updateTankInhabitants(
+          widget.tank.id, updatedTankInhabitants);
+    }
+
+    setState(() => loading = false);
+  }
+
+  @override
+  void initState() {
+    updateInfo();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(

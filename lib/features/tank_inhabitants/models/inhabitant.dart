@@ -37,6 +37,15 @@ class Inhabitant {
     };
   }
 
+  Map<String, dynamic> toJsonForSuggestion() {
+    return {
+      'common_name': commonName,
+      'scientific_name': scientificName,
+      'image_url': imageUrl,
+      'fish_id': id,
+    };
+  }
+
   factory Inhabitant.fromJson(Map<String, dynamic> json) {
     try {
       return Inhabitant(
@@ -88,5 +97,13 @@ class Inhabitant {
     return List.generate(
             length, (index) => characters[Random().nextInt(characters.length)])
         .join();
+  }
+
+  bool equals(Inhabitant other) {
+    return id == other.id &&
+        petName == other.petName &&
+        commonName == other.commonName &&
+        scientificName == other.scientificName &&
+        imageUrl == other.imageUrl;
   }
 }
