@@ -34,7 +34,7 @@ class _TankInhabitantsState extends State<TankInhabitants> {
 
   bool loading = false;
 
-  updateInfo() async {
+  Future<void> updateInfo() async {
     setState(() => loading = true);
     List<String> inhabitantsIds = _tank.inhabitants.map((e) => e.id).toList();
 

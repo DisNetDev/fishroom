@@ -11,12 +11,10 @@ import 'package:fishroom/features/tank_inhabitants/cubit/inhabitants_cubit.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/gradient_borders.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/usecases/capitalize_each_word.dart';
-import '../../../core/usecases/is_dark_mode.dart';
 import '../../../core/usecases/nav_push.dart';
 import '../../../core/widgets/counter_wheel.dart';
 import '../models/inhabitant.dart';
