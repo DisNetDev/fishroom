@@ -30,7 +30,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.fishroom"
-    compileSdk 34
+    compileSdk 35
     ndkVersion "26.1.10909125"
 
     compileOptions {

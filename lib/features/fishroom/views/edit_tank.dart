@@ -35,7 +35,7 @@ class _EditTankState extends State<EditTank> {
 
   List<bool> tankTypeSelection = [false, false, false];
 
-  setTankTypeSelectionOnInit() {
+  void setTankTypeSelectionOnInit() {
     switch (widget.tank.type) {
       case "Freshwater":
         tankTypeSelection = [true, false, false];
@@ -51,7 +51,7 @@ class _EditTankState extends State<EditTank> {
     }
   }
 
-  setImage() {
+  void setImage() {
     if (widget.tank.imageLocalPath != null) {
       _image = File(widget.tank.imageLocalPath!);
     }

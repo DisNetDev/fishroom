@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/fertilizer.dart';
 import '../widgets/fertilizer_modal.dart';
 
-showFertilizerModal(BuildContext context,
+void showFertilizerModal(BuildContext context,
     {Fertilizer? fertilizer, required Function(Fertilizer) onAdd}) {
   showModalBottomSheet(
     isDismissible: true,

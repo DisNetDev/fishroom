@@ -6,7 +6,7 @@ import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
-import 'package:fishroom/features/release_notes/usecases/checkReleaseNotes.dart';
+import 'package:fishroom/features/release_notes/usecases/check_release_notes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +34,7 @@ class _FishroomState extends State<Fishroom> {
   AppCubit get appCubit => context.read<AppCubit>();
   bool loading = false;
 
-  init() async {
+  void init() async {
     if (context.read<AppCubit>().state.user == null) {
       logOut(context);
     }

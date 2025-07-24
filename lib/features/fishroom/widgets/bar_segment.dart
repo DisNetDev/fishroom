@@ -29,7 +29,7 @@ class _BarSegmentState extends State<BarSegment> {
     animate();
   }
 
-  animate() async {
+  Future<void> animate() async {
     await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
       animatedValue = widget.height ?? getRandomValue();

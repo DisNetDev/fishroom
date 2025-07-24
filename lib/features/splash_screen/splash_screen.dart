@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/repositories/supabase_repository.dart';
-import 'package:fishroom/core/usecases/init_rc.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
+import 'package:fishroom/features/IAP/purchase_service.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:fishroom/features/splash_screen/usecases/send_welcome_email.dart';
 import 'package:fishroom/main.dart';
@@ -29,8 +29,10 @@ class _SplashScreenState extends State<SplashScreen> {
       context.read<SupabaseRepository>().setSession();
       try {
         await appCubit.fetchUser();
-        await initRC(appCubit.state.user!.email);
-        await appCubit.checkSub();
+        await PurchaseService().init();
+        await PurchaseService().isUserPro(
+            activeSubscription: appCubit.state.user?.activeSubscription,
+            nextProCheck: appCubit.state.user?.nextProCheck);
       } catch (e) {
         showToast(context,
             title: "Something went wrong. Please try again",

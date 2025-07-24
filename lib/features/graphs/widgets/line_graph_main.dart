@@ -150,7 +150,7 @@ class _LineGraphMainState extends State<LineGraphMain> {
     }
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: text,
     );
   }

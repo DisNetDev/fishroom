@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
@@ -8,11 +9,11 @@ import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/pricing_option_card.dart';
+import 'package:fishroom/features/IAP/purchase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../app/cubit/app_cubit.dart';
 
@@ -26,13 +27,20 @@ class UpgradeToPro extends StatefulWidget {
 class _UpgradeToProState extends State<UpgradeToPro> {
   bool isLoading = false;
   bool canMakePayments = false;
+  PurchaseService purchaseService = PurchaseService();
 
   Future<void> init() async {
+    PurchaseService().onPurchasingChanged = (isPurchasing) {
+      if (isPurchasing) {
+        fishLog("Purchasing started...");
+        setState(() => isLoading = true);
+      } else {
+        fishLog("Purchasing finished.");
+        setState(() => isLoading = false);
+      }
+    };
     try {
-      canMakePayments = await Purchases.canMakePayments();
-      setState(() => isLoading = true);
-      await context.read<AppCubit>().getSubscriptions();
-      setState(() => isLoading = false);
+      canMakePayments = purchaseService.isAvailable;
     } catch (e) {
       setState(() => isLoading = false);
       showToast(context,
@@ -77,26 +85,41 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                   const Gap(10),
                   !isLoading
                       ? BlocBuilder<AppCubit, AppState>(
-                          builder: (context, state) {
+                          builder: (context, blocState) {
                             return Column(
                               spacing: 10,
-                              children: state.availableSubscriptions
+                              children: purchaseService.products
+                                  .where((test) => test.type == ProductType.sub)
                                   .map((e) => PricingOptionCard(
                                       title: toBeginningOfSentenceCase(
-                                          e.packageType.name),
-                                      description: e.packageType.name ==
-                                              "annual"
-                                          ? "Renewed Annually.\nGet 2 Months Free."
-                                          : "Renewed every month",
-                                      price: e.storeProduct.priceString,
+                                          e.title ?? ""),
+                                      description: e.subtitle ?? "",
+                                      price: e.productDetails?.price ?? "",
                                       onPressed: () async {
                                         try {
                                           setState(() => isLoading = true);
-                                          await Purchases.purchasePackage(e);
-                                          await context
-                                              .read<AppCubit>()
-                                              .upgradeUserToPro();
-                                          navPop(context);
+                                          if (e.productDetails != null) {
+                                            purchaseService.buySubscription(
+                                              e.productDetails!,
+                                              onSuccess: () async {
+                                                String? currentSub =
+                                                    await PurchaseService()
+                                                        .isUserPro();
+                                                if (currentSub != null) {
+                                                  context
+                                                      .read<AppCubit>()
+                                                      .fetchUser();
+                                                }
+                                                navPop(context);
+                                              },
+                                            );
+                                          } else {
+                                            showToast(context,
+                                                title: "Error",
+                                                description:
+                                                    "Product details not found",
+                                                toastType: ToastType.error);
+                                          }
                                         } catch (e) {
                                           setState(() => isLoading = false);
                                           if (e
@@ -117,11 +140,12 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                         )
                       : Loader(),
                   Gap(20),
-                  CustomButton(
-                      loading: isLoading,
-                      text: "Later",
-                      primary: false,
-                      onPressed: () => Navigator.of(context).pop()),
+                  if (!isLoading)
+                    CustomButton(
+                        loading: isLoading,
+                        text: "Later",
+                        primary: false,
+                        onPressed: () => Navigator.of(context).pop()),
                 ],
               ),
             ),

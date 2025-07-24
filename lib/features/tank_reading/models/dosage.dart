@@ -12,7 +12,7 @@ class Dosage {
     );
   }
 
-  toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'fertilizer': fertilizer.toJson(),
       'amount': amount,

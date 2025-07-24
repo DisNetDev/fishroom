@@ -1,7 +1,6 @@
 import 'package:fishroom/features/settings/models/settings.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../../core/models/database_tables.dart';
 import '../../../core/repositories/supabase_repository.dart';
 import '../../bug_report/models/bug_report.dart';
@@ -291,28 +290,5 @@ class AppCubit extends HydratedCubit<AppState> {
     } catch (e) {
       rethrow;
     }
-  }
-
-  Future<void> checkSub() async {
-    final CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-
-    final bool isPro = customerInfo.activeSubscriptions.isNotEmpty;
-
-    if (isPro) {
-      if (!state.user!.premium) {
-        await upgradeUserToPro(isPro: true);
-      }
-    } else {
-      if (state.user!.premium) {
-        await upgradeUserToPro(isPro: false);
-      }
-    }
-  }
-
-  Future<void> getSubscriptions() async {
-    final Offerings offerings = await Purchases.getOfferings();
-    final List<Package> subscriptions =
-        offerings.current?.availablePackages ?? [];
-    emit(state.copyWith(availableSubscriptions: subscriptions));
   }
 }

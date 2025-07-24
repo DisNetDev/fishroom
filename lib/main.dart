@@ -1,7 +1,7 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/theme/dropdown_theme.dart';
 import 'package:fishroom/core/theme/slider_theme.dart';
-import 'package:fishroom/core/usecases/init_rc.dart';
+import 'package:fishroom/core/usecases/init_hydrated_bloc.dart';
 import 'package:fishroom/features/release_notes/cubit/release_notes_cubit.dart';
 import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/foundation.dart';
@@ -10,8 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
@@ -24,9 +22,7 @@ import 'features/tank_inhabitants/cubit/inhabitants_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationDocumentsDirectory(),
-  );
+  await initHydratedBloc();
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
       url: dotenv.env['SUPABASE_URL']!,

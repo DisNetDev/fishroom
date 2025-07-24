@@ -9,7 +9,6 @@ import 'package:fishroom/core/widgets/loader.dart';
 import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gradient_borders/gradient_borders.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'dart:io'; // Import the dart:io library
 

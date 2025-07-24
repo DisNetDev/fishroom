@@ -2,7 +2,6 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 
 import 'loader.dart';
 

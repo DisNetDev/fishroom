@@ -5,6 +5,7 @@
   "cSpell.words": [
     "bleh",
     "Darkmode",
+    "disnetdev",
     "dotenv",
     "downvote",
     "downvotes",
@@ -34,9 +35,7 @@
     "vsync",
     "Woah"
   ],
-  "deno.enablePaths": [
-    "supabase/functions"
-  ],
+  "deno.enablePaths": ["supabase/functions"],
   "deno.lint": true,
   "deno.unstable": [
     "bare-node-builtins",

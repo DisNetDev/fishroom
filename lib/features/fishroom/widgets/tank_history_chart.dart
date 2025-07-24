@@ -79,7 +79,7 @@ class _TankHistoryChartState extends State<TankHistoryChart> {
     }
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: text,
     );
   }

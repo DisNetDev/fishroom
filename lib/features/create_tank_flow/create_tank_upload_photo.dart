@@ -30,7 +30,7 @@ class CreateTankUploadPhotoState extends State<CreateTankUploadPhoto> {
   File? _image;
   bool loading = false;
 
-  setImage() {
+  void setImage() {
     if (widget.tank.imageLocalPath != null) {
       _image = File(widget.tank.imageLocalPath!);
     }

@@ -32,7 +32,7 @@ class SupabaseRepository {
     }
   }
 
-  setSession() {
+  void setSession() {
     session = supabase.auth.currentSession;
     user = supabase.auth.currentUser;
   }

@@ -2,13 +2,11 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/neo_brute_border.dart';
-import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/fertilizers/usecases/are_fertilizers_edited.dart';
 import 'package:fishroom/features/fertilizers/widgets/fertilizer_settings_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../core/usecases/is_dark_mode.dart';
@@ -125,13 +123,13 @@ class _FertilizerSettingsState extends State<FertilizerSettings> {
     );
   }
 
-  _onRemovedFertilizer(Fertilizer fertilizer) {
+  void _onRemovedFertilizer(Fertilizer fertilizer) {
     setState(() {
       fertilizers.removeWhere((element) => element.id == fertilizer.id);
     });
   }
 
-  _onAddFertilizer(fertilizer) {
+  void _onAddFertilizer(Fertilizer fertilizer) {
     setState(() {
       int indexOf =
           fertilizers.indexWhere((element) => element.id == fertilizer.id);

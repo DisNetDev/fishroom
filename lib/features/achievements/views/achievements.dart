@@ -35,7 +35,7 @@ class _AchievementsState extends State<Achievements> {
   bool loading = false;
   List<Achievement> achievements = [];
 
-  init() async {
+  Future<void> init() async {
     try {
       setState(() => loading = true);
       achievements = await tanksCubit.getAvailableAchievements();

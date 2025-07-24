@@ -1,8 +1,6 @@
 import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/widgets/neo_brute_border.dart';
-import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 
 import '../../fertilizers/models/fertilizer.dart';
 

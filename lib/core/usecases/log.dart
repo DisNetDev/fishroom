@@ -2,7 +2,7 @@
 
 import 'dart:developer';
 
-fishLog(Object object, {String? prefix = ""}) {
+void fishLog(Object object, {String? prefix = ""}) {
   log("*---------------------------");
   log("*$prefix${prefix != null ? ":" : ""} ${object.toString()}");
 }

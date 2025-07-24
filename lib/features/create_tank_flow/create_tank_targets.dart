@@ -11,7 +11,6 @@ import 'package:gap/gap.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../core/constants.dart';
-import '../../core/usecases/is_dark_mode.dart';
 import '../../core/widgets/custom_button.dart';
 import '../fishroom/cubit/tanks_cubit.dart';
 import '../fishroom/widgets/target_selector.dart';
