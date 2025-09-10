@@ -1,9 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/check_and_set_pro.dart';
 import 'package:fishroom/core/usecases/log.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
+import 'package:fishroom/core/usecases/snackbar.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/custom_button.dart';
 import 'package:fishroom/core/widgets/loader.dart';
@@ -53,6 +55,7 @@ class _UpgradeToProState extends State<UpgradeToPro> {
   @override
   void initState() {
     init();
+
     super.initState();
   }
 
@@ -85,7 +88,7 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                   const Gap(10),
                   !isLoading
                       ? BlocBuilder<AppCubit, AppState>(
-                          builder: (context, blocState) {
+                          builder: (blocContext, blocState) {
                             return Column(
                               spacing: 10,
                               children: purchaseService.products
@@ -102,14 +105,7 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                                             purchaseService.buySubscription(
                                               e.productDetails!,
                                               onSuccess: () async {
-                                                String? currentSub =
-                                                    await PurchaseService()
-                                                        .isUserPro();
-                                                if (currentSub != null) {
-                                                  context
-                                                      .read<AppCubit>()
-                                                      .fetchUser();
-                                                }
+                                                await checkAndSetPro(context);
                                                 navPop(context);
                                               },
                                             );
@@ -121,17 +117,10 @@ class _UpgradeToProState extends State<UpgradeToPro> {
                                                 toastType: ToastType.error);
                                           }
                                         } catch (e) {
-                                          setState(() => isLoading = false);
-                                          if (e
-                                              .toString()
-                                              .contains("cancelled")) {
-                                            return;
-                                          }
                                           showToast(context,
-                                              title:
-                                                  "Error purchasing subscription",
-                                              description: e.toString(),
-                                              toastType: ToastType.error);
+                                              title: "Something went wrong",
+                                              toastType: ToastType.error,
+                                              description: e.toString());
                                         }
                                       }))
                                   .toList(),

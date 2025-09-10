@@ -6,6 +6,7 @@ import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/core/widgets/text_input.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
+import 'package:fishroom/features/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -233,8 +234,8 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
           .read<AppCubit>()
           .signInWithPassword(email: emailAddress, password: password1);
       if (context.read<AppCubit>().state.user != null) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Fishroom()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SplashScreen()));
       } else {
         String message =
             "Something went wrong singing you up. Please try again.";
@@ -270,7 +271,7 @@ class _LogonViewState extends State<LogonView> with TickerProviderStateMixin {
             .signInWithPassword(email: emailAddress, password: password1);
       }
       if (context.read<AppCubit>().state.user != null) {
-        navReplace(context, const Fishroom());
+        navReplace(context, const SplashScreen());
       } else {
         String message =
             "Something went wrong logging you in. Please try again.";

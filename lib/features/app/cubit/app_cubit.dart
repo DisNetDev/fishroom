@@ -229,18 +229,7 @@ class AppCubit extends HydratedCubit<AppState> {
   }
 
   Future<void> upgradeUserToPro({bool isPro = true}) async {
-    try {
-      if (state.user != null) {
-        await _supabaseRepository.update(
-            tableName: SupabaseTable.users.tableName,
-            json: {SupabaseTable.users.premium: isPro},
-            conditionalColumn: SupabaseTable.users.id,
-            condition: state.user!.uuid);
-        emit(state.copyWith(user: state.user!.copyWith(premium: isPro)));
-      }
-    } catch (_) {
-      rethrow;
-    }
+    emit(state.copyWith(user: state.user!.copyWith(premium: isPro)));
   }
 
   Future<void> submitBugReport(BugReport bugReport) async {

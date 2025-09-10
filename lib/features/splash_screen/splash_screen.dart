@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/repositories/supabase_repository.dart';
+import 'package:fishroom/core/usecases/check_and_set_pro.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/IAP/purchase_service.dart';
@@ -30,9 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
       try {
         await appCubit.fetchUser();
         await PurchaseService().init();
-        await PurchaseService().isUserPro(
-            activeSubscription: appCubit.state.user?.activeSubscription,
-            nextProCheck: appCubit.state.user?.nextProCheck);
+        await checkAndSetPro(context);
       } catch (e) {
         showToast(context,
             title: "Something went wrong. Please try again",
