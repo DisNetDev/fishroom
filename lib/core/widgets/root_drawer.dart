@@ -1,6 +1,7 @@
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
+import 'package:fishroom/features/settings/views/settings.dart';
 import 'package:fishroom/features/settings/views/tank_parameters_settings.dart';
 import 'package:fishroom/features/upgrade/views/upgrade_to_pro.dart';
 import 'package:flutter/foundation.dart';
@@ -63,6 +64,18 @@ class RootDrawer extends StatelessWidget {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const FertilizerSettings()));
+                  },
+                ),
+                ListTile(
+                  title: const Text("Settings"),
+                  subtitle: const Text("Adjust App and Personal Settings"),
+                  subtitleTextStyle:
+                      kDateTimeTextStyle.copyWith(color: Colors.grey),
+                  leading: const Icon(Symbols.settings),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SettingsPage()));
                   },
                 ),
 

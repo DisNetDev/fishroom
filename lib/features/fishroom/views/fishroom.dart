@@ -1,16 +1,19 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_navbar.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/release_notes/usecases/check_release_notes.dart';
+import 'package:fishroom/features/settings/views/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constants.dart';
@@ -118,40 +121,47 @@ class _FishroomState extends State<Fishroom> {
                       title: "Fishroom",
                     )
                   : null,
-              endDrawer: const RootDrawer(),
               body: Builder(
                 builder: (context) {
                   if (loading) {
                     return Column(
                       children: [
                         Skeletonizer(
-                            effect: isDarkMode(context)
-                                ? kDarkModeShimmer
-                                : kLightModeShimmer,
-                            child: context
-                                    .read<AppCubit>()
-                                    .state
-                                    .settings
-                                    .compactTankTile
-                                ? Animate(
-                                    effects: [
-                                      FadeEffect(
-                                          delay: 100.ms,
-                                          duration: 500.ms,
-                                          curve: Curves.ease),
-                                    ],
-                                    child: TankTileCompact(
-                                        tank: Tank(id: const Uuid().v4())),
-                                  )
-                                : Animate(
-                                    effects: [
-                                        FadeEffect(
-                                            delay: 100.ms,
-                                            duration: 500.ms,
-                                            curve: Curves.ease),
-                                      ],
-                                    child: TankTile(
-                                        tank: Tank(id: const Uuid().v4()))))
+                          effect: isDarkMode(context)
+                              ? kDarkModeShimmer
+                              : kLightModeShimmer,
+                          child: context
+                                  .read<AppCubit>()
+                                  .state
+                                  .settings
+                                  .compactTankTile
+                              ? Animate(
+                                  effects: [
+                                    FadeEffect(
+                                        delay: 100.ms,
+                                        duration: 500.ms,
+                                        curve: Curves.ease),
+                                  ],
+                                  child: TankTileCompact(
+                                    tank: Tank(
+                                      id: const Uuid().v4(),
+                                    ),
+                                  ),
+                                )
+                              : Animate(
+                                  effects: [
+                                    FadeEffect(
+                                        delay: 100.ms,
+                                        duration: 500.ms,
+                                        curve: Curves.ease),
+                                  ],
+                                  child: TankTile(
+                                    tank: Tank(
+                                      id: const Uuid().v4(),
+                                    ),
+                                  ),
+                                ),
+                        )
                       ],
                     );
                   }
@@ -159,9 +169,16 @@ class _FishroomState extends State<Fishroom> {
                     return CustomScrollView(
                       physics: const BouncingScrollPhysics(),
                       slivers: [
-                        const RootSliverAppBar(
+                        RootSliverAppBar(
                           title: "Fishroom",
                           sliver: true,
+                          actions: [
+                            InkWell(
+                                onTap: () {
+                                  navPush(context, SettingsPage());
+                                },
+                                child: Icon(Symbols.settings_rounded))
+                          ],
                         ),
                         SliverList(
                           delegate: SliverChildBuilderDelegate(

@@ -2,6 +2,7 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/is_dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 
 class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
   const RootSliverAppBar(
@@ -28,7 +29,7 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             backgroundColor: Colors.transparent,
             centerTitle: false,
             automaticallyImplyLeading: implyLeading,
-            actions: actions,
+            actions: actions.isNotEmpty ? [...actions, Gap(10)] : null,
             floating: false,
             surfaceTintColor: Colors.transparent,
             title: Text(
