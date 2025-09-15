@@ -76,7 +76,6 @@ class _CreateTankTankTypeState extends State<CreateTankTankType> {
           description: 'Even if its just "Freshwater" :)');
     } else {
       tank.type = tank.type?.trim();
-      await Future.delayed(const Duration(milliseconds: 400), () {});
 
       Navigator.push(
           context,

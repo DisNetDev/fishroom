@@ -164,8 +164,6 @@ class _CreateTankTankNameState extends State<CreateTankTankName> {
     }
     nameFocusNode.unfocus();
 
-    await Future.delayed(const Duration(milliseconds: 400), () {});
-
     Navigator.push(
         context,
         MaterialPageRoute(

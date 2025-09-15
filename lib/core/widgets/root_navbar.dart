@@ -10,19 +10,19 @@ class RootNavbar extends StatelessWidget {
 
   final int currentIndex;
 
-  static Color unselectedColor = const Color.fromARGB(255, 207, 207, 207);
+  static Color unselectedColor = const Color.fromARGB(255, 173, 173, 173);
 
   final List<BottomNavigationBarItem> _navbarItems = [
     BottomNavigationBarItem(
       activeIcon: Padding(
-        padding: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.only(bottom: 5),
         child: SvgPicture.asset(
           "assets/icons/home.svg",
           colorFilter: ColorFilter.mode(kTertiaryColor, BlendMode.srcIn),
         ),
       ),
       icon: Padding(
-        padding: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.only(bottom: 5),
         child: SvgPicture.asset(
           "assets/icons/home.svg",
           colorFilter: ColorFilter.mode(unselectedColor, BlendMode.srcIn),
@@ -32,14 +32,14 @@ class RootNavbar extends StatelessWidget {
     ),
     BottomNavigationBarItem(
         activeIcon: Padding(
-          padding: EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.only(bottom: 5),
           child: SvgPicture.asset(
             "assets/icons/chat.svg",
             colorFilter: ColorFilter.mode(kTertiaryColor, BlendMode.srcIn),
           ),
         ),
         icon: Padding(
-          padding: EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.only(bottom: 5),
           child: SvgPicture.asset(
             "assets/icons/chat.svg",
             colorFilter: ColorFilter.mode(unselectedColor, BlendMode.srcIn),
@@ -72,11 +72,11 @@ class RootNavbar extends StatelessWidget {
                   selectedFontSize: 14,
                   elevation: 5,
                   selectedItemColor: kTertiaryColor,
-                  unselectedItemColor: Colors.grey.shade300,
+                  unselectedItemColor: unselectedColor,
                   selectedLabelStyle: kHeadingTextStyle.copyWith(
                       fontSize: 14, color: kTertiaryColor),
                   unselectedLabelStyle: kHeadingTextStyle.copyWith(
-                      fontSize: 12, color: Colors.grey.shade300),
+                      fontSize: 12, color: unselectedColor),
                   items: _navbarItems,
                   currentIndex: currentIndex,
                   onTap: (index) {

@@ -126,7 +126,6 @@ class _CreateTankTankSizeState extends State<CreateTankTankSize> {
       measurementFocusNode.unfocus();
       sizeFocusNode.unfocus();
 
-      await Future.delayed(const Duration(milliseconds: 400), () {});
       Navigator.push(
           context,
           MaterialPageRoute(
