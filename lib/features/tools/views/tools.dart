@@ -36,7 +36,7 @@ class Tools extends StatelessWidget {
                   const SizedBox(height: 12),
                   NeoBruteBorder(
                     child: ListTile(
-                      title: Text('CO2 • KH • pH Tool'),
+                      title: Text('CO2 Calculator'),
                       onTap: () {
                         navPush(context, const Co2KhPhTool());
                       },

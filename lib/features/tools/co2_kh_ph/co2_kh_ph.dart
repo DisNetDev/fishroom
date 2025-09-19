@@ -125,7 +125,7 @@ class _Co2KhPhToolState extends State<Co2KhPhTool> {
           child: CustomScrollView(
             slivers: [
               const RootSliverAppBar(
-                title: 'CO2 • KH • pH',
+                title: 'CO2 Calculator',
                 sliver: true,
                 implyLeading: true,
               ),
@@ -140,13 +140,11 @@ class _Co2KhPhToolState extends State<Co2KhPhTool> {
                       children: [
                         Row(children: [
                           Expanded(
-                            child: _LabeledField(
+                            child: _LabeledNumberField(
                               label: 'KH',
-                              child: _NumberField(
-                                controller: _khCtrl,
-                                onChanged: (_) => _recalculate(),
-                                validator: _positiveValidator,
-                              ),
+                              controller: _khCtrl,
+                              onChanged: (_) => _recalculate(),
+                              validator: _positiveValidator,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -169,37 +167,31 @@ class _Co2KhPhToolState extends State<Co2KhPhTool> {
                         const SizedBox(height: 12),
                         Row(children: [
                           Expanded(
-                            child: _LabeledField(
+                            child: _LabeledNumberField(
                               label: 'pH',
-                              child: _NumberField(
-                                controller: _phCtrl,
-                                onChanged: (_) => _recalculate(),
-                                validator: _phValidator,
-                              ),
+                              controller: _phCtrl,
+                              onChanged: (_) => _recalculate(),
+                              validator: _phValidator,
                             ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: _LabeledField(
+                            child: _LabeledNumberField(
                               label: 'Target CO2 (ppm)',
-                              child: _NumberField(
-                                controller: _targetCo2Ctrl,
-                                onChanged: (_) => _recalculate(),
-                                validator: _positiveValidator,
-                              ),
+                              controller: _targetCo2Ctrl,
+                              onChanged: (_) => _recalculate(),
+                              validator: _positiveValidator,
                             ),
                           ),
                         ]),
                         const SizedBox(height: 12),
                         Row(children: [
                           Expanded(
-                            child: _LabeledField(
+                            child: _LabeledNumberField(
                               label: 'Tank Volume',
-                              child: _NumberField(
-                                controller: _volumeCtrl,
-                                onChanged: (_) => _recalculate(),
-                                validator: _positiveValidator,
-                              ),
+                              controller: _volumeCtrl,
+                              onChanged: (_) => _recalculate(),
+                              validator: _positiveValidator,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -278,24 +270,64 @@ class _LabeledField extends StatelessWidget {
   }
 }
 
-class _NumberField extends StatelessWidget {
+// Removed old _NumberField. Use _LabeledNumberField instead.
+
+class _LabeledNumberField extends StatelessWidget {
+  final String label;
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
   final String? Function(String?)? validator;
-  const _NumberField(
-      {required this.controller, this.onChanged, this.validator});
+  const _LabeledNumberField({
+    required this.label,
+    required this.controller,
+    this.onChanged,
+    this.validator,
+  });
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: const InputDecoration(
-        isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        border: OutlineInputBorder(),
-      ),
-      onChanged: onChanged,
-      validator: validator,
+    final theme = Theme.of(context);
+    return FormField<String>(
+      validator: (_) => validator?.call(controller.text),
+      builder: (state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8, bottom: 6),
+              child: Text(label, style: theme.textTheme.labelMedium),
+            ),
+            NeoBruteBorder(
+              child: TextField(
+                controller: controller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  isDense: true,
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (v) {
+                  state.didChange(v);
+                  onChanged?.call(v);
+                },
+              ),
+            ),
+            if (state.hasError) ...[
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  state.errorText ?? '',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ),
+            ]
+          ],
+        );
+      },
     );
   }
 }

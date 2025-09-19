@@ -125,10 +125,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  NeoBruteBorder(
-                    showBorder: false,
+                  _LabeledField(
+                    label: 'Tank Shape',
                     child: _Dropdown<TankShape>(
-                      label: 'Tank Shape',
                       value: _shape,
                       items: TankShape.values,
                       itemLabel: (s) => s == TankShape.rectangular
@@ -146,9 +145,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
                     Row(
                       children: [
                         Expanded(
-                          child: _NumberField(
-                            controller: _lengthCtrl,
+                          child: _LabeledNumberField(
                             label: 'Length',
+                            controller: _lengthCtrl,
                             suffixText: _lengthUnitLabel(_lengthUnit),
                             onChanged: (_) => _recalculate(),
                             validator: _positiveNumberValidator,
@@ -156,9 +155,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: _NumberField(
-                            controller: _widthCtrl,
+                          child: _LabeledNumberField(
                             label: 'Width',
+                            controller: _widthCtrl,
                             suffixText: _lengthUnitLabel(_lengthUnit),
                             onChanged: (_) => _recalculate(),
                             validator: _positiveNumberValidator,
@@ -167,9 +166,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _NumberField(
-                      controller: _heightCtrl,
+                    _LabeledNumberField(
                       label: 'Height',
+                      controller: _heightCtrl,
                       suffixText: _lengthUnitLabel(_lengthUnit),
                       onChanged: (_) => _recalculate(),
                       validator: _positiveNumberValidator,
@@ -178,9 +177,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
                     Row(
                       children: [
                         Expanded(
-                          child: _NumberField(
-                            controller: _diameterCtrl,
+                          child: _LabeledNumberField(
                             label: 'Diameter',
+                            controller: _diameterCtrl,
                             suffixText: _lengthUnitLabel(_lengthUnit),
                             onChanged: (_) => _recalculate(),
                             validator: _positiveNumberValidator,
@@ -188,9 +187,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: _NumberField(
-                            controller: _heightCtrl,
+                          child: _LabeledNumberField(
                             label: 'Height',
+                            controller: _heightCtrl,
                             suffixText: _lengthUnitLabel(_lengthUnit),
                             onChanged: (_) => _recalculate(),
                             validator: _positiveNumberValidator,
@@ -203,10 +202,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
                   Row(
                     children: [
                       Expanded(
-                        child: NeoBruteBorder(
-                          showBorder: false,
+                        child: _LabeledField(
+                          label: 'Length Unit',
                           child: _Dropdown<LengthUnit>(
-                            label: 'Length Unit',
                             value: _lengthUnit,
                             items: LengthUnit.values,
                             itemLabel: _lengthUnitLabel,
@@ -220,10 +218,9 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: NeoBruteBorder(
-                          showBorder: false,
+                        child: _LabeledField(
+                          label: 'Volume Unit',
                           child: _Dropdown<VolumeUnit>(
-                            label: 'Volume Unit',
                             value: _volumeUnit,
                             items: VolumeUnit.values,
                             itemLabel: _volumeUnitLabel,
@@ -259,16 +256,35 @@ class _WaterVolumeCalcState extends State<WaterVolumeCalc> {
   }
 }
 
-class _NumberField extends StatelessWidget {
-  final TextEditingController controller;
+class _LabeledField extends StatelessWidget {
   final String label;
+  final Widget child;
+  const _LabeledField({required this.label, required this.child});
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8, bottom: 6),
+          child: Text(label, style: Theme.of(context).textTheme.labelMedium),
+        ),
+        NeoBruteBorder(child: child),
+      ],
+    );
+  }
+}
+
+class _LabeledNumberField extends StatelessWidget {
+  final String label;
+  final TextEditingController controller;
   final String? suffixText;
   final ValueChanged<String>? onChanged;
   final String? Function(String?)? validator;
 
-  const _NumberField({
-    required this.controller,
+  const _LabeledNumberField({
     required this.label,
+    required this.controller,
     this.suffixText,
     this.onChanged,
     this.validator,
@@ -276,31 +292,61 @@ class _NumberField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NeoBruteBorder(
-      child: TextFormField(
-        controller: controller,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        decoration: InputDecoration(
-          labelText: label,
-          suffixText: suffixText,
-          border: const OutlineInputBorder(),
-        ),
-        onChanged: onChanged,
-        validator: validator,
-      ),
+    final theme = Theme.of(context);
+    return FormField<String>(
+      validator: (_) => validator?.call(controller.text),
+      builder: (state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8, bottom: 6),
+              child: Text(label, style: theme.textTheme.labelMedium),
+            ),
+            NeoBruteBorder(
+              child: TextField(
+                controller: controller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  suffixText: suffixText,
+                  border: const OutlineInputBorder(),
+                ),
+                onChanged: (v) {
+                  state.didChange(v);
+                  onChanged?.call(v);
+                },
+              ),
+            ),
+            if (state.hasError) ...[
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  state.errorText ?? '',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ),
+            ]
+          ],
+        );
+      },
     );
   }
 }
 
 class _Dropdown<T> extends StatelessWidget {
-  final String label;
   final T value;
   final List<T> items;
   final String Function(T) itemLabel;
   final ValueChanged<T?> onChanged;
 
   const _Dropdown({
-    required this.label,
     required this.value,
     required this.items,
     required this.itemLabel,
@@ -309,23 +355,20 @@ class _Dropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InputDecorator(
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<T>(
-          isExpanded: true,
-          value: value,
-          items: items
-              .map((e) => DropdownMenuItem<T>(
-                    value: e,
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<T>(
+        isExpanded: true,
+        value: value,
+        items: items
+            .map((e) => DropdownMenuItem<T>(
+                  value: e,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(itemLabel(e)),
-                  ))
-              .toList(),
-          onChanged: onChanged,
-        ),
+                  ),
+                ))
+            .toList(),
+        onChanged: onChanged,
       ),
     );
   }
