@@ -10,6 +10,7 @@ import 'package:fishroom/features/app/usecases/logout.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/release_notes/usecases/check_release_notes.dart';
 import 'package:fishroom/features/settings/views/settings.dart';
+import 'package:fishroom/features/tools/views/tools.dart';
 import 'package:fishroom/features/upgrade/views/upgrade_to_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -184,9 +185,14 @@ class _FishroomState extends State<Fishroom> {
                               ),
                             InkWell(
                                 onTap: () {
+                                  navPush(context, Tools());
+                                },
+                                child: Icon(Symbols.build_rounded)),
+                            InkWell(
+                                onTap: () {
                                   navPush(context, SettingsPage());
                                 },
-                                child: Icon(Symbols.settings_rounded))
+                                child: Icon(Symbols.settings_rounded)),
                           ],
                         ),
                         SliverList(
