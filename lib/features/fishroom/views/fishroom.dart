@@ -22,7 +22,6 @@ import '../../../core/constants.dart';
 import '../../../core/models/tank.dart';
 import '../../../core/usecases/can_add_tank.dart';
 import '../../../core/widgets/root_sliver_app_bar.dart';
-import '../../../core/widgets/root_drawer.dart';
 import '../../app/cubit/app_cubit.dart';
 import '../cubit/tanks_cubit.dart';
 import '../widgets/tank_tile.dart';

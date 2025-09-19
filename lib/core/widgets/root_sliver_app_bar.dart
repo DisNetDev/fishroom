@@ -21,7 +21,7 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> actionsToUse = actions ?? [];
+    List<Widget> actionsToUse = actions;
     actionsToUse = [
       for (var action in actionsToUse) ...[action, Gap(10)],
     ];
