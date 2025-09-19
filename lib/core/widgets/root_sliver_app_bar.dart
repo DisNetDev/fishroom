@@ -21,6 +21,11 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> actionsToUse = actions ?? [];
+    actionsToUse = [
+      for (var action in actionsToUse) ...[action, Gap(10)],
+    ];
+
     return sliver
         ? SliverAppBar(
             systemOverlayStyle: isDarkMode(context)
@@ -29,7 +34,7 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
             backgroundColor: Colors.transparent,
             centerTitle: false,
             automaticallyImplyLeading: implyLeading,
-            actions: actions.isNotEmpty ? [...actions, Gap(10)] : null,
+            actions: actions.isNotEmpty ? actionsToUse : null,
             floating: false,
             surfaceTintColor: Colors.transparent,
             title: Text(
@@ -49,7 +54,7 @@ class RootSliverAppBar extends StatelessWidget implements PreferredSizeWidget {
               style: kHeadingTextStyle,
             ),
             surfaceTintColor: Colors.transparent,
-            actions: actions,
+            actions: actions.isNotEmpty ? actionsToUse : null,
             flexibleSpace: flexibleSpace,
           );
   }

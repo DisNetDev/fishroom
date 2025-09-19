@@ -2,6 +2,7 @@ import 'package:fishroom/core/constants.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
+import 'package:fishroom/core/widgets/neo_brute_border.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/app/usecases/logout.dart';
@@ -35,101 +36,116 @@ class SettingsPage extends StatelessWidget {
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    ListTile(
-                      title: const Text("Tank Parameters"),
-                      subtitle: const Text("Adjust your tank parameters"),
-                      subtitleTextStyle:
-                          kDateTimeTextStyle.copyWith(color: Colors.grey),
-                      leading: const Icon(Symbols.bar_chart_rounded),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                const TankParametersSettings()));
-                      },
+                    _TileContainer(
+                      child: ListTile(
+                        title: const Text("Tank Parameters"),
+                        subtitle: const Text("Adjust your tank parameters"),
+                        subtitleTextStyle:
+                            kDateTimeTextStyle.copyWith(color: Colors.grey),
+                        leading: const Icon(Symbols.bar_chart_rounded),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const TankParametersSettings()));
+                        },
+                      ),
                     ),
-                    ListTile(
-                      title: const Text("Fertilizers"),
-                      subtitle:
-                          const Text("Adjust your dosages and fertilizers"),
-                      subtitleTextStyle:
-                          kDateTimeTextStyle.copyWith(color: Colors.grey),
-                      leading: const Icon(Symbols.water_drop_rounded),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const FertilizerSettings()));
-                      },
+                    _TileContainer(
+                      child: ListTile(
+                        title: const Text("Fertilizers"),
+                        subtitle:
+                            const Text("Adjust your dosages and fertilizers"),
+                        subtitleTextStyle:
+                            kDateTimeTextStyle.copyWith(color: Colors.grey),
+                        leading: const Icon(Symbols.water_drop_rounded),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const FertilizerSettings()));
+                        },
+                      ),
                     ),
 
-                    ListTile(
-                      title: const Text("Compact Mode"),
-                      subtitleTextStyle:
-                          kDateTimeTextStyle.copyWith(color: Colors.grey),
-                      subtitle: const Text(
-                          "Lots of tanks? This will make it easier to view them."),
-                      trailing: SizedBox(
-                        width: 40,
-                        child: FittedBox(
-                          child: Switch(
-                            activeColor: kPrimaryColor,
-                            value: state.settings.compactTankTile,
-                            onChanged: (value) {
-                              try {
-                                context.read<AppCubit>().updateSettings(state
-                                    .settings
-                                    .copyWith(compactTankTile: value));
-                              } catch (e) {
-                                showToast(context,
-                                    title: "Failed to update settings",
-                                    description: e.toString(),
-                                    toastType: ToastType.error);
-                              }
-                            },
+                    _TileContainer(
+                      child: ListTile(
+                        leading: const Icon(Symbols.view_list_rounded),
+                        title: const Text("Compact Mode"),
+                        subtitleTextStyle:
+                            kDateTimeTextStyle.copyWith(color: Colors.grey),
+                        subtitle: const Text(
+                            "Lots of tanks? This will make it easier to view them."),
+                        trailing: SizedBox(
+                          width: 40,
+                          child: FittedBox(
+                            child: Switch(
+                              activeColor: kPrimaryColor,
+                              value: state.settings.compactTankTile,
+                              onChanged: (value) {
+                                try {
+                                  context.read<AppCubit>().updateSettings(state
+                                      .settings
+                                      .copyWith(compactTankTile: value));
+                                } catch (e) {
+                                  showToast(context,
+                                      title: "Failed to update settings",
+                                      description: e.toString(),
+                                      toastType: ToastType.error);
+                                }
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ),
 
                     if (kDebugMode)
-                      ListTile(
-                        title: const Text("(DEBUG)"),
-                        subtitle: Text(
-                            "Switch to ${context.read<AppCubit>().state.user?.premium == true ? "FREE" : "PRO"}"),
-                        onTap: () {
-                          context.read<AppCubit>().debugToggleFreeAndPro();
-                        },
+                      _TileContainer(
+                        child: ListTile(
+                          title: const Text("(DEBUG)"),
+                          subtitle: Text(
+                              "Switch to ${context.read<AppCubit>().state.user?.premium == true ? "FREE" : "PRO"}"),
+                          onTap: () {
+                            context.read<AppCubit>().debugToggleFreeAndPro();
+                          },
+                        ),
                       ),
 
                     if (!pro)
-                      ListTile(
-                          leading: const Icon(Icons.arrow_upward_outlined),
-                          title: const Text("Upgrade to Pro"),
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const UpgradeToPro()))),
-
-                    ListTile(
-                      enabled: false,
-                      leading: const Icon(Symbols.info_rounded),
-                      title: const Text("Version Info"),
-                      subtitle: FutureBuilder(
-                        future: PackageInfo.fromPlatform(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<PackageInfo> snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                                "Version: ${snapshot.data!.version} - ${pro ? "Pro" : "Free"}");
-                          } else {
-                            return const Text("Loading version...");
-                          }
-                        },
+                      _TileContainer(
+                        child: ListTile(
+                            leading: const Icon(Icons.arrow_upward_outlined),
+                            title: const Text("Upgrade to Pro"),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const UpgradeToPro()))),
                       ),
-                      subtitleTextStyle: const TextStyle(
-                        fontSize: 12,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.grey,
+
+                    _TileContainer(
+                      child: ListTile(
+                        enabled: false,
+                        leading: const Icon(Symbols.info_rounded),
+                        title: const Text("Version Info"),
+                        subtitle: FutureBuilder(
+                          future: PackageInfo.fromPlatform(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<PackageInfo> snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                  "Version: ${snapshot.data!.version} - ${pro ? "Pro" : "Free"}");
+                            } else {
+                              return const Text("Loading version...");
+                            }
+                          },
+                        ),
+                        subtitleTextStyle: const TextStyle(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                     // ListTile(
@@ -145,23 +161,27 @@ class SettingsPage extends StatelessWidget {
                     //   ),
                     // ),
 
-                    ListTile(
-                      leading: const Icon(Symbols.bug_report_rounded),
-                      title: const Text("Bug Report / Contact Support"),
-                      onTap: () {
-                        navPop(context);
-                        navPush(context, const BugReportView());
-                      },
+                    _TileContainer(
+                      child: ListTile(
+                        leading: const Icon(Symbols.bug_report_rounded),
+                        title: const Text("Bug Report / Contact Support"),
+                        onTap: () {
+                          navPop(context);
+                          navPush(context, const BugReportView());
+                        },
+                      ),
                     ),
 
                     //Bottom
 
-                    ListTile(
-                      leading: const Icon(Icons.logout),
-                      title: const Text("Logout"),
-                      onTap: () {
-                        logOut(context);
-                      },
+                    _TileContainer(
+                      child: ListTile(
+                        leading: const Icon(Icons.logout),
+                        title: const Text("Logout"),
+                        onTap: () {
+                          logOut(context);
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -170,6 +190,22 @@ class SettingsPage extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _TileContainer extends StatelessWidget {
+  const _TileContainer({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(horizontal: 10, vertical: 5),
+      child: NeoBruteBorder(
+        child: child,
+      ),
     );
   }
 }
