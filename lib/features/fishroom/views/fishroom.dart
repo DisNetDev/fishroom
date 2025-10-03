@@ -108,11 +108,7 @@ class _FishroomState extends State<Fishroom> {
                         MaterialPageRoute(
                             builder: (context) => const CreateTankTankName()));
                   } else {
-                    showToast(context,
-                        title: "Upgrade to Pro.",
-                        toastType: ToastType.info,
-                        description:
-                            "You have reached the maximum number of tanks on the free plan. Upgrade to Pro to add more tanks.");
+                    navPush(context, UpgradeToPro());
                   }
                 },
                 child: const Icon(Icons.add),
