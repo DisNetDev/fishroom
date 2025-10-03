@@ -5,6 +5,7 @@ import 'package:fishroom/core/usecases/check_and_set_pro.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/logo.dart';
 import 'package:fishroom/features/IAP/purchase_service.dart';
+import 'package:fishroom/features/app/views/mode_select.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
 import 'package:fishroom/features/splash_screen/usecases/send_welcome_email.dart';
 import 'package:fishroom/main.dart';
@@ -48,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
           MaterialPageRoute(builder: (context) => const Fishroom()));
     } else {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LogonView()));
+          MaterialPageRoute(builder: (context) => ModeSelect()));
     }
   }
 

@@ -1,8 +1,12 @@
 import 'package:fishroom/core/constants.dart';
+import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/widgets/neo_brute_border.dart';
+import 'package:fishroom/features/app/cubit/app_cubit.dart';
 import 'package:fishroom/features/community_tank/views/community_tank_view.dart';
 import 'package:fishroom/features/fishroom/views/fishroom.dart';
+import 'package:fishroom/features/offline_mode/views/switch_to_account.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class RootNavbar extends StatelessWidget {
@@ -55,6 +59,7 @@ class RootNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppCubit appCubit = context.read<AppCubit>();
     return SafeArea(
       child: ClipRRect(
         child: Container(
@@ -80,6 +85,12 @@ class RootNavbar extends StatelessWidget {
                   items: _navbarItems,
                   currentIndex: currentIndex,
                   onTap: (index) {
+                    if (_viewList[index].runtimeType == CommunityTankView &&
+                        appCubit.state.isOfflineMode) {
+                      navPush(context, const SwitchToAccount());
+                      return;
+                    }
+                    if (index == currentIndex) return;
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

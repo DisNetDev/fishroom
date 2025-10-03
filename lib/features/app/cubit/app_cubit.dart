@@ -22,6 +22,7 @@ class AppCubit extends HydratedCubit<AppState> {
       settings:
           json['settings'] != null ? Settings.fromJson(json['settings']) : null,
       appLoaded: false,
+      isOfflineMode: json['isOfflineMode'] ?? false,
     );
   }
 
@@ -31,11 +32,16 @@ class AppCubit extends HydratedCubit<AppState> {
       'user': state.user?.toJson(),
       'settings': state.settings.toJson(),
       'appLoaded': false,
+      'isOfflineMode': state.isOfflineMode,
     };
   }
 
   void setAppLoaded(bool set) {
     emit(state.copyWith(appLoaded: set));
+  }
+
+  void setOfflineMode(bool set) {
+    emit(state.copyWith(isOfflineMode: set));
   }
 
   void debugToggleFreeAndPro() {

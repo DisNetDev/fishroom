@@ -111,6 +111,18 @@ class SettingsPage extends StatelessWidget {
                           },
                         ),
                       ),
+                    if (kDebugMode)
+                      _TileContainer(
+                        child: ListTile(
+                          title: const Text("(DEBUG)"),
+                          subtitle: Text(
+                              "Switch offline mode ${context.read<AppCubit>().state.isOfflineMode == true ? "OFF" : "ON"}"),
+                          onTap: () {
+                            context.read<AppCubit>().setOfflineMode(
+                                !context.read<AppCubit>().state.isOfflineMode);
+                          },
+                        ),
+                      ),
 
                     if (!pro)
                       _TileContainer(
