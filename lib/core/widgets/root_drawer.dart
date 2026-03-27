@@ -90,7 +90,7 @@ class RootDrawer extends StatelessWidget {
                     width: 40,
                     child: FittedBox(
                       child: Switch(
-                        activeColor: kPrimaryColor,
+                        activeThumbColor: kPrimaryColor,
                         value: state.settings.compactTankTile,
                         onChanged: (value) {
                           try {

@@ -109,7 +109,7 @@ class _ToleranceSliderState extends State<ToleranceSlider> {
             activeTrackColor: Colors.transparent,
             inactiveTrackColor: Colors.transparent,
             disabledThumbColor: Colors.transparent,
-            showValueIndicator: ShowValueIndicator.always,
+            showValueIndicator: ShowValueIndicator.onDrag,
             overlayShape: SliderComponentShape.noOverlay,
             rangeTrackShape: _GradientRangeSliderTrackShape(
               minValue: widget.minValue,
