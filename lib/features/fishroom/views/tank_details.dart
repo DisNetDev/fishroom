@@ -1,10 +1,13 @@
 import 'package:collection/collection.dart';
+import 'package:fishroom/core/usecases/dialog_show.dart';
 import 'package:fishroom/core/usecases/nav_push.dart';
 import 'package:fishroom/core/usecases/show_toast.dart';
 import 'package:fishroom/core/widgets/custom_background.dart';
 import 'package:fishroom/core/widgets/root_sliver_app_bar.dart';
 import 'package:fishroom/features/achievements/views/achievements.dart';
 import 'package:fishroom/features/app/cubit/app_cubit.dart';
+import 'package:fishroom/features/community_tank/usecases/share_tank_to_community.dart';
+import 'package:fishroom/features/community_tank/widgets/create_username_modal.dart';
 import 'package:fishroom/features/create_tank_flow/create_tank_tank_name.dart';
 import 'package:fishroom/features/fishroom/usecases/check_for_achievements.dart';
 import 'package:fishroom/features/fishroom/widgets/counter_widget.dart';
@@ -129,6 +132,10 @@ class _TankDetailsState extends State<TankDetails> {
                   title: "",
                   sliver: true,
                   actions: [
+                    GestureDetector(
+                        onTap: _handleShareTank,
+                        child: Text("Share to Community")),
+                    Expanded(child: SizedBox()),
                     IconButton(
                         onPressed: () {
                           if (_tank != null) {
@@ -381,6 +388,39 @@ class _TankDetailsState extends State<TankDetails> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleShareTank() async {
+    if (_tank == null) return;
+    bool hasUsername = appCubit.state.user?.username != null &&
+        appCubit.state.user!.username!.isNotEmpty;
+
+    final confirmed = await dialogShow(
+      context,
+      "Share Tank to Community",
+      "Are you sure you want to share this tank to the community? This will make all the information about this tank as it is right now public.\nReadings will not be shared.",
+      trueText: "Share",
+      falseText: "Cancel",
+    );
+
+    if (confirmed != true) return;
+
+    if (!hasUsername) {
+      await navPush(context, CreateUsernameModal());
+    }
+
+    try {
+      await shareTankToCommunity(context, _tank!);
+      showToast(context,
+          title: "Tank shared to community!",
+          description: "Your tank has been shared to the community.",
+          toastType: ToastType.success);
+    } catch (e) {
+      showToast(context,
+          title: "Something went wrong.",
+          description: e.toString(),
+          toastType: ToastType.error);
+    }
   }
 }
 
