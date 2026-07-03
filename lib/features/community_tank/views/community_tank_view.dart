@@ -72,7 +72,8 @@ class _CommunityTankViewState extends State<CommunityTankView> {
 
   @override
   Widget build(BuildContext context) {
-    bool hasUsername = appCubit.state.user?.username != null;
+    bool hasUsername = appCubit.state.user?.username != null &&
+        appCubit.state.user!.username!.isNotEmpty;
 
     return PopScope(
       canPop: false,
