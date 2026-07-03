@@ -25,8 +25,9 @@ void main() async {
   await initHydratedBloc();
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
-      url: dotenv.env['SUPABASE_URL']!,
-      anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+      url: dotenv.env[kDebugMode ? 'SUPABASE_STAGING_URL' : 'SUPABASE_URL']!,
+      anonKey: dotenv
+          .env[kDebugMode ? 'SUPABASE_STAGING_ANON_KEY' : 'SUPABASE_ANON_KEY']!,
       authOptions: FlutterAuthClientOptions(
         localStorage: MySecureStorage(),
       ));
